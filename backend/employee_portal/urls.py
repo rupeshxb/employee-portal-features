@@ -1,10 +1,11 @@
 from django.urls import path
-from .views import DailyTaskListCreate, DailyTaskDetail
+from .views import DailyTaskListCreate, DailyTaskDetail, ProjectList
 
 urlpatterns = [
-    # API Endpoint: http://127.0.0.1:8000/api/tasks/
+    # Tasks
     path('tasks/', DailyTaskListCreate.as_view(), name='task-list-create'),
-
-    # API Endpoint: http://127.0.0.1:8000/api/tasks/1/ (for editing specific tasks)
     path('tasks/<int:pk>/', DailyTaskDetail.as_view(), name='task-detail'),
+
+    # Projects (Add this line!)
+    path('projects/', ProjectList.as_view(), name='project-list'),
 ]
