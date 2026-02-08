@@ -54,12 +54,6 @@ const TaskRow = ({ task, index, onEdit, onDelete, isBlocker }) => (
     </div>
     
     <div className="task-actions">
-      {/* Blocker Tag (Red) */}
-      {isBlocker && (
-        <span className="tag" style={{ backgroundColor: '#EF4444', color: '#fff' }}>
-          Blocker
-        </span>
-      )}
       
       {/* Project Tag (Dynamic Background, Always White Text) */}
       <span 
