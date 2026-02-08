@@ -18,6 +18,7 @@ class Employee(models.Model):
     designation = models.CharField(max_length=100)
     department = models.CharField(max_length=100)
     date_joined = models.DateTimeField(auto_now_add=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     
     # Simple check for permissions later
     def is_manager(self):

@@ -1,163 +1,78 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-
-// Import Helper Logic
-import { getLatestTime } from './utils/helpers'
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import './App.css';
 
 // Import Components
-import Sidebar from './components/Sidebar'
-import Header from './components/Header'
-import TaskList from './components/TaskList'
-import TaskModal from './components/TaskModal'
-import DeleteModal from './components/DeleteModal'
-import NotificationToast from './components/NotificationToast'
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import AddTask from './components/AddTask';
+import TeamUpdates from './components/TeamUpdates';
+import Settings from './components/Settings';
+import LoginPage from './components/LoginPage';
 
-function App() {
-  // --- STATE ---
-  const [tasks, setTasks] = useState([])
-  const [projects, setProjects] = useState([])
-  
-  // UI State
-  const [modalState, setModalState] = useState({ show: false, isEditing: false, task: null })
-  const [deleteModal, setDeleteModal] = useState({ show: false, task: null })
-  const [notification, setNotification] = useState({ show: false, message: '' })
+const App = () => {
+  // 1. Initialize State directly from LocalStorage
+  // This ensures that when you refresh, the user stays logged in.
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
 
-  const EMPLOYEE_ID = 2; 
+  // 2. Login Handler (Passed to LoginPage)
+  // This updates the App state immediately after a successful API login
+  const handleLoginState = (newToken) => {
+    setToken(newToken);
+    // We also update the user state so the Header shows the name immediately
+    const userData = JSON.parse(localStorage.getItem('user'));
+    setUser(userData);
+  };
 
-  // --- API CALLS ---
-  useEffect(() => {
-    fetchTasks();
-    fetchProjects();
-  }, [])
+  // 3. Logout Handler
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setToken(null);
+    setUser(null);
+  };
 
-  const fetchTasks = () => {
-    fetch('http://127.0.0.1:8000/api/tasks/')
-      .then(res => res.json())
-      .then(data => setTasks(data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))))
-      .catch(err => console.error(err));
-  }
-
-  const fetchProjects = () => {
-    fetch('http://127.0.0.1:8000/api/projects/')
-      .then(res => res.json())
-      .then(data => setProjects(data));
-  }
-
-  // --- HANDLERS ---
-  
-  // 1. Grouping Logic
-  const groupedTasks = (() => {
-    const groups = {};
-    tasks.forEach(task => {
-      const rawDate = task.date || task.created_at;
-      const dateKey = rawDate ? rawDate.split('T')[0] : new Date().toISOString().split('T')[0];
-      
-      if (!groups[dateKey]) {
-        groups[dateKey] = { date: dateKey, tasks: [], blockers: [], allTasks: [] };
-      }
-      groups[dateKey].allTasks.push(task);
-      task.is_blocker ? groups[dateKey].blockers.push(task) : groups[dateKey].tasks.push(task);
-    });
-    
-    return Object.values(groups).map(group => ({
-      ...group,
-      lastUpdated: getLatestTime(group.allTasks)
-    })).sort((a, b) => new Date(b.date) - new Date(a.date));
-  })();
-
-  // 2. Form Submit (Create or Update)
-  const handleTaskSubmit = (formData) => {
-    const payload = { ...formData, employee_id: EMPLOYEE_ID };
-    const url = modalState.isEditing 
-      ? `http://127.0.0.1:8000/api/tasks/${modalState.task.id}/` 
-      : 'http://127.0.0.1:8000/api/tasks/';
-    const method = modalState.isEditing ? 'PUT' : 'POST';
-
-    fetch(url, {
-      method: method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(async response => {
-      if (response.ok) {
-        setModalState({ show: false, isEditing: false, task: null });
-        fetchTasks();
-        showNotification(modalState.isEditing ? "Task updated!" : "Daily task added!");
-      } else {
-        alert("Error saving task");
-      }
-    });
-  }
-
-  // 3. Delete Task
-  const confirmDelete = () => {
-    fetch(`http://127.0.0.1:8000/api/tasks/${deleteModal.task.id}/`, { method: 'DELETE' })
-      .then(res => { 
-        if(res.ok) {
-          fetchTasks();
-          setDeleteModal({ show: false, task: null });
-          showNotification("Task deleted.");
-        }
-      });
-  }
-
-  // Helper to show toast
-  const showNotification = (msg) => {
-    setNotification({ show: true, message: msg });
-    setTimeout(() => setNotification({ show: false, message: '' }), 3000);
-  }
-
-  // --- RENDER ---
   return (
-    <div className="app-container">
-      <NotificationToast 
-        show={notification.show} 
-        message={notification.message} 
-        onClose={() => setNotification({ show: false, message: '' })} 
-      />
-
-      <DeleteModal 
-        show={deleteModal.show} 
-        task={deleteModal.task} 
-        onClose={() => setDeleteModal({ show: false, task: null })} 
-        onConfirm={confirmDelete}
-      />
-
-      <Sidebar />
-
-      <main className="main-content">
-        <Header />
+    <Router>
+      <div className="app-container">
         
-        <div className="content-area">
-          <div className="hero-banner">
-            <div className="hero-title">
-              <h1>Add Daily Tasks</h1>
-              <p>Add a brief summary of today's work, meetings, and any blockers.</p>
+        {/* IF NO TOKEN -> SHOW LOGIN PAGE */}
+        {!token ? (
+          <Routes>
+            {/* We pass 'handleLoginState' as the 'setToken' prop because your LoginPage expects 'setToken' */}
+            <Route path="*" element={<LoginPage setToken={handleLoginState} />} />
+          </Routes>
+        ) : (
+          /* IF TOKEN EXISTS -> SHOW DASHBOARD LAYOUT */
+          <>
+            <Sidebar />
+            
+            <div className="main-content">
+              {/* Pass user info to Header */}
+              <Header user={user} onLogout={handleLogout} /> 
+              
+              <div className="content-area">
+                <Routes>
+                  {/* Route 1: Home (Add Task) */}
+                  <Route path="/" element={<AddTask />} />
+                  
+                  {/* Route 2: Team Updates */}
+                  <Route path="/team-updates" element={<TeamUpdates />} />
+                  
+                  {/* Route 3: Settings */}
+                  <Route path="/settings" element={<Settings />} />
+                  
+                  {/* Fallback - Redirect unknown routes to Home */}
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+              </div>
             </div>
-            <button className="hero-btn" onClick={() => setModalState({ show: true, isEditing: false, task: null })}>
-              + Add New Task
-            </button>
-          </div>
+          </>
+        )}
+      </div>
+    </Router>
+  );
+};
 
-          <TaskList 
-            groupedTasks={groupedTasks} 
-            onEdit={(task) => setModalState({ show: true, isEditing: true, task: task })}
-            onDelete={(task) => setDeleteModal({ show: true, task: task })}
-          />
-        </div>
-      </main>
-
-      {/* ADD/EDIT FORM MODAL */}
-      <TaskModal 
-        show={modalState.show}
-        onClose={() => setModalState({ show: false, isEditing: false, task: null })}
-        onSubmit={handleTaskSubmit}
-        isEditing={modalState.isEditing}
-        initialData={modalState.task}
-        projects={projects}
-      />
-    </div>
-  )
-}
-
-export default App
+export default App;
