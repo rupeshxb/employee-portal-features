@@ -71,13 +71,13 @@ const TeamUpdates = () => {
     const headers = getAuthHeaders();
 
     // A. Fetch Projects
-    fetch('${API_BASE_URL}/api/projects/', { headers })
+    fetch(`${API_BASE_URL}/api/projects/`, { headers })
       .then(res => res.json())
       .then(data => setProjectList(data))
       .catch(err => console.error("Error fetching projects:", err));
 
     // B. Fetch Employees to get Designations (Roles) dynamically
-    fetch('${API_BASE_URL}/api/employees/', { headers })
+    fetch(`${API_BASE_URL}/api/employees/`, { headers })
         .then(res => res.json())
         .then(data => {
             // Extract unique designations

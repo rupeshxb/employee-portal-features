@@ -39,7 +39,7 @@ const Settings = () => {
 
     const fetchProfile = () => {
         const headers = token ? { 'Authorization': `Token ${token}` } : {};
-        fetch('${API_BASE_URL}/api/profile/', { headers })
+        fetch(`${API_BASE_URL}/api/profile/`, { headers })
         .then(res => res.json())
         .then(data => setProfile(data))
         .catch(err => console.error("Error fetching profile:", err));
@@ -67,7 +67,7 @@ const Settings = () => {
         formData.append('last_name', profile.last_name);
         formData.append('email', profile.email);
 
-        fetch('${API_BASE_URL}/api/profile/', {
+        fetch(`${API_BASE_URL}/api/profile/`, {
             method: 'PATCH',
             headers: { 'Authorization': `Token ${token}` },
             body: formData
@@ -98,7 +98,7 @@ const Settings = () => {
                     const formData = new FormData();
                     formData.append('avatar', blob, 'profile-pic.jpg');
 
-                    fetch('${API_BASE_URL}/api/profile/', {
+                    fetch(`${API_BASE_URL}/api/profile/`, {
                         method: 'PATCH',
                         headers: { 'Authorization': `Token ${token}` },
                         body: formData
@@ -125,7 +125,7 @@ const Settings = () => {
             return;
         }
 
-        fetch('${API_BASE_URL}/api/change-password/', {
+        fetch(`${API_BASE_URL}/api/change-password/`, {
             method: 'POST',
             headers: { 
                 'Authorization': `Token ${token}`,

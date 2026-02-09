@@ -41,7 +41,7 @@ const AddTask = () => {
     }, []);
 
     const fetchTasks = () => {
-        fetch('${API_BASE_URL}/api/tasks/', {
+        fetch(`${API_BASE_URL}/api/tasks/`, {
             headers: getAuthHeaders()
         })
         .then(res => {
@@ -56,7 +56,7 @@ const AddTask = () => {
     };
 
     const fetchProjects = () => {
-        fetch('${API_BASE_URL}/api/projects/', {
+        fetch(`${API_BASE_URL}/api/projects/`, {
             headers: getAuthHeaders()
         })
         .then(res => res.json())
@@ -87,7 +87,7 @@ const AddTask = () => {
     const handleTaskSubmit = (formData) => {
         const url = modalState.isEditing 
             ? `${API_BASE_URL}/api/tasks/${modalState.task.id}/` 
-            : '${API_BASE_URL}/api/tasks/';
+            : `${API_BASE_URL}/api/tasks/`;
         
         const method = modalState.isEditing ? 'PUT' : 'POST';
 
