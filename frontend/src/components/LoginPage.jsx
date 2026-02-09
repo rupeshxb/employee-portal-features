@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, LogIn, ArrowRight } from 'lucide-react';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL } from '../../config';
 
 const Login = ({ setToken }) => {
     const [credentials, setCredentials] = useState({ username: '', password: '' });

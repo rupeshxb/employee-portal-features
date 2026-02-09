@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../App.css'; 
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL } from '../../config';
 
 const TeamUpdates = () => {
   // --- STATE ---

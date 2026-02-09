@@ -5,7 +5,7 @@ import TaskList from './TaskList';
 import TaskModal from './TaskModal';
 import DeleteModal from './DeleteModal';
 import NotificationToast from './NotificationToast';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL } from '../../config';
 
 const AddTask = () => {
     // --- STATE ---

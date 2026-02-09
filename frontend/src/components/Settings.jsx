@@ -5,7 +5,7 @@ import {
   Eye, EyeOff, Trash2, X 
 } from 'lucide-react';
 import '../App.css'; 
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL } from '../../config';
 
 const Settings = () => {
     // --- STATE ---
