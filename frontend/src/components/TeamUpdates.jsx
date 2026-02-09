@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../App.css'; 
+import { API_BASE_URL } from '../config';
 
 const TeamUpdates = () => {
   // --- STATE ---
@@ -50,11 +51,11 @@ const TeamUpdates = () => {
     
     // 2. If it starts with /media, prepend domain
     if (avatarPath.startsWith('/media')) {
-        return `http://127.0.0.1:8000${avatarPath}`;
+        return `${API_BASE_URL}${avatarPath}`;
     }
     
     // 3. Fallback for relative paths
-    return `http://127.0.0.1:8000/media/${avatarPath}`;
+    return `${API_BASE_URL}/media/${avatarPath}`;
   };
 
   // --- HELPER: Get Initials ---
@@ -70,13 +71,13 @@ const TeamUpdates = () => {
     const headers = getAuthHeaders();
 
     // A. Fetch Projects
-    fetch('http://127.0.0.1:8000/api/projects/', { headers })
+    fetch('${API_BASE_URL}/api/projects/', { headers })
       .then(res => res.json())
       .then(data => setProjectList(data))
       .catch(err => console.error("Error fetching projects:", err));
 
     // B. Fetch Employees to get Designations (Roles) dynamically
-    fetch('http://127.0.0.1:8000/api/employees/', { headers })
+    fetch('${API_BASE_URL}/api/employees/', { headers })
         .then(res => res.json())
         .then(data => {
             // Extract unique designations
@@ -116,7 +117,7 @@ const TeamUpdates = () => {
     });
 
     // Call your Django API
-    fetch(`http://127.0.0.1:8000/api/team-updates/?${params.toString()}`, {
+    fetch(`${API_BASE_URL}/api/team-updates/?${params.toString()}`, {
         headers: getAuthHeaders()
     })
       .then(res => {

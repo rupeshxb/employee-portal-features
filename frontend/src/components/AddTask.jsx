@@ -5,6 +5,7 @@ import TaskList from './TaskList';
 import TaskModal from './TaskModal';
 import DeleteModal from './DeleteModal';
 import NotificationToast from './NotificationToast';
+import { API_BASE_URL } from '../config';
 
 const AddTask = () => {
     // --- STATE ---
@@ -40,7 +41,7 @@ const AddTask = () => {
     }, []);
 
     const fetchTasks = () => {
-        fetch('http://127.0.0.1:8000/api/tasks/', {
+        fetch('${API_BASE_URL}/api/tasks/', {
             headers: getAuthHeaders()
         })
         .then(res => {
@@ -55,7 +56,7 @@ const AddTask = () => {
     };
 
     const fetchProjects = () => {
-        fetch('http://127.0.0.1:8000/api/projects/', {
+        fetch('${API_BASE_URL}/api/projects/', {
             headers: getAuthHeaders()
         })
         .then(res => res.json())
@@ -85,8 +86,8 @@ const AddTask = () => {
 
     const handleTaskSubmit = (formData) => {
         const url = modalState.isEditing 
-            ? `http://127.0.0.1:8000/api/tasks/${modalState.task.id}/` 
-            : 'http://127.0.0.1:8000/api/tasks/';
+            ? `${API_BASE_URL}/api/tasks/${modalState.task.id}/` 
+            : '${API_BASE_URL}/api/tasks/';
         
         const method = modalState.isEditing ? 'PUT' : 'POST';
 
@@ -108,7 +109,7 @@ const AddTask = () => {
     };
 
     const confirmDelete = () => {
-        fetch(`http://127.0.0.1:8000/api/tasks/${deleteModal.task.id}/`, { 
+        fetch(`${API_BASE_URL}/api/tasks/${deleteModal.task.id}/`, { 
             method: 'DELETE',
             headers: getAuthHeaders() 
         })

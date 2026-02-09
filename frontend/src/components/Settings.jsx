@@ -5,6 +5,7 @@ import {
   Eye, EyeOff, Trash2, X 
 } from 'lucide-react';
 import '../App.css'; 
+import { API_BASE_URL } from '../config';
 
 const Settings = () => {
     // --- STATE ---
@@ -38,7 +39,7 @@ const Settings = () => {
 
     const fetchProfile = () => {
         const headers = token ? { 'Authorization': `Token ${token}` } : {};
-        fetch('http://127.0.0.1:8000/api/profile/', { headers })
+        fetch('${API_BASE_URL}/api/profile/', { headers })
         .then(res => res.json())
         .then(data => setProfile(data))
         .catch(err => console.error("Error fetching profile:", err));
@@ -48,8 +49,8 @@ const Settings = () => {
     const getImageUrl = (avatarPath) => {
         if (!avatarPath) return null; 
         if (avatarPath.startsWith('http')) return avatarPath;
-        if (avatarPath.startsWith('/media')) return `http://127.0.0.1:8000${avatarPath}`;
-        return `http://127.0.0.1:8000/media/${avatarPath}`;
+        if (avatarPath.startsWith('/media')) return `${API_BASE_URL}${avatarPath}`;
+        return `${API_BASE_URL}/media/${avatarPath}`;
     };
 
     // --- HELPER: Get Initials (NEW ADDITION) ---
@@ -66,7 +67,7 @@ const Settings = () => {
         formData.append('last_name', profile.last_name);
         formData.append('email', profile.email);
 
-        fetch('http://127.0.0.1:8000/api/profile/', {
+        fetch('${API_BASE_URL}/api/profile/', {
             method: 'PATCH',
             headers: { 'Authorization': `Token ${token}` },
             body: formData
@@ -97,7 +98,7 @@ const Settings = () => {
                     const formData = new FormData();
                     formData.append('avatar', blob, 'profile-pic.jpg');
 
-                    fetch('http://127.0.0.1:8000/api/profile/', {
+                    fetch('${API_BASE_URL}/api/profile/', {
                         method: 'PATCH',
                         headers: { 'Authorization': `Token ${token}` },
                         body: formData
@@ -124,7 +125,7 @@ const Settings = () => {
             return;
         }
 
-        fetch('http://127.0.0.1:8000/api/change-password/', {
+        fetch('${API_BASE_URL}/api/change-password/', {
             method: 'POST',
             headers: { 
                 'Authorization': `Token ${token}`,

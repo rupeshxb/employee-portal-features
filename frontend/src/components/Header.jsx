@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, ChevronDown, LogOut, User, Settings, Calendar } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const Header = ({ user, onLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -28,7 +29,7 @@ const Header = ({ user, onLogout }) => {
   const getAvatarUrl = (avatarPath) => {
     if (!avatarPath) return null;
     if (avatarPath.startsWith('http')) return avatarPath;
-    return `http://127.0.0.1:8000${avatarPath}`;
+    return `${API_BASE_URL}${avatarPath}`;
   };
 
   // --- 4. SMART NAME LOGIC ---
