@@ -17,7 +17,7 @@ const Sidebar = () => (
         end
       >
         <Calendar size={20} />
-        <span>Add Daily Tasks</span>
+        <span>Daily Tasks</span>
       </NavLink>
 
       {/* 2. Team Updates */}

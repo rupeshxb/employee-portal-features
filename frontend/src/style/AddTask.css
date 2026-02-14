@@ -1,0 +1,262 @@
+/* =========================================
+   1. LAYOUT & VARIABLES
+   ========================================= */
+:root {
+    --primary-blue: #2563EA;
+    --bg-gradient: linear-gradient(90.82deg, #E0EAFC 6.42%, #CFDEF3 92.16%);
+    --text-dark: #05205F;
+    --text-body: rgba(1, 12, 55, 0.75);
+    --font-family: 'Figtree', sans-serif;
+    --success-green: #22C55E;
+}
+
+.content-area {
+    font-family: var(--font-family);
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* =========================================
+     2. HERO BANNER - LOCKED DOWN
+     ========================================= */
+
+/* The banner is now the strict master of its coordinate system */
+.hero-banner.relative-banner-context {
+    position: relative !important;
+    width: 100%;
+    min-height: 146px;
+    background: var(--bg-gradient);
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    margin-bottom: 32px;
+    box-sizing: border-box;
+}
+
+/* --- NOTIFICATION WRAPPER (The Anchor) --- */
+.banner-notification-wrapper {
+    position: absolute !important;
+    top: 16px !important;    /* Forces it 16px from top of BANNER */
+    right: 16px !important;  /* Forces it 16px from right of BANNER */
+    z-index: 9999 !important; /* Forces it on top of decor */
+    pointer-events: none;    /* Clicks pass through to background */
+}
+
+/* --- THE TOAST (Green Box) --- */
+.banner-notification-wrapper .notification-toast {
+    position: relative !important;
+    top: 0 !important;
+    right: 0 !important;
+    pointer-events: auto; /* Re-enable clicks for close button */
+    
+    background: var(--success-green) !important;
+    color: #FFFFFF !important;
+    
+    /* Padding is removed here and moved to .toast-content */
+    padding: 0; 
+    
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    
+    display: flex;
+    flex-direction: column; /* Stack content and progress bar */
+    overflow: hidden; /* Ensures progress bar stays inside rounded corners */
+    
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+    min-width: 260px;
+    
+    animation: toastEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* --- TOAST CONTENT (New Wrapper) --- */
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px; /* Padding for text/icon */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* --- PROGRESS BAR (New) --- */
+.toast-progress-bar {
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.85);
+    width: 100%;
+    /* Animation: 3s matches the setTimeout in AddTask.jsx */
+    animation: progressLinear 3s linear forwards;
+}
+
+@keyframes progressLinear {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* --- THE CHECK ICON --- */
+.check-circle {
+    background: rgba(255, 255, 255, 0.25);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+/* --- THE CLOSE BUTTON --- */
+.toast-close {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 0 4px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.toast-close:hover {
+    opacity: 1;
+}
+
+/* --- ENTRANCE ANIMATION --- */
+@keyframes toastEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* =========================================
+     3. HERO CONTENT & DECOR
+     ========================================= */
+.hero-title {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 60%;
+}
+
+.hero-title h1 {
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+    letter-spacing: -0.03em;
+}
+
+.hero-title p {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-body);
+    margin: 0;
+}
+
+.hero-btn {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #17181A;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+/* --- HERO DECORATION (Handles clipping) --- */
+.hero-decor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Clips only the circles */
+    border-radius: 16px;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(80.05deg, rgba(191, 90, 224, 0.4) 19.27%, rgba(168, 17, 218, 0.4) 70.01%);
+}
+
+.hero-circle-1 { width: 154px; height: 154px; right: -40px; top: -60px; }
+.hero-circle-2 { width: 77px; height: 77px; right: 30%; bottom: -20px; }
+.hero-circle-3 { width: 32px; height: 32px; right: 15%; top: 40px; }
+
+/* =========================================
+     4. EMPTY STATE & MOBILE
+     ========================================= */
+.empty-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.empty-icon-wrapper { margin-bottom: 24px; display: flex; align-items: center; justify-content: center; }
+.empty-title { font-size: 22px; font-weight: 600; color: #17181A; margin: 0 0 8px 0; }
+.empty-subtitle { font-size: 14px; color: rgba(23, 24, 26, 0.6); margin: 0; }
+
+.btn-primary-large {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+    .hero-banner.relative-banner-context {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+        height: auto;
+        gap: 20px;
+    }
+    .hero-btn { width: 100%; justify-content: center; }
+    
+    .banner-notification-wrapper {
+        top: 12px !important;
+        right: 12px !important;
+        left: 12px !important; /* Full width on mobile */
+    }
+    
+    .banner-notification-wrapper .notification-toast {
+        min-width: unset;
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

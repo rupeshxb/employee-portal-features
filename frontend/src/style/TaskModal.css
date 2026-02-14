@@ -1,0 +1,319 @@
+/* --- Container & Overlay --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 24, 26, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(3px);
+}
+
+.modal-content {
+  background: #FFFFFF;
+  width: 100%;
+  max-width: 520px;
+  padding: 32px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0px 10px 40px rgba(0,0,0,0.1);
+}
+
+/* --- Close Button --- */
+.close-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  color: #9CA3AF;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: #F3F4F6;
+  color: #111827;
+}
+
+/* --- Header Section --- */
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  font-family: 'Figtree', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #111827;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.modal-header p {
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.9375rem;
+  color: #6B7280;
+  margin: 0;
+}
+
+/* --- Form Layout --- */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.form-group label {
+  font-family: 'Figtree', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.label-grey {
+  color: #9CA3AF !important;
+  font-weight: 500 !important;
+}
+
+/* --- Inputs & DatePicker Fix --- */
+.form-textarea, .date-picker-input, .blocker-input {
+  width: 100%;
+  background: #F6F7FB;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.9375rem;
+  color: #1F2937;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+/* LIBRARY FIX: Forcing React-DatePicker to span full width */
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker__input-container {
+  width: 100%;
+  display: block; /* Ensures the wrapper acts like a block-level element */
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.date-picker-input, .blocker-input {
+  height: 48px;
+}
+
+.form-textarea:focus, 
+.date-picker-input:focus, 
+.blocker-input:focus {
+  border-color: #2563EA;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(37, 99, 234, 0.1);
+}
+
+/* --- DROPDOWN STYLING --- */
+.custom-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-trigger {
+  width: 100%;
+  background: #F6F7FB;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0 16px;
+  height: 48px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.9375rem;
+  color: #1F2937;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.custom-select-trigger:hover {
+  background: #eceff5;
+}
+
+.custom-select-trigger.active {
+  background: #FFFFFF;
+  border-color: #2563EA;
+}
+
+.dropdown-arrow {
+  color: #6B7280;
+  transition: transform 0.3s ease;
+}
+
+.dropdown-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.custom-options-list {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.12);
+  z-index: 50;
+  border: 1px solid #E5E7EB;
+  padding: 12px;
+}
+
+.dropdown-search-container {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background: #F6F7FB;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.dropdown-search-container:focus-within {
+  background: #FFFFFF;
+  border-color: #2563EA;
+}
+
+.dropdown-search-container input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.9375rem;
+  color: #1F2937;
+}
+
+.options-scroll-area {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.custom-option {
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.custom-option:hover { background: #F3F4F6; }
+.custom-option.selected { background: #EFF6FF; }
+
+/* --- Input Icon Wrapper --- */
+.input-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-icon-right {
+  position: absolute;
+  right: 16px;
+  color: #9CA3AF;
+  pointer-events: none;
+  z-index: 10; /* Keep icon above the datepicker input */
+}
+
+/* --- Blocker Section --- */
+.blocker-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.9375rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #DC2626;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* --- Actions --- */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.btn-reset {
+  padding: 0 24px;
+  height: 48px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  color: #6B7280;
+  font-family: 'Figtree', sans-serif;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.btn-submit {
+  padding: 0 32px;
+  height: 48px;
+  background: #2563EA;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Figtree', sans-serif;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

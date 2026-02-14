@@ -9,31 +9,21 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # 1. Load Environment Variables
-# This loads variables from a .env file locally, but does nothing on Render
-# (because Render sets them in the dashboard).
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# BASE_DIR points to the 'backend' folder
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- SECURITY CONFIGURATION ---
 
 # 2. SECRET KEY
-# In Production (Render): It pulls from the environment variable.
-# In Local: It falls back to the insecure key (convenient for dev).
-SECRET_KEY = os.environ.get('SECRET_KEY')
-
-if not SECRET_KEY:
-    raise ValueError("No SECRET_KEY set for Django application")
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-dev')
 
 # 3. DEBUG MODE
-# We check if we are on Render. If yes, DEBUG is False (Secure).
-# If no (Local), DEBUG is True (Helpful errors).
 DEBUG = 'RENDER' not in os.environ
 
 # 4. ALLOWED HOSTS
-# '*' allows all domains. This is necessary because Render gives dynamic URLs.
-# In a strict enterprise app, you would list specific domains here.
 ALLOWED_HOSTS = ['*']
 
 
@@ -53,9 +43,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',         # <--- MUST BE TOP (for React)
+    'corsheaders.middleware.CorsMiddleware',         # <--- MUST BE TOP
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',    # <--- NEW: Serves static files on Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',    # <--- Serves static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -86,14 +76,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # --- DATABASE CONFIGURATION ---
 
-# 5. DYNAMIC DATABASE SWITCHING
-# This logic checks: Is there a DATABASE_URL in the environment?
-# If YES (Render/Neon): Use that Cloud Database.
-# If NO (Local): Use your local PostgreSQL credentials.
-
 DATABASES = {
     'default': dj_database_url.config(
-        # This is your Local DB Connection String
+        # Local DB Connection String
         default='postgresql://postgres:root@localhost:5432/hamro_salary_db',
         conn_max_age=600
     )
@@ -120,27 +105,27 @@ USE_TZ = True
 
 # --- STATIC & MEDIA FILES ---
 
-# 6. STATIC FILES (CSS, JS, Images for Admin Panel)
-STATIC_URL = 'static/'
-# This determines where static files are collected when you run 'collectstatic'
+STATIC_URL = '/static/'
+
+# 1. Where to collect files for production (Render)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# WhiteNoise enables Python to serve its own static files (crucial for Render)
+
+# 2. Where to look for extra static files (Your custom JS)
+# This points to backend/static/
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# 3. Storage engine (WhiteNoise for Render)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# 7. MEDIA FILES (User Uploaded Avatars)
+# 4. Media Files (User Uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# NOTE ON MEDIA FILES IN RENDER FREE TIER:
-# Render's free disk is "ephemeral". If the server restarts (which happens often),
-# uploaded images will vanish. For a portfolio demo, this is usually acceptable.
-# For a real product, you would use AWS S3.
 
 
 # --- CORS CONFIGURATION ---
 
-# 8. CORS
-# Allows your React frontend to communicate with this Backend.
 CORS_ALLOW_ALL_ORIGINS = True 
 
 
