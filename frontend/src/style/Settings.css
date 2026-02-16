@@ -78,7 +78,7 @@
     padding: 0;
 }
 
-.settings-card h3{
+.settings-card h3 {
     border-bottom: 0;
     padding-bottom: 0;
 }
@@ -363,4 +363,189 @@
     .panel-body {
         padding: 24px;
     }
+}
+
+/* =========================================
+   MODAL STYLES (Added for Edit Password)
+   ========================================= */
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.modal-box {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 500px;
+    max-width: 90%;
+    padding: 32px;
+    box-shadow:
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    font-family: "Figtree", sans-serif;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 24px;
+    font-weight: 500;
+    color: #0f172a;
+    margin: 0;
+    text-align: left;
+    width: 100%;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #64748b;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.close-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+/* Modal Form Areas */
+.modal-body-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.modal-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal-input-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+/* Password Input Wrapper in Modal */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0 44px 0 16px; /* Extra padding right for Eye icon */
+    font-size: 15px;
+    color: #0f172a;
+    background: #f8fafc;
+    outline: none;
+    font-family: "Figtree", sans-serif;
+    transition: all 0.2s;
+}
+
+.password-input-wrapper input:focus {
+    background: #ffffff;
+    border-color: #2563ea;
+    box-shadow: 0 0 0 3px rgba(37, 99, 234, 0.1);
+}
+
+.toggle-visibility {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.toggle-visibility:hover {
+    color: #475569;
+}
+
+/* Modal Actions (Buttons) */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn-cancel {
+    height: 44px;
+    padding: 0 24px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #f8fafc;
+    color: #0f172a;
+}
+
+.btn-confirm {
+    height: 44px;
+    padding: 0 24px;
+    background: #2563ea;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+    box-shadow: 0 2px 4px rgba(37, 99, 234, 0.2);
+}
+
+.btn-confirm:hover {
+    background: #1d4ed8;
+}
+
+/* Avatar Cropper Specifics */
+.cropper-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 0;
 }
