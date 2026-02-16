@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',         # <--- MUST BE TOP
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',    # <--- REQUIRED FOR OPTION A
+    'whitenoise.middleware.WhiteNoiseMiddleware',    # <--- Serves the files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -129,25 +129,23 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
-# 5. MODERN STORAGE CONFIGURATION (Django 4.2+)
+# 5. STORAGE CONFIGURATION (NO COMPRESSION)
+# This uses standard storage for static files to bypass the Whitenoise compression crash.
 STORAGES = {
     # Media files (Images) -> Cloudinary
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
-    # Static files (CSS/JS) -> WhiteNoise
+    # Static files (CSS/JS) -> Standard Django Storage (No Compression)
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
-# 6. LEGACY STORAGE FALLBACK (CRITICAL FIX)
-# The Cloudinary library still looks for these old variables during build.
-# We define them to match the STORAGES config above.
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# 6. LEGACY FALLBACK (Must match above)
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-# This tells Whitenoise: "If a file referenced in CSS is missing, don't crash, just ignore it."
-WHITENOISE_MANIFEST_STRICT = False
+
 
 # --- CORS CONFIGURATION ---
 
