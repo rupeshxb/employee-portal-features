@@ -1,19 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Bell, ChevronDown, LogOut, User, Settings as SettingsIcon, Calendar } from 'lucide-react';
-import { API_BASE_URL } from '../../config'; 
+import { API_BASE_URL } from '../../config';
 import { useUser } from '../context/UserContext';
 
 const Header = () => {
-  const { user, logout } = useUser(); // Get user AND logout function from Context
+  const { user, logout } = useUser();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  // Use the global user directly
-  const userData = user;
-
-  // --- CLICK OUTSIDE LISTENER ---
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -24,34 +21,48 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // --- HELPER FUNCTIONS ---
   const handleLogout = () => {
     setDropdownOpen(false);
-    logout(); // Clear context/localstorage
-    navigate('/login'); // Redirect to login
+    logout();
+    navigate('/login');
   };
 
+  // --- UPDATED HELPER: Construct full URL for avatar with Version Timestamp ---
   const getAvatarUrl = (avatarPath) => {
     if (!avatarPath) return null;
-    if (avatarPath.startsWith('http')) return avatarPath;
-    // Check if API_BASE_URL is defined, otherwise return path as is
-    return typeof API_BASE_URL !== 'undefined' ? `${API_BASE_URL}${avatarPath}` : avatarPath;
+
+    let finalUrl;
+
+    // Check if it's already a full URL (e.g., external provider)
+    if (avatarPath.startsWith('http')) {
+      finalUrl = avatarPath;
+    } else {
+      // Construct local API URL
+      const baseUrl = API_BASE_URL.replace(/\/$/, '');
+      const path = avatarPath.startsWith('/') ? avatarPath : `/${avatarPath}`;
+      finalUrl = `${baseUrl}${path}`;
+    }
+
+    // APPEND THE VERSION TIMESTAMP TO FORCE REFRESH
+    // This allows the browser to bypass the cache when the image changes
+    if (user?.avatar_version) {
+      return `${finalUrl}?v=${user.avatar_version}`;
+    }
+
+    return finalUrl;
   };
 
+  // Helper: Determine display name (Priority: First Last > Username > Email)
   const getDisplayName = () => {
-    if (!userData) return 'Guest';
-    if (userData.first_name?.trim()) return userData.first_name;
-    if (userData.full_name?.trim() && userData.full_name !== userData.username) {
-      return userData.full_name.split(' ')[0];
+    if (!user) return 'Guest';
+    if (user.first_name && user.first_name.trim() !== '') {
+      return `${user.first_name} ${user.last_name || ''}`;
     }
-    if (userData.username) {
-      let name = userData.username.replace(/[._-]/g, ' ').replace(/[0-9]/g, '');
-      return name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || "User";
-    }
-    return 'User';
+    return user.username || user.email || 'User';
   };
 
   const displayName = getDisplayName();
+  const avatarUrl = getAvatarUrl(user?.avatar || user?.profile_pic);
 
   const getInitials = (name) => {
     if (!name) return 'U';
@@ -77,13 +88,13 @@ const Header = () => {
         <div
           className="user-profile"
           onClick={() => setDropdownOpen(!dropdownOpen)}
-          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', padding: '5px 10px', borderRadius: '8px', transition: 'background 0.2s' }}
+          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', padding: '5px 10px', borderRadius: '8px' }}
         >
           {/* AVATAR */}
           <div style={{ flexShrink: 0 }}>
-            {getAvatarUrl(userData?.avatar || userData?.profile_pic) ? (
+            {avatarUrl ? (
               <img
-                src={getAvatarUrl(userData.avatar || userData.profile_pic)}
+                src={avatarUrl}
                 alt="Profile"
                 style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #E5E7EB', display: 'block' }}
               />
@@ -94,13 +105,13 @@ const Header = () => {
             )}
           </div>
 
-          {/* TEXT SECTION */}
+          {/* TEXT INFO */}
           <div className="user-info" style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
             <span style={{ fontWeight: '600', fontSize: '0.95rem', color: '#1F2937', lineHeight: '1.2' }}>
               {displayName}
             </span>
             <span style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '2px' }}>
-              {userData?.role || userData?.designation || 'Employee'}
+              {user?.designation || user?.role || 'Employee'}
             </span>
           </div>
 
@@ -112,10 +123,11 @@ const Header = () => {
           <div className="dropdown-menu">
             <div className="dropdown-user-header">
               <small>Signed in as</small>
-              <div style={{ fontWeight: 'bold' }}>{userData?.username || userData?.email}</div>
+              <div style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {user?.email || user?.username}
+              </div>
             </div>
 
-            {/* --- ADDED: PROFILE LINK --- */}
             <Link to="/settings" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
               <User size={16} /> View Profile
             </Link>

@@ -9,7 +9,8 @@ export const UserProvider = ({ children }) => {
         last_name: '',
         avatar: null,
         email: '',
-        designation: ''
+        designation: '',
+        avatar_version: Date.now() // Initialize with a version
     });
 
     // Add a loading state to prevent flickering
@@ -28,7 +29,7 @@ export const UserProvider = ({ children }) => {
             });
             if (res.ok) {
                 const data = await res.json();
-                setUser(data);
+                setUser(prev => ({ ...prev, ...data }));
             }
         } catch (error) {
             console.error("Failed to fetch user:", error);
@@ -41,13 +42,25 @@ export const UserProvider = ({ children }) => {
         fetchUser();
     }, []);
 
-    // Call this function whenever you update the profile
+    // --- MODIFIED updateUser FUNCTION ---
     const updateUser = (newData) => {
-        setUser((prev) => ({ ...prev, ...newData }));
+        setUser((prev) => ({
+            ...prev,
+            ...newData,
+            // This adds a current timestamp whenever you update the profile.
+            // It forces React to see the image URL as "new" immediately.
+            avatar_version: Date.now()
+        }));
+    };
+
+    // Added logout function since Header.js uses it
+    const logout = () => {
+        localStorage.removeItem('token');
+        setUser(null);
     };
 
     return (
-        <UserContext.Provider value={{ user, updateUser, fetchUser, loading }}>
+        <UserContext.Provider value={{ user, updateUser, fetchUser, logout, loading }}>
             {children}
         </UserContext.Provider>
     );

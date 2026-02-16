@@ -3,49 +3,51 @@ import AvatarEditor from 'react-avatar-editor';
 import { Camera, Mail, Edit2, X, Briefcase, Eye, EyeOff } from 'lucide-react';
 import '../style/Settings.css';
 import { API_BASE_URL } from '../../config';
-import { useUser } from '../context/UserContext'; // <--- 1. Import Context
+import { useUser } from '../context/UserContext';
 
 const Settings = () => {
-    // --- 2. Use Global Context ---
+    // --- Global Context ---
     const { user, updateUser } = useUser();
 
-    // --- General State ---
+    // --- Local State ---
     const [message, setMessage] = useState({ text: '', type: '' });
 
-    // Initialize state with global user data
+    // Initialize profile with empty strings to avoid uncontrolled input warnings
     const [profile, setProfile] = useState({
-        first_name: '', last_name: '', email: '', designation: '', avatar: null
+        first_name: '',
+        last_name: '',
+        email: '',
+        designation: '',
+        avatar: null
     });
 
-    // --- Modal Visibility State ---
+    // --- Modal State ---
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-    // --- Password Form State ---
+    // --- Password State ---
     const [passwordData, setPasswordData] = useState({
         current_password: '', new_password: '', confirm_password: ''
     });
-
-    // --- Password Visibility Toggles ---
     const [showCurrentPass, setShowCurrentPass] = useState(false);
     const [showNewPass, setShowNewPass] = useState(false);
     const [showConfirmPass, setShowConfirmPass] = useState(false);
 
-    // --- Image Upload State ---
+    // --- Image Editor State ---
     const [selectedImage, setSelectedImage] = useState(null);
     const [scale, setScale] = useState(1.2);
     const editorRef = useRef(null);
 
     const token = localStorage.getItem('token');
 
-    // --- 3. SYNC WITH GLOBAL STATE ---
-    // If the global 'user' loads or changes, update the form fields
+    // --- Sync Local State with Global User Context ---
     useEffect(() => {
         if (user) {
             setProfile(prev => ({ ...prev, ...user }));
         }
     }, [user]);
 
+    // --- Helpers ---
     const getImageUrl = (avatarPath) => {
         if (!avatarPath) return null;
         if (avatarPath.startsWith('http')) return avatarPath;
@@ -63,55 +65,65 @@ const Settings = () => {
 
     // --- Handlers ---
 
-    const handleTextSave = () => {
-        const formData = new FormData();
-        formData.append('first_name', profile.first_name);
-        formData.append('last_name', profile.last_name);
+    const handleTextSave = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('first_name', profile.first_name);
+            formData.append('last_name', profile.last_name);
 
-        fetch(`${API_BASE_URL}/api/profile/`, {
-            method: 'PATCH',
-            headers: { 'Authorization': `Token ${token}` },
-            body: formData
-        })
-            .then(res => res.json())
-            .then(data => {
-                // Update Local State
-                setProfile(data);
-                // Update Global Context (This fixes the Header Name)
-                updateUser(data);
+            const res = await fetch(`${API_BASE_URL}/api/profile/`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Token ${token}` },
+                body: formData
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setProfile(data); // Update local form
+                updateUser(data); // Update Global Context (Header updates immediately)
                 showMessage('Details saved successfully!', 'success');
-            })
-            .catch(() => showMessage('Failed to save details.', 'error'));
+            } else {
+                showMessage(data.detail || 'Failed to save details.', 'error');
+            }
+        } catch (error) {
+            showMessage('Network error occurred.', 'error');
+        }
     };
 
     const handleImageSave = () => {
         if (editorRef.current) {
             const canvas = editorRef.current.getImageScaledToCanvas();
-            canvas.toBlob(blob => {
+            canvas.toBlob(async (blob) => {
                 if (blob) {
-                    const formData = new FormData();
-                    formData.append('avatar', blob, 'profile.jpg');
+                    try {
+                        const formData = new FormData();
+                        formData.append('avatar', blob, 'profile.jpg');
 
-                    fetch(`${API_BASE_URL}/api/profile/`, {
-                        method: 'PATCH',
-                        headers: { 'Authorization': `Token ${token}` },
-                        body: formData
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            setIsProfileModalOpen(false);
-                            // Update Local State
-                            setProfile(data);
-                            // Update Global Context (This fixes the Header Image!)
-                            updateUser(data);
-                            showMessage('Profile picture updated!', 'success');
+                        const res = await fetch(`${API_BASE_URL}/api/profile/`, {
+                            method: 'PATCH',
+                            headers: { 'Authorization': `Token ${token}` },
+                            body: formData
                         });
+
+                        const data = await res.json();
+
+                        if (res.ok) {
+                            setIsProfileModalOpen(false);
+                            setProfile(data); // Update local form
+                            updateUser(data); // Update Global Context (Header updates immediately)
+                            showMessage('Profile picture updated!', 'success');
+                        } else {
+                            showMessage('Failed to upload image.', 'error');
+                        }
+                    } catch (error) {
+                        showMessage('Network error during upload.', 'error');
+                    }
                 }
             });
         }
     };
 
-    // ... (Keep handlePasswordChange and handleFileChange exactly as they were) ...
     const handlePasswordChange = async () => {
         if (!passwordData.current_password || !passwordData.new_password || !passwordData.confirm_password) {
             showMessage('Please fill in all password fields.', 'error');
@@ -121,6 +133,7 @@ const Settings = () => {
             showMessage('New passwords do not match.', 'error');
             return;
         }
+
         try {
             const response = await fetch(`${API_BASE_URL}/api/change-password/`, {
                 method: 'POST',
@@ -142,7 +155,6 @@ const Settings = () => {
                 showMessage(data.detail || data.message || 'Failed to change password.', 'error');
             }
         } catch (error) {
-            console.error('Password change error:', error);
             showMessage('An error occurred. Please try again.', 'error');
         }
     };
@@ -160,11 +172,10 @@ const Settings = () => {
             <div className="settings-header">
                 <div className="header-content">
                     <h1>Settings</h1>
-                    <p>Manage your personal details, salary preferences, and notification settings.</p>
+                    <p>Manage your personal details and account security.</p>
                 </div>
                 <div className="header-decor bubble-large"></div>
                 <div className="header-decor bubble-small"></div>
-                <div className="header-decor bubble-mini"></div>
             </div>
 
             {/* Toast Message */}
@@ -181,7 +192,7 @@ const Settings = () => {
 
             {/* Main Grid Card */}
             <div className="settings-card">
-                {/* --- LEFT PANEL --- */}
+                {/* --- LEFT PANEL (Profile Info) --- */}
                 <div className="card-left">
                     <div className="panel-header">
                         <h3>Employee Profile</h3>
@@ -198,10 +209,12 @@ const Settings = () => {
                                 )}
                                 <label className="camera-btn">
                                     <Camera size={20} color="white" />
-                                    <input type="file" hidden onChange={handleFileChange} />
+                                    <input type="file" hidden onChange={handleFileChange} accept="image/*" />
                                 </label>
                             </div>
-                            <h2 className="user-fullname">{profile.first_name} {profile.last_name}</h2>
+                            <h2 className="user-fullname">
+                                {profile.first_name} {profile.last_name}
+                            </h2>
                         </div>
 
                         <div className="info-list">
@@ -209,7 +222,7 @@ const Settings = () => {
                                 <div className="icon-box"><Briefcase size={18} /></div>
                                 <div className="info-content">
                                     <span className="label">Designation</span>
-                                    <p className="value">{profile.designation || 'Full Stack Developer'}</p>
+                                    <p className="value">{profile.designation || 'N/A'}</p>
                                 </div>
                             </div>
                             <div className="info-item-box">
@@ -223,7 +236,7 @@ const Settings = () => {
                     </div>
                 </div>
 
-                {/* --- RIGHT PANEL --- */}
+                {/* --- RIGHT PANEL (Edit Form) --- */}
                 <div className="card-right">
                     <div className="panel-header">
                         <h3>Account & Security</h3>
@@ -233,13 +246,17 @@ const Settings = () => {
                             <div className="form-row">
                                 <div className="input-group">
                                     <label>First Name</label>
-                                    <input type="text" className="text-input" value={profile.first_name || ''}
-                                        onChange={e => setProfile({ ...profile, first_name: e.target.value })} />
+                                    <input type="text" className="text-input"
+                                        value={profile.first_name || ''}
+                                        onChange={e => setProfile({ ...profile, first_name: e.target.value })}
+                                    />
                                 </div>
                                 <div className="input-group">
                                     <label>Last Name</label>
-                                    <input type="text" className="text-input" value={profile.last_name || ''}
-                                        onChange={e => setProfile({ ...profile, last_name: e.target.value })} />
+                                    <input type="text" className="text-input"
+                                        value={profile.last_name || ''}
+                                        onChange={e => setProfile({ ...profile, last_name: e.target.value })}
+                                    />
                                 </div>
                             </div>
 
@@ -266,7 +283,7 @@ const Settings = () => {
                 </div>
             </div>
 
-            {/* --- MODALS (Kept exactly as is) --- */}
+            {/* --- Image Cropper Modal --- */}
             {isProfileModalOpen && (
                 <div className="modal-backdrop">
                     <div className="modal-box">
@@ -294,6 +311,7 @@ const Settings = () => {
                 </div>
             )}
 
+            {/* --- Password Modal --- */}
             {isPasswordModalOpen && (
                 <div className="modal-backdrop">
                     <div className="modal-box">
@@ -302,7 +320,6 @@ const Settings = () => {
                             <button className="close-btn" onClick={() => setIsPasswordModalOpen(false)}><X size={20} /></button>
                         </div>
                         <div className="modal-body-form">
-                            {/* Current Password */}
                             <div className="modal-input-group">
                                 <label>Current Password</label>
                                 <div className="password-input-wrapper">
@@ -317,7 +334,6 @@ const Settings = () => {
                                     </button>
                                 </div>
                             </div>
-                            {/* New Password */}
                             <div className="modal-input-group">
                                 <label>New Password</label>
                                 <div className="password-input-wrapper">
@@ -332,7 +348,6 @@ const Settings = () => {
                                     </button>
                                 </div>
                             </div>
-                            {/* Confirm New Password */}
                             <div className="modal-input-group">
                                 <label>Confirm New Password</label>
                                 <div className="password-input-wrapper">
@@ -350,7 +365,7 @@ const Settings = () => {
                         </div>
                         <div className="modal-actions">
                             <button onClick={() => setIsPasswordModalOpen(false)} className="btn-cancel">Cancel</button>
-                            <button onClick={handlePasswordChange} className="btn-confirm">Save Details</button>
+                            <button onClick={handlePasswordChange} className="btn-confirm">Update Password</button>
                         </div>
                     </div>
                 </div>
