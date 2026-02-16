@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Bell, ChevronDown, LogOut, User, Settings as SettingsIcon, Calendar } from 'lucide-react';
-import { API_BASE_URL } from '../../config'; // Adjust path if needed (../config or ../../config)
+import { API_BASE_URL } from '../../config'; 
 import { useUser } from '../context/UserContext';
 
 const Header = () => {
