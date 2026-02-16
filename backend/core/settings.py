@@ -137,7 +137,7 @@ STORAGES = {
     },
     # Static files (CSS/JS) -> WhiteNoise
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
