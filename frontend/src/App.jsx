@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
@@ -10,65 +10,63 @@ import TeamUpdates from './components/TeamUpdates';
 import Settings from './components/Settings';
 import LoginPage from './components/LoginPage';
 
-const App = () => {
-  // 1. Initialize State directly from LocalStorage
-  // This ensures that when you refresh, the user stays logged in.
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
+// 1. IMPORT THE PROVIDER
+import { UserProvider } from '../src/context/UserContext';
 
-  // 2. Login Handler (Passed to LoginPage)
-  // This updates the App state immediately after a successful API login
+const App = () => {
+  // 2. Manage Token Only (User data is now handled by Context)
+  const [token, setToken] = useState(localStorage.getItem('token'));
+
   const handleLoginState = (newToken) => {
     setToken(newToken);
-    // We also update the user state so the Header shows the name immediately
-    const userData = JSON.parse(localStorage.getItem('user'));
-    setUser(userData);
+    // No need to manually set user here anymore
+    // The UserProvider will automatically fetch it when it mounts
   };
 
-  // 3. Logout Handler
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('user'); // Optional, but good cleanup
     setToken(null);
-    setUser(null);
   };
 
   return (
     <Router>
       <div className="app-container">
-        
+
         {/* IF NO TOKEN -> SHOW LOGIN PAGE */}
         {!token ? (
           <Routes>
-            {/* We pass 'handleLoginState' as the 'setToken' prop because your LoginPage expects 'setToken' */}
             <Route path="*" element={<LoginPage setToken={handleLoginState} />} />
           </Routes>
         ) : (
           /* IF TOKEN EXISTS -> SHOW DASHBOARD LAYOUT */
-          <>
+          /* 3. WRAP THE AUTHENTICATED APP IN USER PROVIDER */
+          <UserProvider>
+
             <Sidebar />
-            
+
             <div className="main-content">
-              {/* Pass user info to Header */}
-              <Header user={user} onLogout={handleLogout} /> 
-              
+              {/* 4. REMOVED 'user={user}' PROP - Header uses context now */}
+              <Header onLogout={handleLogout} />
+
               <div className="content-area">
                 <Routes>
                   {/* Route 1: Home (Add Task) */}
                   <Route path="/" element={<AddTask />} />
-                  
+
                   {/* Route 2: Team Updates */}
                   <Route path="/team-updates" element={<TeamUpdates />} />
-                  
+
                   {/* Route 3: Settings */}
                   <Route path="/settings" element={<Settings />} />
-                  
+
                   {/* Fallback - Redirect unknown routes to Home */}
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
               </div>
             </div>
-          </>
+
+          </UserProvider>
         )}
       </div>
     </Router>

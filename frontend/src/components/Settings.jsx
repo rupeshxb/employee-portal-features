@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AvatarEditor from 'react-avatar-editor';
-import { Camera, User, Mail, Edit2, X, Briefcase, Eye, EyeOff } from 'lucide-react';
+import { Camera, Mail, Edit2, X, Briefcase, Eye, EyeOff } from 'lucide-react';
 import '../style/Settings.css';
 import { API_BASE_URL } from '../../config';
+import { useUser } from '../context/UserContext'; // <--- 1. Import Context
 
 const Settings = () => {
+    // --- 2. Use Global Context ---
+    const { user, updateUser } = useUser();
+
     // --- General State ---
     const [message, setMessage] = useState({ text: '', type: '' });
+
+    // Initialize state with global user data
     const [profile, setProfile] = useState({
         first_name: '', last_name: '', email: '', designation: '', avatar: null
     });
@@ -17,9 +23,7 @@ const Settings = () => {
 
     // --- Password Form State ---
     const [passwordData, setPasswordData] = useState({
-        current_password: '',
-        new_password: '',
-        confirm_password: ''
+        current_password: '', new_password: '', confirm_password: ''
     });
 
     // --- Password Visibility Toggles ---
@@ -34,17 +38,13 @@ const Settings = () => {
 
     const token = localStorage.getItem('token');
 
+    // --- 3. SYNC WITH GLOBAL STATE ---
+    // If the global 'user' loads or changes, update the form fields
     useEffect(() => {
-        fetchProfile();
-    }, [token]);
-
-    const fetchProfile = () => {
-        const headers = token ? { 'Authorization': `Token ${token}` } : {};
-        fetch(`${API_BASE_URL}/api/profile/`, { headers })
-            .then(res => res.json())
-            .then(data => setProfile(data))
-            .catch(err => console.error(err));
-    };
+        if (user) {
+            setProfile(prev => ({ ...prev, ...user }));
+        }
+    }, [user]);
 
     const getImageUrl = (avatarPath) => {
         if (!avatarPath) return null;
@@ -56,23 +56,32 @@ const Settings = () => {
         return ((first?.charAt(0) || '') + (last?.charAt(0) || '')).toUpperCase();
     };
 
+    const showMessage = (text, type) => {
+        setMessage({ text, type });
+        setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+    };
+
     // --- Handlers ---
 
     const handleTextSave = () => {
         const formData = new FormData();
         formData.append('first_name', profile.first_name);
         formData.append('last_name', profile.last_name);
+
         fetch(`${API_BASE_URL}/api/profile/`, {
             method: 'PATCH',
             headers: { 'Authorization': `Token ${token}` },
             body: formData
-        }).then(res => {
-            if (res.ok) {
+        })
+            .then(res => res.json())
+            .then(data => {
+                // Update Local State
+                setProfile(data);
+                // Update Global Context (This fixes the Header Name)
+                updateUser(data);
                 showMessage('Details saved successfully!', 'success');
-            } else {
-                showMessage('Failed to save details.', 'error');
-            }
-        });
+            })
+            .catch(() => showMessage('Failed to save details.', 'error'));
     };
 
     const handleImageSave = () => {
@@ -82,38 +91,39 @@ const Settings = () => {
                 if (blob) {
                     const formData = new FormData();
                     formData.append('avatar', blob, 'profile.jpg');
+
                     fetch(`${API_BASE_URL}/api/profile/`, {
                         method: 'PATCH',
                         headers: { 'Authorization': `Token ${token}` },
                         body: formData
-                    }).then(res => {
-                        if (res.ok) {
+                    })
+                        .then(res => res.json())
+                        .then(data => {
                             setIsProfileModalOpen(false);
-                            fetchProfile();
+                            // Update Local State
+                            setProfile(data);
+                            // Update Global Context (This fixes the Header Image!)
+                            updateUser(data);
                             showMessage('Profile picture updated!', 'success');
-                        }
-                    });
+                        });
                 }
             });
         }
     };
 
+    // ... (Keep handlePasswordChange and handleFileChange exactly as they were) ...
     const handlePasswordChange = async () => {
-        // 1. Validation
         if (!passwordData.current_password || !passwordData.new_password || !passwordData.confirm_password) {
             showMessage('Please fill in all password fields.', 'error');
             return;
         }
-
         if (passwordData.new_password !== passwordData.confirm_password) {
             showMessage('New passwords do not match.', 'error');
             return;
         }
-
-        // 2. API Call
         try {
             const response = await fetch(`${API_BASE_URL}/api/change-password/`, {
-                method: 'POST', // or PUT depending on your backend
+                method: 'POST',
                 headers: {
                     'Authorization': `Token ${token}`,
                     'Content-Type': 'application/json'
@@ -123,28 +133,18 @@ const Settings = () => {
                     new_password: passwordData.new_password
                 })
             });
-
             const data = await response.json();
-
             if (response.ok) {
                 showMessage('Password changed successfully!', 'success');
                 setIsPasswordModalOpen(false);
-                // Reset form
                 setPasswordData({ current_password: '', new_password: '', confirm_password: '' });
             } else {
-                // Handle backend errors (e.g. "Wrong current password")
-                const errorMsg = data.detail || data.message || 'Failed to change password.';
-                showMessage(errorMsg, 'error');
+                showMessage(data.detail || data.message || 'Failed to change password.', 'error');
             }
         } catch (error) {
             console.error('Password change error:', error);
             showMessage('An error occurred. Please try again.', 'error');
         }
-    };
-
-    const showMessage = (text, type) => {
-        setMessage({ text, type });
-        setTimeout(() => setMessage({ text: '', type: '' }), 3000);
     };
 
     const handleFileChange = (e) => {
@@ -266,9 +266,7 @@ const Settings = () => {
                 </div>
             </div>
 
-            {/* --- MODALS --- */}
-
-            {/* Profile Picture Modal */}
+            {/* --- MODALS (Kept exactly as is) --- */}
             {isProfileModalOpen && (
                 <div className="modal-backdrop">
                     <div className="modal-box">
@@ -296,7 +294,6 @@ const Settings = () => {
                 </div>
             )}
 
-            {/* Change Password Modal */}
             {isPasswordModalOpen && (
                 <div className="modal-backdrop">
                     <div className="modal-box">
@@ -304,7 +301,6 @@ const Settings = () => {
                             <h3>Change Account Password</h3>
                             <button className="close-btn" onClick={() => setIsPasswordModalOpen(false)}><X size={20} /></button>
                         </div>
-
                         <div className="modal-body-form">
                             {/* Current Password */}
                             <div className="modal-input-group">
@@ -321,7 +317,6 @@ const Settings = () => {
                                     </button>
                                 </div>
                             </div>
-
                             {/* New Password */}
                             <div className="modal-input-group">
                                 <label>New Password</label>
@@ -337,7 +332,6 @@ const Settings = () => {
                                     </button>
                                 </div>
                             </div>
-
                             {/* Confirm New Password */}
                             <div className="modal-input-group">
                                 <label>Confirm New Password</label>
@@ -354,7 +348,6 @@ const Settings = () => {
                                 </div>
                             </div>
                         </div>
-
                         <div className="modal-actions">
                             <button onClick={() => setIsPasswordModalOpen(false)} className="btn-cancel">Cancel</button>
                             <button onClick={handlePasswordChange} className="btn-confirm">Save Details</button>

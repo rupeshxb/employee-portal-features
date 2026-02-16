@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { Bell, ChevronDown, LogOut, User, Settings, Calendar } from 'lucide-react';
-import { API_BASE_URL } from '../../config';
+import { Link, useNavigate } from 'react-router-dom';
+import { Bell, ChevronDown, LogOut, User, Settings as SettingsIcon, Calendar } from 'lucide-react';
+import { API_BASE_URL } from '../../config'; // Adjust path if needed (../config or ../../config)
+import { useUser } from '../context/UserContext';
 
-const Header = ({ user, onLogout }) => {
+const Header = () => {
+  const { user, logout } = useUser(); // Get user AND logout function from Context
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
-  // --- 1. HANDLE DATA STRUCTURE ---
-  const userData = user?.user || user; 
+  // Use the global user directly
+  const userData = user;
 
-  // DEBUG: Check what the frontend is actually receiving
-  console.log("Header User Data:", userData);
-
-  // --- 2. CLICK OUTSIDE LISTENER ---
+  // --- CLICK OUTSIDE LISTENER ---
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -24,63 +24,40 @@ const Header = ({ user, onLogout }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // --- 3. HELPER FUNCTIONS ---
-  
+  // --- HELPER FUNCTIONS ---
+  const handleLogout = () => {
+    setDropdownOpen(false);
+    logout(); // Clear context/localstorage
+    navigate('/login'); // Redirect to login
+  };
+
   const getAvatarUrl = (avatarPath) => {
     if (!avatarPath) return null;
     if (avatarPath.startsWith('http')) return avatarPath;
-    return `${API_BASE_URL}${avatarPath}`;
+    // Check if API_BASE_URL is defined, otherwise return path as is
+    return typeof API_BASE_URL !== 'undefined' ? `${API_BASE_URL}${avatarPath}` : avatarPath;
   };
 
-  // --- 4. SMART NAME LOGIC ---
   const getDisplayName = () => {
     if (!userData) return 'Guest';
-
-    // Priority 1: The actual 'first_name' from the Database (requires logout/login)
-    if (userData.first_name && userData.first_name.trim() !== "") {
-        return userData.first_name;
+    if (userData.first_name?.trim()) return userData.first_name;
+    if (userData.full_name?.trim() && userData.full_name !== userData.username) {
+      return userData.full_name.split(' ')[0];
     }
-
-    // Priority 2: Extract from 'full_name'
-    if (userData.full_name && userData.full_name.trim() !== "") {
-        // If full_name is just the username, skip to fallback
-        if (userData.full_name !== userData.username) {
-             return userData.full_name.split(' ')[0];
-        }
-    }
-
-    // Priority 3: Fallback -> Beautify the Username
-    // Converts "b.shakya" -> "B Shakya"
     if (userData.username) {
-        let name = userData.username;
-        
-        // Replace dots, underscores, dashes with space
-        name = name.replace(/[._-]/g, ' '); 
-        
-        // Remove numbers
-        name = name.replace(/[0-9]/g, '');
-
-        // Capitalize Words
-        name = name.split(' ')
-                   .filter(word => word.length > 0)
-                   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                   .join(' ');
-                   
-        return name || "User";
+      let name = userData.username.replace(/[._-]/g, ' ').replace(/[0-9]/g, '');
+      return name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || "User";
     }
-
-    return 'User'; 
+    return 'User';
   };
 
   const displayName = getDisplayName();
 
-  // Get Initials
   const getInitials = (name) => {
     if (!name) return 'U';
     return name.charAt(0).toUpperCase();
   };
 
-  // --- 5. RENDER ---
   return (
     <header className="header">
       {/* Left: Date & Notifications */}
@@ -96,108 +73,60 @@ const Header = ({ user, onLogout }) => {
       </div>
 
       {/* Right: User Profile */}
-      <div
-        className="header-right"
-        ref={dropdownRef}
-        style={{ position: 'relative' }} 
-      >
+      <div className="header-right" ref={dropdownRef} style={{ position: 'relative' }}>
         <div
           className="user-profile"
           onClick={() => setDropdownOpen(!dropdownOpen)}
-          style={{ 
-            cursor: 'pointer', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '12px',
-            padding: '5px 10px',
-            borderRadius: '8px',
-            transition: 'background 0.2s'
-          }}
+          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', padding: '5px 10px', borderRadius: '8px', transition: 'background 0.2s' }}
         >
-          
-          {/* A. AVATAR SECTION */}
+          {/* AVATAR */}
           <div style={{ flexShrink: 0 }}>
             {getAvatarUrl(userData?.avatar || userData?.profile_pic) ? (
               <img
                 src={getAvatarUrl(userData.avatar || userData.profile_pic)}
                 alt="Profile"
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  border: '1px solid #E5E7EB',
-                  display: 'block'
-                }}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #E5E7EB', display: 'block' }}
               />
             ) : (
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                backgroundColor: '#4F46E5',
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 'bold',
-                fontSize: '16px',
-                border: '1px solid #E5E7EB'
-              }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#4F46E5', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px', border: '1px solid #E5E7EB' }}>
                 {getInitials(displayName)}
               </div>
             )}
           </div>
 
-          {/* B. TEXT SECTION (Name & Role) */}
+          {/* TEXT SECTION */}
           <div className="user-info" style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
-            
-            {/* NAME: Shows First Name (or Capitalized Username as fallback) */}
-            <span style={{ 
-                fontWeight: '600', 
-                fontSize: '0.95rem', 
-                color: '#1F2937', 
-                lineHeight: '1.2' 
-            }}>
-                {displayName}
+            <span style={{ fontWeight: '600', fontSize: '0.95rem', color: '#1F2937', lineHeight: '1.2' }}>
+              {displayName}
             </span>
-            
-            {/* ROLE */}
-            <span style={{ 
-                fontSize: '0.75rem', 
-                color: '#6B7280',
-                marginTop: '2px' 
-            }}>
-                {userData?.role || userData?.designation || 'Employee'}
+            <span style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '2px' }}>
+              {userData?.role || userData?.designation || 'Employee'}
             </span>
           </div>
 
-          {/* C. ARROW ICON */}
-          <ChevronDown size={16} className={`dropdown-arrow ${dropdownOpen ? 'rotate' : ''}`} style={{color: '#9CA3AF'}} />
+          <ChevronDown size={16} className={`dropdown-arrow ${dropdownOpen ? 'rotate' : ''}`} style={{ color: '#9CA3AF' }} />
         </div>
 
-        {/* D. DROPDOWN MENU */}
+        {/* DROPDOWN MENU */}
         {dropdownOpen && (
           <div className="dropdown-menu">
             <div className="dropdown-user-header">
               <small>Signed in as</small>
-              <div style={{fontWeight: 'bold'}}>{userData?.username || userData?.email}</div>
+              <div style={{ fontWeight: 'bold' }}>{userData?.username || userData?.email}</div>
             </div>
 
+            {/* --- ADDED: PROFILE LINK --- */}
             <Link to="/settings" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
               <User size={16} /> View Profile
             </Link>
 
             <Link to="/settings" className="dropdown-item" onClick={() => setDropdownOpen(false)}>
-              <Settings size={16} /> Settings
+              <SettingsIcon size={16} /> Settings
             </Link>
 
             <div className="dropdown-divider"></div>
 
-            <div
-              className="dropdown-item logout"
-              onClick={() => { setDropdownOpen(false); onLogout(); }}
-            >
+            <div className="dropdown-item logout" onClick={handleLogout}>
               <LogOut size={16} /> Logout
             </div>
           </div>

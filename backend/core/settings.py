@@ -18,12 +18,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- SECURITY CONFIGURATION ---
 
 # 2. SECRET KEY
+# Defaults to a dev key if not found in .env (Add a real one in Render Environment!)
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-dev')
 
 # 3. DEBUG MODE
+# False if running on Render, True otherwise
 DEBUG = 'RENDER' not in os.environ
 
 # 4. ALLOWED HOSTS
+# Allow all hosts to avoid "Bad Request (400)" on Render
 ALLOWED_HOSTS = ['*']
 
 
@@ -39,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    # Cloudinary Apps (Order matters: cloudinary_storage first)
     'cloudinary_storage',
     'cloudinary',
     'django.contrib.staticfiles',
@@ -47,7 +51,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',         # <--- MUST BE TOP
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',    # <--- Serves static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',    # <--- Serves static files on Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,7 +84,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        # Local DB Connection String
+        # Local DB Connection String (Fallback if DATABASE_URL not in env)
         default='postgresql://postgres:root@localhost:5432/hamro_salary_db',
         conn_max_age=600
     )
@@ -112,26 +116,34 @@ STATIC_URL = '/static/'
 # 1. Where to collect files for production (Render)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# 2. Where to look for extra static files (Your custom JS)
-# This points to backend/static/
+# 2. Where to look for extra static files
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# 3. Storage engine (WhiteNoise for Render)
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# 4. Media Files (User Uploads)
+# 3. Media Files (User Uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# 5. Cloudinary Configuration for Media Storage (Recommended for production)
+# 4. Cloudinary Configuration
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# 5. NEW STORAGE CONFIGURATION (Django 5/6 Compatible)
+# This replaces DEFAULT_FILE_STORAGE and STATICFILES_STORAGE
+STORAGES = {
+    # Media files (Images) -> Cloudinary
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    # Static files (CSS/JS) -> WhiteNoise
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 
 # --- CORS CONFIGURATION ---
