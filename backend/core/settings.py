@@ -146,7 +146,8 @@ STORAGES = {
 # We define them to match the STORAGES config above.
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
+# This tells Whitenoise: "If a file referenced in CSS is missing, don't crash, just ignore it."
+WHITENOISE_MANIFEST_STRICT = False
 
 # --- CORS CONFIGURATION ---
 
