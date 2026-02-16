@@ -12,13 +12,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-# BASE_DIR points to the 'backend' folder
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- SECURITY CONFIGURATION ---
 
 # 2. SECRET KEY
-# Defaults to a dev key if not found in .env (Add a real one in Render Environment!)
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-dev')
 
 # 3. DEBUG MODE
@@ -26,7 +24,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-dev'
 DEBUG = 'RENDER' not in os.environ
 
 # 4. ALLOWED HOSTS
-# Allow all hosts to avoid "Bad Request (400)" on Render
 ALLOWED_HOSTS = ['*']
 
 
@@ -44,14 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     # Cloudinary Apps (Order matters: cloudinary_storage first)
     'cloudinary_storage',
+    'django.contrib.staticfiles', # staticfiles must be here
     'cloudinary',
-    'django.contrib.staticfiles',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',         # <--- MUST BE TOP
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',    # <--- Serves static files on Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',    # <--- REQUIRED FOR OPTION A
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -132,8 +129,7 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
-# 5. NEW STORAGE CONFIGURATION (Django 5/6 Compatible)
-# This replaces DEFAULT_FILE_STORAGE and STATICFILES_STORAGE
+# 5. MODERN STORAGE CONFIGURATION (Django 4.2+)
 STORAGES = {
     # Media files (Images) -> Cloudinary
     "default": {
@@ -145,11 +141,16 @@ STORAGES = {
     },
 }
 
+# 6. LEGACY STORAGE FALLBACK (CRITICAL FIX)
+# The Cloudinary library still looks for these old variables during build.
+# We define them to match the STORAGES config above.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 # --- CORS CONFIGURATION ---
 
 CORS_ALLOW_ALL_ORIGINS = True 
-
 
 # --- DRF CONFIGURATION ---
 
