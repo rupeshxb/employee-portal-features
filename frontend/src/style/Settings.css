@@ -7,7 +7,7 @@
     margin: 0 auto;
     padding: 20px;
     font-family: "Figtree", sans-serif;
-    color: #111827; /* Darker, sharper black for text */
+    color: #111827;
 }
 
 /* --- Header Section --- */
@@ -43,7 +43,6 @@
     margin: 0;
 }
 
-/* Header Decor Bubbles */
 .header-decor {
     position: absolute;
     border-radius: 50%;
@@ -61,52 +60,38 @@
     right: 450px;
     top: -30px;
 }
-.bubble-mini {
-    width: 32px;
-    height: 32px;
-    right: 480px;
-    top: 50px;
-}
 
-/* --- Main Card (The 4-Part Grid) --- */
+/* --- Main Card --- */
 .settings-card {
     background: #ffffff;
     border-radius: 16px;
     display: flex;
     min-height: 600px;
-    overflow: hidden; /* Ensures borders adhere to radius */
+    overflow: hidden;
     padding: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.settings-card h3 {
-    border-bottom: 0;
-    padding-bottom: 0;
-}
-
-/* -- Left Pane -- */
 .card-left {
     width: 340px;
     flex-shrink: 0;
-    border-right: 1px solid #e2e8f0; /* Vertical Divider */
+    border-right: 1px solid #e2e8f0;
     display: flex;
     flex-direction: column;
 }
 
-/* -- Right Pane -- */
 .card-right {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-/* -- Common Panel Styles -- */
-/* This creates the top horizontal line separating headers from body */
 .panel-header {
     height: 50px;
     display: flex;
     align-items: center;
     padding: 0 32px;
-    border-bottom: 1px solid #e2e8f0; /* Horizontal Divider */
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .panel-header h3 {
@@ -150,11 +135,10 @@
     color: #94a3b8;
 }
 
-/* Camera Button - Top Right Positioning */
 .camera-btn {
     position: absolute;
-    top: 4px; /* Position near top */
-    right: 8px; /* Position near right */
+    top: 4px;
+    right: 8px;
     width: 42px;
     height: 42px;
     background-color: #2563ea;
@@ -173,21 +157,12 @@
     transform: scale(1.1);
 }
 
-.user-fullname {
-    font-size: 22px;
-    font-weight: 700;
-    color: #0f172a;
-    text-align: center;
-    margin: 0;
-}
-
-/* Info List (Boxed Style) */
+/* --- Info List --- */
 .info-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
-
 .info-item-box {
     display: flex;
     align-items: center;
@@ -195,7 +170,6 @@
     padding: 0px;
     background: #ffffff;
 }
-
 .icon-box {
     width: 40px;
     height: 40px;
@@ -208,90 +182,60 @@
     color: #64748b;
     flex-shrink: 0;
 }
-
-.info-content {
-    display: flex;
-    flex-direction: column;
-}
-
 .info-content .label {
     font-size: 12px;
     font-weight: 600;
     color: #64748b;
-    letter-spacing: 0.02em;
     margin-bottom: 4px;
 }
-
 .info-content .value {
     font-size: 13px;
     font-weight: 500;
     color: #0f172a;
     margin: 0;
-    word-break: break-word;
 }
 
-/* --- Form Section (Right) --- */
+/* --- Form Styles --- */
 .form-grid {
     display: flex;
     flex-direction: column;
     gap: 24px;
-    max-width: 100%;
 }
-
 .form-row {
     display: flex;
     gap: 24px;
-    width: 100%;
 }
-
 .input-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
     flex: 1;
 }
-
 .input-group label {
     font-size: 14px;
     font-weight: 600;
     color: #334155;
 }
-
-/* Input Styling */
 .text-input {
     height: 52px;
-    background: #f8fafc; /* Light gray bg */
+    background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: 0 16px;
     font-size: 15px;
     color: #0f172a;
-    font-family: "Figtree", sans-serif;
-    width: 100%;
-    box-sizing: border-box;
-    transition: all 0.2s;
 }
-
-.text-input:focus {
-    background: #ffffff;
-    border-color: #2563ea;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(37, 99, 234, 0.1);
-}
-
 .text-input.disabled {
     background: #f1f5f9;
     color: #64748b;
-    border-color: transparent;
     cursor: not-allowed;
+    border-color: transparent;
 }
 
-/* Password Row */
 .password-wrapper {
     position: relative;
     width: 100%;
 }
-
 .edit-password-btn {
     position: absolute;
     right: 16px;
@@ -301,30 +245,16 @@
     border: none;
     color: #2563ea;
     font-weight: 600;
-    font-size: 14px;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 6px;
 }
-
-.edit-password-btn:hover {
-    text-decoration: underline;
-}
-
 .password-dots {
     font-family: monospace;
     letter-spacing: 2px;
     font-size: 20px;
-    color: #0f172a;
     line-height: 52px;
-}
-
-/* Save Button */
-.action-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 16px;
 }
 
 .save-btn {
@@ -335,83 +265,49 @@
     font-weight: 600;
     border: none;
     border-radius: 10px;
-    font-size: 15px;
     cursor: pointer;
-    transition: background 0.2s;
-    box-shadow: 0 2px 4px rgba(37, 99, 234, 0.2);
-}
-
-.save-btn:hover {
-    background-color: #1d4ed8;
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-    .settings-card {
-        flex-direction: column;
-        height: auto;
-    }
-    .card-left {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #e2e8f0;
-    }
-    .form-row {
-        flex-direction: column;
-        gap: 16px;
-    }
-    .panel-body {
-        padding: 24px;
-    }
 }
 
 /* =========================================
-   MODAL STYLES (Added for Edit Password)
+   MODAL STYLES (Figma Match)
    ========================================= */
 
 .modal-backdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(4px);
 }
 
 .modal-box {
     background: #ffffff;
     border-radius: 16px;
-    width: 500px;
-    max-width: 90%;
+    width: 560px;
+    max-width: 95%;
     padding: 32px;
-    box-shadow:
-        0 20px 25px -5px rgba(0, 0, 0, 0.1),
-        0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    font-family: "Figtree", sans-serif;
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 24px;
 }
-
 .modal-header h3 {
-    font-size: 24px;
-    font-weight: 500;
+    font-size: 22px;
+    font-weight: 700;
     color: #0f172a;
     margin: 0;
-    text-align: left;
     width: 100%;
+    text-align: left;
 }
 
 .close-btn {
@@ -421,131 +317,193 @@
     color: #64748b;
     padding: 8px;
     border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
 }
-
 .close-btn:hover {
     background: #f1f5f9;
     color: #0f172a;
 }
 
-/* Modal Form Areas */
-.modal-body-form {
+/* Cropper Specifics */
+.cropper-body {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-}
-
-.modal-input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.modal-input-group label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #334155;
-}
-
-/* Password Input Wrapper in Modal */
-.password-input-wrapper {
-    position: relative;
-    display: flex;
     align-items: center;
     width: 100%;
+    gap: 24px;
 }
 
-.password-input-wrapper input {
+.canvas-container {
+    position: relative;
     width: 100%;
-    height: 48px;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 0 44px 0 16px; /* Extra padding right for Eye icon */
-    font-size: 15px;
-    color: #0f172a;
-    background: #f8fafc;
-    outline: none;
-    font-family: "Figtree", sans-serif;
-    transition: all 0.2s;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.password-input-wrapper input:focus {
-    background: #ffffff;
-    border-color: #2563ea;
-    box-shadow: 0 0 0 3px rgba(37, 99, 234, 0.1);
+.cropper-body .canvas-container canvas {
+    max-width: 100%;
+    max-height: 100%;
+    width: 100% !important;
+    height: auto !important;
 }
 
-.toggle-visibility {
+.delete-avatar-btn {
     position: absolute;
-    right: 12px;
-    background: none;
-    border: none;
-    color: #94a3b8;
-    cursor: pointer;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px;
-    transition: color 0.2s;
+    color: #ef4444;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    z-index: 20;
+    transition: all 0.2s;
+}
+.delete-avatar-btn:hover {
+    background: #fee2e2;
+    border-color: #fecaca;
 }
 
-.toggle-visibility:hover {
+/* Custom Range Slider */
+.zoom-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.zoom-group label {
+    font-size: 14px;
+    font-weight: 600;
     color: #475569;
 }
 
-/* Modal Actions (Buttons) */
+.zoom-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    /* Background will be handled by inline style in React */
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+}
+.zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #2563ea;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: -6px; /* Centers thumb on the 6px track */
+}
+
+/* Firefox support */
+.zoom-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #2563ea;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    margin-top: 8px;
+    margin-top: 12px;
 }
-
 .btn-cancel {
     height: 44px;
     padding: 0 24px;
     border: 1px solid #e2e8f0;
-    background: #ffffff;
+    background: white;
     color: #475569;
     font-weight: 600;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s;
 }
-
-.btn-cancel:hover {
-    background: #f8fafc;
-    color: #0f172a;
-}
-
 .btn-confirm {
     height: 44px;
-    padding: 0 24px;
+    padding: 0 32px;
     background: #2563ea;
     color: white;
     font-weight: 600;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s;
-    box-shadow: 0 2px 4px rgba(37, 99, 234, 0.2);
 }
 
-.btn-confirm:hover {
-    background: #1d4ed8;
+/* Responsiveness */
+@media (max-width: 1024px) {
+    .settings-card {
+        flex-direction: column;
+    }
+    .card-left {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .form-row {
+        flex-direction: column;
+    }
 }
 
-/* Avatar Cropper Specifics */
-.cropper-body {
+/* --- New Upload Placeholder Styles --- */
+.upload-placeholder-box {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Keeps it a perfect square matching your canvas */
+    background-color: #f8fafc;
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    padding: 10px 0;
+    justify-content: center;
+    gap: 16px;
+    transition: all 0.2s ease;
+}
+
+.upload-placeholder-box:hover {
+    border-color: #2563ea;
+    background-color: #eff6ff;
+}
+
+.select-image-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #2563ea;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(37, 99, 234, 0.15);
+}
+
+.placeholder-text {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* --- Disabled Slider State --- */
+.zoom-slider:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.zoom-slider:disabled::-webkit-slider-thumb {
+    background: #cbd5e1; /* Gray thumb when disabled */
+    box-shadow: none;
 }

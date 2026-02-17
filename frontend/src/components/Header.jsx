@@ -124,7 +124,7 @@ const Header = () => {
             <div className="dropdown-user-header">
               <small>Signed in as</small>
               <div style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {user?.email || user?.username}
+                {user?.email} {user?.username && `(${user?.username})`}
               </div>
             </div>
 

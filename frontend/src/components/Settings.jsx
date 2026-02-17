@@ -1,94 +1,94 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AvatarEditor from 'react-avatar-editor';
-import { Camera, Mail, Edit2, X, Briefcase, Eye, EyeOff } from 'lucide-react';
+import { Camera, Mail, Edit2, X, Briefcase, Eye, EyeOff, Trash2 } from 'lucide-react';
 import '../style/Settings.css';
 import { API_BASE_URL } from '../../config';
 import { useUser } from '../context/UserContext';
 
 const Settings = () => {
-    // --- Global Context ---
     const { user, updateUser } = useUser();
-
-    // --- Local State ---
     const [message, setMessage] = useState({ text: '', type: '' });
-
-    // Initialize profile with empty strings to avoid uncontrolled input warnings
-    const [profile, setProfile] = useState({
-        first_name: '',
-        last_name: '',
-        email: '',
-        designation: '',
-        avatar: null
-    });
-
-    // --- Modal State ---
+    const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', designation: '', avatar: null });
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-    // --- Password State ---
-    const [passwordData, setPasswordData] = useState({
-        current_password: '', new_password: '', confirm_password: ''
-    });
-    const [showCurrentPass, setShowCurrentPass] = useState(false);
-    const [showNewPass, setShowNewPass] = useState(false);
-    const [showConfirmPass, setShowConfirmPass] = useState(false);
-
-    // --- Image Editor State ---
     const [selectedImage, setSelectedImage] = useState(null);
     const [scale, setScale] = useState(1.2);
     const editorRef = useRef(null);
-
     const token = localStorage.getItem('token');
 
-    // --- Sync Local State with Global User Context ---
-    useEffect(() => {
-        if (user) {
-            setProfile(prev => ({ ...prev, ...user }));
-        }
-    }, [user]);
+    // --- NEW: Password Specific State ---
+    const [passwords, setPasswords] = useState({ old: '', new: '', confirm: '' });
+    const [showPassword, setShowPassword] = useState({ old: false, new: false, confirm: false });
 
-    // --- Helpers ---
+    useEffect(() => { if (user) setProfile(prev => ({ ...prev, ...user })); }, [user]);
+
     const getImageUrl = (avatarPath) => {
         if (!avatarPath) return null;
         if (avatarPath.startsWith('http')) return avatarPath;
         return `${API_BASE_URL}${avatarPath.startsWith('/') ? '' : '/'}${avatarPath}`;
     };
 
-    const getInitials = (first, last) => {
-        return ((first?.charAt(0) || '') + (last?.charAt(0) || '')).toUpperCase();
-    };
+    const getInitials = (first, last) => ((first?.charAt(0) || '') + (last?.charAt(0) || '')).toUpperCase();
 
     const showMessage = (text, type) => {
         setMessage({ text, type });
         setTimeout(() => setMessage({ text: '', type: '' }), 3000);
     };
 
-    // --- Handlers ---
+    const closeProfileModal = () => {
+        setIsProfileModalOpen(false);
+        setSelectedImage(null);
+        setScale(1.2);
+    };
+
+    // --- NEW: Password Helper Functions ---
+    const toggleShowPassword = (field) => {
+        setShowPassword(prev => ({ ...prev, [field]: !prev[field] }));
+    };
+
+    const handlePasswordChange = async () => {
+        if (passwords.new !== passwords.confirm) {
+            showMessage("New passwords do not match!", "error");
+            return;
+        }
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/change-password/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ old_password: passwords.old, new_password: passwords.new })
+            });
+            if (res.ok) {
+                showMessage('Password updated!', 'success');
+                setIsPasswordModalOpen(false);
+                setPasswords({ old: '', new: '', confirm: '' });
+            } else {
+                const data = await res.json();
+                showMessage(data.error || 'Failed to update password.', 'error');
+            }
+        } catch (error) { showMessage('Network error.', 'error'); }
+    };
 
     const handleTextSave = async () => {
         try {
             const formData = new FormData();
             formData.append('first_name', profile.first_name);
             formData.append('last_name', profile.last_name);
-
             const res = await fetch(`${API_BASE_URL}/api/profile/`, {
                 method: 'PATCH',
                 headers: { 'Authorization': `Token ${token}` },
                 body: formData
             });
-
             const data = await res.json();
-
             if (res.ok) {
-                setProfile(data); // Update local form
-                updateUser(data); // Update Global Context (Header updates immediately)
+                setProfile(data);
+                updateUser(data);
                 showMessage('Details saved successfully!', 'success');
-            } else {
-                showMessage(data.detail || 'Failed to save details.', 'error');
             }
-        } catch (error) {
-            showMessage('Network error occurred.', 'error');
-        }
+        } catch (error) { showMessage('Network error occurred.', 'error'); }
     };
 
     const handleImageSave = () => {
@@ -96,79 +96,38 @@ const Settings = () => {
             const canvas = editorRef.current.getImageScaledToCanvas();
             canvas.toBlob(async (blob) => {
                 if (blob) {
-                    try {
-                        const formData = new FormData();
-                        formData.append('avatar', blob, 'profile.jpg');
-
-                        const res = await fetch(`${API_BASE_URL}/api/profile/`, {
-                            method: 'PATCH',
-                            headers: { 'Authorization': `Token ${token}` },
-                            body: formData
-                        });
-
-                        const data = await res.json();
-
-                        if (res.ok) {
-                            setIsProfileModalOpen(false);
-                            setProfile(data); // Update local form
-                            updateUser(data); // Update Global Context (Header updates immediately)
-                            showMessage('Profile picture updated!', 'success');
-                        } else {
-                            showMessage('Failed to upload image.', 'error');
-                        }
-                    } catch (error) {
-                        showMessage('Network error during upload.', 'error');
+                    const formData = new FormData();
+                    formData.append('avatar', blob, 'profile.jpg');
+                    const res = await fetch(`${API_BASE_URL}/api/profile/`, {
+                        method: 'PATCH',
+                        headers: { 'Authorization': `Token ${token}` },
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        closeProfileModal();
+                        setProfile(data);
+                        updateUser(data);
+                        showMessage('Profile picture updated!', 'success');
                     }
                 }
             });
         }
     };
 
-    const handlePasswordChange = async () => {
-        if (!passwordData.current_password || !passwordData.new_password || !passwordData.confirm_password) {
-            showMessage('Please fill in all password fields.', 'error');
-            return;
-        }
-        if (passwordData.new_password !== passwordData.confirm_password) {
-            showMessage('New passwords do not match.', 'error');
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/change-password/`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Token ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    old_password: passwordData.current_password,
-                    new_password: passwordData.new_password
-                })
-            });
-            const data = await response.json();
-            if (response.ok) {
-                showMessage('Password changed successfully!', 'success');
-                setIsPasswordModalOpen(false);
-                setPasswordData({ current_password: '', new_password: '', confirm_password: '' });
-            } else {
-                showMessage(data.detail || data.message || 'Failed to change password.', 'error');
-            }
-        } catch (error) {
-            showMessage('An error occurred. Please try again.', 'error');
-        }
-    };
-
     const handleFileChange = (e) => {
-        if (e.target.files[0]) {
-            setSelectedImage(e.target.files[0]);
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(file);
             setIsProfileModalOpen(true);
+            e.target.value = '';
         }
     };
 
     return (
         <div className="settings-container">
-            {/* Header Section */}
+            {message.text && <div className={`message-toast ${message.type}`}>{message.text}</div>}
+
             <div className="settings-header">
                 <div className="header-content">
                     <h1>Settings</h1>
@@ -178,45 +137,25 @@ const Settings = () => {
                 <div className="header-decor bubble-small"></div>
             </div>
 
-            {/* Toast Message */}
-            {message.text && (
-                <div className={`alert-toast ${message.type}`} style={{
-                    position: 'fixed', top: '20px', right: '20px',
-                    padding: '12px 24px', borderRadius: '8px', zIndex: 9999,
-                    backgroundColor: message.type === 'success' ? '#10b981' : '#ef4444',
-                    color: 'white', fontWeight: '500', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                }}>
-                    {message.text}
-                </div>
-            )}
-
-            {/* Main Grid Card */}
             <div className="settings-card">
-                {/* --- LEFT PANEL (Profile Info) --- */}
                 <div className="card-left">
-                    <div className="panel-header">
-                        <h3>Employee Profile</h3>
-                    </div>
+                    <div className="panel-header"><h3>Employee Profile</h3></div>
                     <div className="panel-body">
                         <div className="avatar-section">
                             <div className="avatar-wrapper">
                                 {getImageUrl(profile.avatar) ? (
                                     <img src={getImageUrl(profile.avatar)} alt="Profile" className="avatar-image" />
                                 ) : (
-                                    <div className="avatar-placeholder">
-                                        {getInitials(profile.first_name, profile.last_name)}
-                                    </div>
+                                    <div className="avatar-placeholder">{getInitials(profile.first_name, profile.last_name)}</div>
                                 )}
                                 <label className="camera-btn">
                                     <Camera size={20} color="white" />
                                     <input type="file" hidden onChange={handleFileChange} accept="image/*" />
                                 </label>
                             </div>
-                            <h2 className="user-fullname">
-                                {profile.first_name} {profile.last_name}
-                            </h2>
+                            <h2 className="user-fullname">{profile.first_name} {profile.last_name}</h2>
                         </div>
-
+                        {/* RESTORED: Left Panel Designation & Email */}
                         <div className="info-list">
                             <div className="info-item-box">
                                 <div className="icon-box"><Briefcase size={18} /></div>
@@ -229,143 +168,126 @@ const Settings = () => {
                                 <div className="icon-box"><Mail size={18} /></div>
                                 <div className="info-content">
                                     <span className="label">Work Email</span>
-                                    <p className="value" title={profile.email}>{profile.email}</p>
+                                    <p className="value">{profile.email}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* --- RIGHT PANEL (Edit Form) --- */}
                 <div className="card-right">
-                    <div className="panel-header">
-                        <h3>Account & Security</h3>
-                    </div>
+                    <div className="panel-header"><h3>Account & Security</h3></div>
                     <div className="panel-body">
                         <div className="form-grid">
                             <div className="form-row">
                                 <div className="input-group">
                                     <label>First Name</label>
-                                    <input type="text" className="text-input"
-                                        value={profile.first_name || ''}
-                                        onChange={e => setProfile({ ...profile, first_name: e.target.value })}
-                                    />
+                                    <input type="text" className="text-input" value={profile.first_name || ''} onChange={e => setProfile({ ...profile, first_name: e.target.value })} />
                                 </div>
                                 <div className="input-group">
                                     <label>Last Name</label>
-                                    <input type="text" className="text-input"
-                                        value={profile.last_name || ''}
-                                        onChange={e => setProfile({ ...profile, last_name: e.target.value })}
-                                    />
+                                    <input type="text" className="text-input" value={profile.last_name || ''} onChange={e => setProfile({ ...profile, last_name: e.target.value })} />
                                 </div>
                             </div>
-
+                            {/* RESTORED: Right Panel Disabled Designation */}
                             <div className="input-group">
                                 <label>Designation</label>
                                 <input type="text" className="text-input disabled" value={profile.designation || ''} disabled />
                             </div>
-
                             <div className="input-group">
                                 <label>Password</label>
                                 <div className="password-wrapper">
                                     <div className="text-input password-dots">••••••••••••••••••••</div>
-                                    <button className="edit-password-btn" onClick={() => setIsPasswordModalOpen(true)}>
-                                        <Edit2 size={16} /> Edit
-                                    </button>
+                                    <button className="edit-password-btn" onClick={() => setIsPasswordModalOpen(true)}><Edit2 size={16} /> Edit</button>
                                 </div>
                             </div>
-
-                            <div className="action-row">
-                                <button className="save-btn" onClick={handleTextSave}>Save Details</button>
-                            </div>
+                            <div className="action-row"><button className="save-btn" onClick={handleTextSave}>Save Details</button></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* --- Image Cropper Modal --- */}
+            {/* Profile Modal */}
             {isProfileModalOpen && (
                 <div className="modal-backdrop">
                     <div className="modal-box">
                         <div className="modal-header">
-                            <h3>Update Profile Picture</h3>
-                            <button className="close-btn" onClick={() => setIsProfileModalOpen(false)}><X size={20} /></button>
+                            <h3>Change Profile Picture</h3>
+                            <button className="close-btn" onClick={closeProfileModal}><X size={20} /></button>
                         </div>
                         <div className="cropper-body">
-                            <AvatarEditor
-                                ref={editorRef}
-                                image={selectedImage}
-                                width={200}
-                                height={200}
-                                border={20}
-                                borderRadius={100}
-                                scale={scale}
-                            />
+                            <div className="canvas-container">
+                                {selectedImage ? (
+                                    <AvatarEditor ref={editorRef} image={selectedImage} width={400} height={400} border={0} borderRadius={200} scale={scale} />
+                                ) : (
+                                    <div className="upload-placeholder-box">No image selected</div>
+                                )}
+                            </div>
                             <input type="range" min="1" max="2" step="0.01" value={scale} onChange={(e) => setScale(parseFloat(e.target.value))} />
                         </div>
                         <div className="modal-actions">
-                            <button onClick={() => setIsProfileModalOpen(false)} className="btn-cancel">Cancel</button>
+                            <button onClick={closeProfileModal} className="btn-cancel">Cancel</button>
                             <button onClick={handleImageSave} className="btn-confirm">Save</button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* --- Password Modal --- */}
+            {/* RESTORED & IMPLEMENTED: Change Password Modal */}
             {isPasswordModalOpen && (
-                <div className="modal-backdrop">
-                    <div className="modal-box">
+                <div className="modal-overlay">
+                    <div className="modal-content password-modal">
                         <div className="modal-header">
-                            <h3>Change Account Password</h3>
-                            <button className="close-btn" onClick={() => setIsPasswordModalOpen(false)}><X size={20} /></button>
+                            <h2>Change Account Password</h2>
+                            <button onClick={() => setIsPasswordModalOpen(false)} className="close-btn"><X size={24} /></button>
                         </div>
-                        <div className="modal-body-form">
-                            <div className="modal-input-group">
+                        <div className="modal-body">
+                            <div className="form-group">
                                 <label>Current Password</label>
                                 <div className="password-input-wrapper">
                                     <input
-                                        type={showCurrentPass ? "text" : "password"}
-                                        placeholder="Enter current password"
-                                        value={passwordData.current_password}
-                                        onChange={(e) => setPasswordData({ ...passwordData, current_password: e.target.value })}
+                                        type={showPassword.old ? "text" : "password"}
+                                        className="input-field"
+                                        value={passwords.old}
+                                        onChange={e => setPasswords({ ...passwords, old: e.target.value })}
                                     />
-                                    <button className="toggle-visibility" onClick={() => setShowCurrentPass(!showCurrentPass)}>
-                                        {showCurrentPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    <button className="eye-btn" onClick={() => toggleShowPassword('old')}>
+                                        {showPassword.old ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
                                 </div>
                             </div>
-                            <div className="modal-input-group">
+                            <div className="form-group">
                                 <label>New Password</label>
                                 <div className="password-input-wrapper">
                                     <input
-                                        type={showNewPass ? "text" : "password"}
-                                        placeholder="Enter new password"
-                                        value={passwordData.new_password}
-                                        onChange={(e) => setPasswordData({ ...passwordData, new_password: e.target.value })}
+                                        type={showPassword.new ? "text" : "password"}
+                                        className="input-field"
+                                        value={passwords.new}
+                                        onChange={e => setPasswords({ ...passwords, new: e.target.value })}
                                     />
-                                    <button className="toggle-visibility" onClick={() => setShowNewPass(!showNewPass)}>
-                                        {showNewPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    <button className="eye-btn" onClick={() => toggleShowPassword('new')}>
+                                        {showPassword.new ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
                                 </div>
                             </div>
-                            <div className="modal-input-group">
+                            <div className="form-group">
                                 <label>Confirm New Password</label>
                                 <div className="password-input-wrapper">
                                     <input
-                                        type={showConfirmPass ? "text" : "password"}
-                                        placeholder="Confirm new password"
-                                        value={passwordData.confirm_password}
-                                        onChange={(e) => setPasswordData({ ...passwordData, confirm_password: e.target.value })}
+                                        type={showPassword.confirm ? "text" : "password"}
+                                        className="input-field"
+                                        value={passwords.confirm}
+                                        onChange={e => setPasswords({ ...passwords, confirm: e.target.value })}
                                     />
-                                    <button className="toggle-visibility" onClick={() => setShowConfirmPass(!showConfirmPass)}>
-                                        {showConfirmPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    <button className="eye-btn" onClick={() => toggleShowPassword('confirm')}>
+                                        {showPassword.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        <div className="modal-actions">
-                            <button onClick={() => setIsPasswordModalOpen(false)} className="btn-cancel">Cancel</button>
-                            <button onClick={handlePasswordChange} className="btn-confirm">Update Password</button>
+                        <div className="modal-footer">
+                            <button className="btn-cancel" onClick={() => setIsPasswordModalOpen(false)}>Cancel</button>
+                            <button className="btn-save" onClick={handlePasswordChange}>Save Details</button>
                         </div>
                     </div>
                 </div>
