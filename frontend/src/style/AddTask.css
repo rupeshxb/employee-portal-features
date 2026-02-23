@@ -2,12 +2,12 @@
    1. LAYOUT & VARIABLES
    ========================================= */
 :root {
-    --primary-blue: #2563EA;
-    --bg-gradient: linear-gradient(90.82deg, #E0EAFC 6.42%, #CFDEF3 92.16%);
-    --text-dark: #05205F;
+    --primary-blue: #2563ea;
+    --bg-gradient: linear-gradient(90.82deg, #e0eafc 6.42%, #cfdef3 92.16%);
+    --text-dark: #05205f;
     --text-body: rgba(1, 12, 55, 0.75);
-    --font-family: 'Figtree', sans-serif;
-    --success-green: #22C55E;
+    --font-family: "Figtree", sans-serif;
+    --success-green: #22c55e;
 }
 
 .content-area {
@@ -42,10 +42,10 @@
 /* --- NOTIFICATION WRAPPER (The Anchor) --- */
 .banner-notification-wrapper {
     position: absolute !important;
-    top: 16px !important;    /* Forces it 16px from top of BANNER */
-    right: 16px !important;  /* Forces it 16px from right of BANNER */
+    top: 16px !important; /* Forces it 16px from top of BANNER */
+    right: 16px !important; /* Forces it 16px from right of BANNER */
     z-index: 9999 !important; /* Forces it on top of decor */
-    pointer-events: none;    /* Clicks pass through to background */
+    pointer-events: none; /* Clicks pass through to background */
 }
 
 /* --- THE TOAST (Green Box) --- */
@@ -54,24 +54,24 @@
     top: 0 !important;
     right: 0 !important;
     pointer-events: auto; /* Re-enable clicks for close button */
-    
+
     background: var(--success-green) !important;
-    color: #FFFFFF !important;
-    
+    color: #ffffff !important;
+
     /* Padding is removed here and moved to .toast-content */
-    padding: 0; 
-    
+    padding: 0;
+
     border-radius: 12px;
     font-size: 14px;
     font-weight: 500;
-    
+
     display: flex;
     flex-direction: column; /* Stack content and progress bar */
     overflow: hidden; /* Ensures progress bar stays inside rounded corners */
-    
+
     box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
     min-width: 260px;
-    
+
     animation: toastEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -80,7 +80,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 16px; /* Padding for text/icon */
+    padding: 8px 16px; /* Padding for text/icon */
     width: 100%;
     box-sizing: border-box;
 }
@@ -95,8 +95,12 @@
 }
 
 @keyframes progressLinear {
-    from { width: 100%; }
-    to { width: 0%; }
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
 }
 
 /* --- THE CHECK ICON --- */
@@ -173,7 +177,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background-color: #17181A;
+    background-color: #17181a;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -203,9 +207,24 @@
     background: linear-gradient(80.05deg, rgba(191, 90, 224, 0.4) 19.27%, rgba(168, 17, 218, 0.4) 70.01%);
 }
 
-.hero-circle-1 { width: 154px; height: 154px; right: -40px; top: -60px; }
-.hero-circle-2 { width: 77px; height: 77px; right: 30%; bottom: -20px; }
-.hero-circle-3 { width: 32px; height: 32px; right: 15%; top: 40px; }
+.hero-circle-1 {
+    width: 154px;
+    height: 154px;
+    right: -40px;
+    top: -60px;
+}
+.hero-circle-2 {
+    width: 77px;
+    height: 77px;
+    right: 30%;
+    bottom: -20px;
+}
+.hero-circle-3 {
+    width: 32px;
+    height: 32px;
+    right: 15%;
+    top: 40px;
+}
 
 /* =========================================
      4. EMPTY STATE & MOBILE
@@ -219,9 +238,23 @@
     text-align: center;
 }
 
-.empty-icon-wrapper { margin-bottom: 24px; display: flex; align-items: center; justify-content: center; }
-.empty-title { font-size: 22px; font-weight: 600; color: #17181A; margin: 0 0 8px 0; }
-.empty-subtitle { font-size: 14px; color: rgba(23, 24, 26, 0.6); margin: 0; }
+.empty-icon-wrapper {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.empty-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #17181a;
+    margin: 0 0 8px 0;
+}
+.empty-subtitle {
+    font-size: 14px;
+    color: rgba(23, 24, 26, 0.6);
+    margin: 0;
+}
 
 .btn-primary-large {
     display: flex;
@@ -246,17 +279,142 @@
         height: auto;
         gap: 20px;
     }
-    .hero-btn { width: 100%; justify-content: center; }
-    
+    .hero-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
     .banner-notification-wrapper {
         top: 12px !important;
         right: 12px !important;
         left: 12px !important; /* Full width on mobile */
     }
-    
+
     .banner-notification-wrapper .notification-toast {
         min-width: unset;
         width: 100%;
         box-sizing: border-box;
     }
+}
+
+/* 2. The Aligned Close Button */
+.toast-close {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+
+    /* Flexbox for perfect centering of the 'X' */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Size & Spacing */
+    font-size: 18px; /* Slightly larger than text for easy clicking */
+    line-height: 1;
+    padding: 4px; /* Clickable area without increasing height */
+    margin: 0; /* Reset margins */
+    margin-right: -4px; /* Pulls slightly right for visual balance */
+
+    /* Interactive State */
+    opacity: 0.8;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.toast-close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* 1. The Compact Toast Container */
+.banner-notification-wrapper .notification-toast {
+    position: relative !important;
+    top: 0 !important;
+    right: 0 !important;
+    pointer-events: auto;
+    background: var(--success-green) !important;
+    color: #ffffff !important;
+
+    /* Layout: Row with centered items */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    /* Compact Padding */
+    padding: 0px;
+
+    /* Size & Shape */
+    min-width: 240px;
+    border-radius: 12px;
+    overflow: hidden; /* Clips the progress bar at the corners */
+
+    /* Visuals */
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+
+    /* Entrance Animation */
+    animation: toastEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 2. Text styling for Single Line + Ellipsis */
+/* This targets the text span or div inside your toast */
+.banner-notification-wrapper .notification-toast > span,
+.banner-notification-wrapper .notification-toast > div:first-child {
+    flex: 1; /* Takes up all available space */
+    white-space: nowrap; /* Forces single line */
+    overflow: hidden; /* Hides overflow */
+    text-overflow: ellipsis; /* Adds '...' if text is too long */
+    margin-right: 12px; /* Gap between text and close button */
+}
+
+/* 3. The Bottom Progress Bar */
+.toast-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px; /* Thin bar */
+    background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+
+    /* Animation matches your timeout duration */
+    animation: progressLinear 3s linear forwards;
+}
+
+@keyframes progressLinear {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* 4. The Close Button (Vertically Centered & Fixed Right) */
+.toast-close {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+
+    /* Flex alignment */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; /* Prevents button from being squashed */
+
+    font-size: 18px;
+    padding: 4px;
+    margin: 0;
+    margin-right: -4px; /* Slight visual pull to the right */
+
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.toast-close:hover {
+    opacity: 1;
 }

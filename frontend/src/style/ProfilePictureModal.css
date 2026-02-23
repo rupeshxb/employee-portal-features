@@ -1,0 +1,289 @@
+/* --- Modal Backdrop --- */
+.profile-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* --- Modal Box --- */
+.profile-modal-box {
+  background: #ffffff;
+  border-radius: 16px;
+
+  /* --- NEW RESPONSIVE CONSTRAINTS --- */
+  /* Takes 45% of width, but safely shrinks on short screens so the 1:1 canvas doesn't overflow */
+  width: min(45vw, 65vh);
+  min-width: 320px;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  /* Internal Layout */
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+/* --- Header --- */
+.profile-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-shrink: 0; /* Prevents header from squishing */
+}
+
+.profile-modal-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  padding: 4px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.profile-close-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* --- Cropper Area (The Canvas) --- */
+.cropper-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex-grow: 1; /* Fills available space */
+  gap: 16px;
+  overflow: hidden;
+}
+
+/* --- Cropper Area (The Canvas) --- */
+.canvas-container {
+  position: relative;
+  /* Size Constraints: 100% width locks it to the slider, 1:1 keeps it square */
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+/* Circular Visual Guide */
+.canvas-container canvas {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.upload-placeholder-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* --- Delete Button Overlay --- */
+.delete-image-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #fee2e2;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.delete-image-btn:hover {
+  background: #fee2e2;
+  transform: scale(1.1);
+  color: #dc2626;
+}
+
+/* --- Zoom Slider --- */
+.zoom-control-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto; /* Pushes to bottom of body if extra space */
+}
+
+.zoom-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* 1. The invisible container (tall enough so the thumb doesn't get cropped) */
+.zoom-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 18px; /* Tall enough to house the 18px thumb */
+  background: transparent; /* Make the bounding box invisible */
+  outline: none;
+  cursor: pointer;
+  margin: 0;
+}
+
+/* 2. The actual visible track (Chrome/Safari) */
+.zoom-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px; /* The thin visual line */
+  background-color: #e2e8f0; /* Unfilled gray */
+  border-radius: 10px;
+
+  /* The dynamic blue fill using the CSS variable from React */
+  background-image: linear-gradient(#2563ea, #2563ea);
+  background-size: var(--zoom-fill, 0%) 100%;
+  background-repeat: no-repeat;
+}
+
+/* 3. The thumb (Chrome/Safari) */
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #2563ea;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: grab;
+
+  /* Center it vertically: (Thumb height 18px - Track height 6px) / 2 = 6px */
+  margin-top: -6px;
+}
+
+.zoom-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+/* --- FIREFOX SUPPORT --- */
+
+/* Firefox Track */
+.zoom-slider::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  background-color: #e2e8f0;
+  border-radius: 10px;
+
+  background-image: linear-gradient(#2563ea, #2563ea);
+  background-size: var(--zoom-fill, 0%) 100%;
+  background-repeat: no-repeat;
+}
+
+/* Firefox Thumb */
+.zoom-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: #2563ea;
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: grab;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  /* Firefox centers the thumb automatically, so no margin-top needed */
+}
+
+.zoom-slider::-moz-range-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+/* --- Actions --- */
+.profile-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 0px;
+  padding-top: 16px;
+  flex-shrink: 0;
+}
+
+.btn-modal-cancel {
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #475569;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.btn-modal-cancel:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.btn-modal-save {
+  height: 36px;
+  padding: 0 20px;
+  background: #2563ea;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  box-shadow: 0 2px 4px rgba(37, 99, 234, 0.2);
+  transition: all 0.2s;
+}
+
+.btn-modal-save:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 6px rgba(37, 99, 234, 0.3);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

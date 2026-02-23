@@ -655,28 +655,16 @@ svg {
   animation: fadeIn 0.2s ease-out;
 }
 
-.modal-content {
-  background: white;
-  width: 500px;
-  padding: 32px;
-  border-radius: 16px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
 .modal-header { display: flex; justify-content: space-between; align-items: flex-start; }
 .modal-header h2 { font-size: 20px; margin-bottom: 4px; color: #111827; }
 .modal-header p { font-size: 13px; color: #6B7280; }
 
-.close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #9CA3AF; transition: color 0.2s; }
-.close-btn:hover { color: #4B5563; }
+/* .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #9CA3AF; transition: color 0.2s; }
+.close-btn:hover { color: #4B5563; } */
 
 /* Form Elements */
 .form-group { display: flex; flex-direction: column; gap: 6px; }
-.form-group label { font-size: 13px; font-weight: 600; color: #374151; }
+.form-group label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 0px; }
 
 .form-input, .form-select, .form-textarea, .date-picker-input {
   padding: 10px 12px;
@@ -1429,7 +1417,7 @@ svg {
   animation: fadeIn 0.2s ease-out;
 }
 
-.modal-content {
+/* .modal-content {
   background: white;
   border-radius: 16px;
   padding: 2rem;
@@ -1437,7 +1425,7 @@ svg {
   max-width: 480px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
+} */
 
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px) scale(0.95); }
@@ -1502,28 +1490,7 @@ svg {
   color: #475569;
 }
 
-/* --- Password Modal Specific --- */
-.password-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
 
-.eye-btn {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #94A3B8;
-  padding: 0;
-  display: flex;
-  align-items: center;
-}
-
-.eye-btn:hover {
-  color: #64748B;
-}
 
 /* --- Image Modal Specific --- */
 .centered-body {
@@ -2201,13 +2168,6 @@ svg {
      4. MODAL OVERRIDES (Crucial for QA Fixes)
      ========================================= */
   
-  /* The Modal Container */
-  .modal-content {
-    border-radius: var(--modal-radius) !important; /* Fixes "Modal corner radius mismatch" */
-    padding: 40px !important; /* "Breathing space" fix */
-    border: none !important;
-    box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.1);
-  }
   
   /* HEADERS in Modal */
   .modal-header h2 {

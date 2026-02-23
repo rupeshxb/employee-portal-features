@@ -257,6 +257,16 @@
     line-height: 52px;
 }
 
+.password-modal .modal-header {
+    width: 100%;
+    text-align: left;
+    h2 {
+        width: inherit;
+        font-size: 24px;
+        text-align: left;
+    }
+}
+
 .save-btn {
     padding: 0 32px;
     height: 48px;
@@ -266,6 +276,106 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
+}
+
+/* --- 1. General Modal Input Styling (Figma Match) --- */
+.modal-body input[type="text"],
+.modal-body input[type="password"],
+.modal-body input[type="date"],
+.modal-body textarea,
+.modal-body select {
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 14px 16px !important;
+    color: #1e293b;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    /* Force a consistent line-height to prevent vertical text shifts */
+    line-height: 1.2 !important;
+}
+
+/* --- 2. Password Wrapper Stability --- */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    /* LOCK the height of the wrapper so the modal cannot move */
+    height: 48px;
+}
+
+/* --- 3. Password Specific Override --- */
+.password-input-wrapper .input-field {
+    height: 100% !important; /* Take full height of the locked wrapper */
+    padding-right: 46px !important;
+    margin-bottom: 0 !important;
+    /* We keep the 14px padding for left, but let the height lock handle top/bottom */
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 16px !important;
+}
+
+/* Maintain background and border on focus */
+.modal-body input:focus {
+    outline: none !important;
+    border-color: #2563eb !important;
+    background-color: #f8fafc !important;
+}
+
+/* --- 4. The Eye Button (Isolated) --- */
+.eye-btn {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%) !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer;
+    color: #94a3b8;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    /* Lock the button size so icon swaps don't change dimensions */
+    width: 24px !important;
+    height: 24px !important;
+    z-index: 10;
+    transition: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure the SVG itself doesn't have stray margins */
+.eye-btn svg {
+    display: block;
+    flex-shrink: 0;
+}
+
+.eye-btn:hover,
+.eye-btn:focus,
+.eye-btn:active {
+    background: transparent !important;
+    color: #64748b;
+    transform: translateY(-50%) !important;
+}
+
+/* --- 5. Modal Layout Spacing --- */
+.password-modal .modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    /* Prevent the modal body from doing any size calculations during swaps */
+    overflow: hidden;
+}
+
+.password-modal .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 /* =========================================
@@ -332,6 +442,9 @@
     gap: 24px;
 }
 
+.cropper-body input {
+    width: 100%;
+}
 .canvas-container {
     position: relative;
     width: 100%;
@@ -506,4 +619,132 @@
 .zoom-slider:disabled::-webkit-slider-thumb {
     background: #cbd5e1; /* Gray thumb when disabled */
     box-shadow: none;
+}
+
+/* =========================================
+   SETTINGS SUCCESS TOAST
+   ========================================= */
+
+/* Anchors to the top right of .settings-header */
+.settings-notification-wrapper {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 50;
+    pointer-events: none; /* Allows clicking through empty space */
+}
+
+/* The Green Toast Container */
+.settings-notification-wrapper .notification-toast {
+    position: relative;
+    pointer-events: auto; /* Re-enable clicks for the close button */
+    background: #22c55e;
+    color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    min-width: 260px;
+    padding: 0;
+
+    border-radius: 12px;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    font-weight: 500;
+    overflow: hidden; /* Keeps the progress bar strictly inside the rounded corners */
+
+    animation: toastEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Error State for the Toast */
+.settings-notification-wrapper .notification-toast.error {
+    background: #ef4444; /* Red color for errors */
+}
+
+/* The Content Area */
+.settings-notification-wrapper .toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    flex: 1;
+}
+
+/* The Checkmark Circle */
+.settings-notification-wrapper .check-circle {
+    background: rgba(255, 255, 255, 0.25);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+/* The Close Button */
+.settings-notification-wrapper .toast-close {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 12px 16px;
+    opacity: 0.8;
+    transition:
+        opacity 0.2s,
+        transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-notification-wrapper .toast-close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* The Right-to-Left Disappearing Progress Bar */
+.settings-notification-wrapper .toast-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.85);
+    animation: progressLinear 3s linear forwards;
+}
+
+/* --- Animations --- */
+@keyframes progressLinear {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+@keyframes toastEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .settings-notification-wrapper {
+        top: 12px;
+        right: 12px;
+        left: 12px;
+    }
+    .settings-notification-wrapper .notification-toast {
+        min-width: unset;
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
