@@ -12,7 +12,7 @@ const Settings = () => {
     const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', designation: '', avatar: null });
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const token = localStorage.getItem('token');
 
@@ -114,6 +114,7 @@ const Settings = () => {
     // Updated to accept blob from ProfilePictureModal
     const handleImageSave = async (blob) => {
         if (blob) {
+            setIsUploadingImage(true);
             const formData = new FormData();
             formData.append('avatar', blob, 'profile.jpg');
             try {
@@ -134,6 +135,9 @@ const Settings = () => {
             } catch (error) {
                 // It's okay to keep the old showMessage for errors, or you can build an error toast later!
                 showMessage('Failed to upload image.', 'error');
+            }
+            finally {
+                setIsUploadingImage(false); // <-- Turn OFF the loading spinner
             }
         }
     };
@@ -253,6 +257,7 @@ const Settings = () => {
                 onClose={closeProfileModal}
                 image={selectedImage}
                 onSave={handleImageSave}
+                isLoading={isUploadingImage}
             />
 
             {/* Password Modal */}
