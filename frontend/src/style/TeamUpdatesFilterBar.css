@@ -2,36 +2,69 @@
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
     align-items: center;
+    padding: 0px;
 }
 
-.search-wrapper {
+.team-updates-container .filter-bar {
+    padding: 0px 0px;
+    background-color: transparent;
+}
+
+/* Common Wrapper for Search and Dropdowns */
+.filter-item-wrapper {
     display: flex;
     align-items: center;
-    background: white;
+    background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     padding: 0 12px;
+    height: 42px;
+    gap: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.filter-item-wrapper svg {
+    flex-shrink: 0; /* Prevents icons from shrinking */
+}
+
+/* Search Specifics */
+.search-wrapper {
     flex: 1;
-    min-width: 200px;
+    min-width: 250px;
 }
 
 .search-wrapper input {
     border: none;
     outline: none;
-    padding: 10px;
     width: 100%;
     font-size: 14px;
+    background: transparent;
+    color: #334155;
 }
 
-.filter-select {
-    padding: 10px 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background: white;
-    font-size: 14px;
-    color: #334155;
+.search-wrapper input::placeholder {
+    color: #94a3b8;
+}
+
+/* Dropdown Specifics */
+.filter-item-wrapper select {
+    border: none;
     outline: none;
+    background: transparent;
+    font-size: 14px;
+    color: #475569;
+    cursor: pointer;
+    width: 100%;
+    /* Optional: Add a custom chevron in the future by setting appearance: none */
+}
+
+.date-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    color: #475569;
     cursor: pointer;
 }

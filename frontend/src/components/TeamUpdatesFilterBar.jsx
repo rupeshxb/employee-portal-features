@@ -1,5 +1,6 @@
 import React from 'react';
 import '../style/TeamUpdatesFilterBar.css';
+import { SearchIcon, ProjectIcon, RoleIcon, DateIcon } from './Icons';
 
 const TeamUpdatesFilterBar = ({
     searchTerm, setSearchTerm,
@@ -12,8 +13,8 @@ const TeamUpdatesFilterBar = ({
     return (
         <div className="filter-bar">
             {/* Search */}
-            <div className="search-wrapper">
-                <span style={{ fontSize: '18px' }}>🔍</span>
+            <div className="filter-item-wrapper search-wrapper">
+                <SearchIcon />
                 <input
                     type="text"
                     placeholder="Search team member"
@@ -23,47 +24,56 @@ const TeamUpdatesFilterBar = ({
             </div>
 
             {/* Project Dropdown */}
-            <select
-                className="filter-select"
-                value={selectedProject}
-                onChange={(e) => setSelectedProject(e.target.value)}
-            >
-                <option value="All Projects">All Projects</option>
-                {projectList.map(p => (
-                    <option key={p.id} value={p.name}>{p.name}</option>
-                ))}
-            </select>
+            <div className="filter-item-wrapper">
+                <ProjectIcon />
+                <select
+                    value={selectedProject}
+                    onChange={(e) => setSelectedProject(e.target.value)}
+                >
+                    <option value="All Projects">All Projects</option>
+                    {projectList.map(p => (
+                        <option key={p.id} value={p.name}>{p.name}</option>
+                    ))}
+                </select>
+            </div>
 
             {/* Role Dropdown */}
-            <select
-                className="filter-select"
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value)}
-            >
-                {roleList.map((role, index) => (
-                    <option key={index} value={role}>{role}</option>
-                ))}
-            </select>
+            <div className="filter-item-wrapper">
+                <RoleIcon />
+                <select
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                >
+                    {roleList.map((role, index) => (
+                        <option key={index} value={role}>{role}</option>
+                    ))}
+                </select>
+            </div>
 
             {/* Date Dropdown */}
             <div style={{ display: 'flex', gap: '8px' }}>
-                <select
-                    className="filter-select"
-                    value={dateFilter}
-                    onChange={(e) => setDateFilter(e.target.value)}
-                >
-                    <option value="Today">Today</option>
-                    <option value="Yesterday">Yesterday</option>
-                    <option value="Custom">Custom Date</option>
-                </select>
+                <div className="filter-item-wrapper">
+                    <DateIcon />
+                    <select
+                        value={dateFilter}
+                        onChange={(e) => setDateFilter(e.target.value)}
+                    >
+                        <option value="Today">Today</option>
+                        <option value="Yesterday">Yesterday</option>
+                        <option value="Custom">Custom Date</option>
+                    </select>
+                </div>
 
+                {/* Custom Date Input (Appears alongside when 'Custom Date' is selected) */}
                 {dateFilter === 'Custom' && (
-                    <input
-                        type="date"
-                        className="filter-select"
-                        value={customDate}
-                        onChange={(e) => setCustomDate(e.target.value)}
-                    />
+                    <div className="filter-item-wrapper">
+                        <input
+                            type="date"
+                            className="date-input"
+                            value={customDate}
+                            onChange={(e) => setCustomDate(e.target.value)}
+                        />
+                    </div>
                 )}
             </div>
         </div>
