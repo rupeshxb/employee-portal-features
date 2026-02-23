@@ -1,0 +1,30 @@
+.team-updates-container {
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.updates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 24px;
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 16px;
+    border: 1px dashed #cbd5e1;
+}
+
+.no-results h3 {
+    margin: 0 0 8px 0;
+    color: #1e293b;
+}
+
+.no-results p {
+    margin: 0;
+    color: #64748b;
+}

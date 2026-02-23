@@ -1,0 +1,72 @@
+.employee-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.avatar-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emp-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    color: #111827;
+}
+
+.emp-info span {
+    font-size: 13px;
+    color: #6B7280;
+}
+
+.card-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #6B7280;
+    margin-bottom: 8px;
+    margin-top: 16px;
+    letter-spacing: 0.05em;
+}
+
+.update-item {
+    display: flex;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 14px;
+    color: #4B5563;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.update-item:last-child {
+    border-bottom: none;
+}
+
+.mini-tag {
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.blocker-text {
+    color: #EF4444;
+}
+
+.blocker-box {
+    background: #FEF2F2;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #FCA5A5;
+}
