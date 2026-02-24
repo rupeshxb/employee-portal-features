@@ -68,3 +68,71 @@
     color: #475569;
     cursor: pointer;
 }
+
+/* Custom Date Dropdown Styles */
+.date-dropdown-container {
+    position: relative;
+    display: flex;
+}
+
+.date-dropdown-pill {
+    cursor: pointer;
+    user-select: none;
+    min-width: 220px;
+    font-size: 14px;
+    color: #475569;
+}
+
+.date-dropdown-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.date-subtext {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-left: 6px;
+}
+
+.date-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    z-index: 50;
+    font-size: 14px;
+    color: #475569;
+    overflow: hidden; /* Keeps hover effects inside the rounded corners */
+}
+
+.date-dropdown-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* Added a nice hover effect! */
+.date-dropdown-item:hover {
+    background-color: #f8fafc;
+}
+
+.date-dropdown-item-bordered {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.date-invisible-input {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    opacity: 0;
+    width: 0px;
+    height: 0px;
+    pointer-events: none;
+    color-scheme: light;
+}
