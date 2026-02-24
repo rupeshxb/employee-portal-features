@@ -65,6 +65,11 @@ const AddTask = () => {
                 if (response.ok) {
                     setModalState({ show: false, isEditing: false, task: null });
                     fetchTasks();
+                    
+                    // --- NEW LOGIC HERE ---
+                    // Announce globally that a task was added/edited so TeamUpdates can refresh!
+                    window.dispatchEvent(new Event('taskAdded'));
+
                     const msg = modalState.isEditing ? "Task updated!" : "Daily task for today added successfully.";
                     showNotification(msg);
                 }
@@ -100,7 +105,12 @@ const AddTask = () => {
                 onConfirm={() => {
                     fetch(`${API_BASE_URL}/api/tasks/${deleteModal.task.id}/`, {
                         method: 'DELETE', headers: getAuthHeaders()
-                    }).then(() => { fetchTasks(); setDeleteModal({ show: false, task: null }); });
+                    }).then(() => { 
+                        fetchTasks(); 
+                        setDeleteModal({ show: false, task: null }); 
+                        // Trigger a refresh on delete too!
+                        window.dispatchEvent(new Event('taskAdded'));
+                    });
                 }}
             />
 

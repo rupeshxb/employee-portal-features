@@ -4,13 +4,18 @@
     padding: 24px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    height: 460px; /* Fixed height so the card size never changes */
+    box-sizing: border-box;
 }
 
 .card-header {
     display: flex;
     align-items: center;
     gap: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
+    flex-shrink: 0; /* Prevents the header from shrinking when content grows */
 }
 
 .avatar-wrapper {
@@ -22,51 +27,138 @@
 .emp-info h4 {
     margin: 0 0 4px 0;
     font-size: 16px;
+    font-weight: 600;
     color: #111827;
 }
 
 .emp-info span {
     font-size: 13px;
-    color: #6B7280;
+    color: #6b7280;
+}
+
+/* --- Scrollable Area & Scrollbar Styling --- */
+.card-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 8px; /* Adds space so text doesn't touch the scrollbar */
+    margin-right: -4px;
+}
+
+/* WebKit Custom Scrollbar matching your SVG requirements */
+.card-scroll-area::-webkit-scrollbar {
+    width: 4px;
+}
+
+.card-scroll-area::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.card-scroll-area::-webkit-scrollbar-thumb {
+    background-color: #bbbbbb;
+    border-radius: 3px;
+}
+
+/* --- Section Formatting --- */
+.day-section {
+    background-color: #f9fafc; /* Light gray background for the whole day block */
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid #f1f5f9; /* Optional: adds a crisp edge to the box */
+}
+
+.card-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0; /* Removed top margin since it's now padded inside the box */
+    margin-bottom: 12px; /* Space between header and the first task */
 }
 
 .card-section-title {
     font-size: 12px;
     font-weight: 700;
-    color: #6B7280;
-    margin-bottom: 8px;
-    margin-top: 16px;
+    color: #94a3b8;
     letter-spacing: 0.05em;
+    margin: 0;
 }
 
+.section-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- Task List Container --- */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0px; /* Adds space between each of the new task boxes */
+}
+
+/* --- Normal Task Items (Now as Boxes) --- */
 .update-item {
     display: flex;
     gap: 12px;
-    padding: 8px 0;
+    padding: 10px 0; /* Flat padding since the background is on the parent now */
     font-size: 14px;
-    color: #4B5563;
-    border-bottom: 1px solid #f3f4f6;
+    color: #4b5563;
+    line-height: 1.4;
+    margin-bottom: 0px;
 }
 
 .update-item:last-child {
-    border-bottom: none;
+    border-bottom: none; /* Removes separator from the last task in the box */
+    padding-bottom: 0;
 }
 
+/* Optional: Add a slight hover effect so they feel interactive */
+.update-item:hover {
+    background-color: #f1f5f9;
+    transition: background-color 0.2s ease;
+}
+
+/* Empty state styling so it matches the new boxes */
+.empty-state {
+    font-size: 14px;
+    color: #9ca3af;
+    padding: 4px 0 8px 0;
+}
+
+/* --- Custom Project Badges --- */
 .mini-tag {
     color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
+    padding: 3px 8px;
+    border-radius: 6px;
     font-size: 11px;
     font-weight: 600;
+    display: inline-block;
 }
 
-.blocker-text {
-    color: #EF4444;
-}
-
-.blocker-box {
-    background: #FEF2F2;
-    padding: 8px 12px;
+/* --- Blocker Item Styling --- */
+.blocker-item {
+    background: #ffedec;
+    padding: 12px;
     border-radius: 8px;
-    border: 1px solid #FCA5A5;
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.blocker-item:last-child {
+    margin-bottom: 0;
+}
+
+.blocker-icon-container {
+    flex-shrink: 0;
+    margin-top: 2px; /* Slight offset to align perfectly with top-left text */
+}
+
+.blocker-content {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    color: #ff493f; /* Blocker text color */
+    line-height: 1.4;
 }

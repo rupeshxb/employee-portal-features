@@ -1,5 +1,32 @@
 import React from 'react';
 
+export const TodayIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6.66669 1.66602V4.16602" stroke="#747575" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M13.3333 1.66602V4.16602" stroke="#747575" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M2.91669 7.57422H17.0834" stroke="#747575" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M17.5 7.08268V14.166C17.5 16.666 16.25 18.3327 13.3333 18.3327H6.66667C3.75 18.3327 2.5 16.666 2.5 14.166V7.08268C2.5 4.58268 3.75 2.91602 6.66667 2.91602H13.3333C16.25 2.91602 17.5 4.58268 17.5 7.08268Z" stroke="#747575" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9.99626 11.4167H10.0037" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6.91191 11.4167H6.91939" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6.91191 13.9167H6.91939" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+
+export const HistoryIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.125 18.0577C15.7 17.116 18.3334 13.866 18.3334 9.99935C18.3334 5.39935 14.6334 1.66602 10 1.66602C4.44169 1.66602 1.66669 6.29935 1.66669 6.29935M1.66669 6.29935V2.49935M1.66669 6.29935H3.34169H5.36669" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M1.66669 10C1.66669 14.6 5.40002 18.3333 10 18.3333" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="3 3" />
+    </svg>
+);
+
+export const BlockerAlertIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 6.45898V10.834" stroke="#FF493F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M17.5666 7.14938V12.8493C17.5666 13.7827 17.0666 14.6494 16.2583 15.1244L11.3083 17.9827C10.5 18.4494 9.49994 18.4494 8.68327 17.9827L3.73327 15.1244C2.92493 14.6577 2.42493 13.791 2.42493 12.8493V7.14938C2.42493 6.21604 2.92493 5.34934 3.73327 4.87434L8.68327 2.01602C9.4916 1.54935 10.4916 1.54935 11.3083 2.01602L16.2583 4.87434C17.0666 5.34934 17.5666 6.20771 17.5666 7.14938Z" stroke="#FF493F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10 13.5V13.5833" stroke="#FF493F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+
 export const SearchIcon = () => (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M9.58335 17.4993C13.9556 17.4993 17.5 13.9549 17.5 9.58268C17.5 5.21043 13.9556 1.66602 9.58335 1.66602C5.2111 1.66602 1.66669 5.21043 1.66669 9.58268C1.66669 13.9549 5.2111 17.4993 9.58335 17.4993Z" stroke="#BBBBBB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

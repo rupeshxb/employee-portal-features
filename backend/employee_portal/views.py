@@ -53,6 +53,8 @@ def team_updates(request):
     project_filter = request.GET.get('project', 'All Projects')
     role_filter = request.GET.get('role', 'All Roles')
 
+    # 1. Determine the dates
+    is_specific_date = bool(date_param) # Track if the user explicitly asked for a date
     if date_param:
         target_date = parse_date(date_param)
     else:
@@ -61,6 +63,7 @@ def team_updates(request):
     if not target_date: target_date = date.today()
     prev_date = target_date - timedelta(days=1)
 
+    # 2. Filter employees
     employees = Employee.objects.select_related('user').all()
 
     if search_query:
@@ -75,17 +78,32 @@ def team_updates(request):
 
     response_data = []
 
+    # 3. Process tasks for each employee
     for emp in employees:
         tasks_query = DailyTask.objects.filter(employee=emp)
 
         if project_filter != 'All Projects':
             tasks_query = tasks_query.filter(project__name=project_filter)
 
+        # Categorize tasks
         today_tasks = tasks_query.filter(date=target_date, is_blocker=False)
         yesterday_tasks = tasks_query.filter(date=prev_date, is_blocker=False)
         blockers = tasks_query.filter(date=target_date, is_blocker=True)
+        
+        # Initialize previous tasks as empty
+        previous_tasks = DailyTask.objects.none()
 
-        has_activity = (today_tasks.exists() or yesterday_tasks.exists() or blockers.exists())
+        # ONLY fetch previous tasks if the user DID NOT specify a date filter (Default view)
+        if not is_specific_date:
+            previous_tasks = tasks_query.filter(date__lt=prev_date, is_blocker=False)
+
+        # Check if they have ANY activity based on what we just fetched
+        has_activity = (
+            today_tasks.exists() or 
+            yesterday_tasks.exists() or 
+            blockers.exists() or 
+            previous_tasks.exists()
+        )
 
         if not has_activity:
             continue 
@@ -94,7 +112,8 @@ def team_updates(request):
         emp_data['tasks'] = {
             'today': DailyTaskSerializer(today_tasks, many=True).data,
             'yesterday': DailyTaskSerializer(yesterday_tasks, many=True).data,
-            'blockers': DailyTaskSerializer(blockers, many=True).data
+            'blockers': DailyTaskSerializer(blockers, many=True).data,
+            'previous': DailyTaskSerializer(previous_tasks, many=True).data # ADDED THIS!
         }
         response_data.append(emp_data)
 

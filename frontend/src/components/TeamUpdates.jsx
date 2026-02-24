@@ -19,7 +19,9 @@ const TeamUpdates = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedProject, setSelectedProject] = useState('All Projects');
     const [selectedRole, setSelectedRole] = useState('All Roles');
-    const [dateFilter, setDateFilter] = useState('Today');
+
+
+    const [dateFilter, setDateFilter] = useState('Date');
     const [customDate, setCustomDate] = useState(new Date().toISOString().split('T')[0]);
 
     // Dropdown Data States
@@ -57,11 +59,30 @@ const TeamUpdates = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm, selectedProject, selectedRole, dateFilter, customDate]);
 
+    // --- 3. NEW EVENT LISTENER LOGIC ---
+    useEffect(() => {
+        // When AddTask.jsx dispatches 'taskAdded', this function fires
+        const handleRefresh = () => {
+            fetchUpdates();
+        };
+
+        window.addEventListener('taskAdded', handleRefresh);
+
+        // Cleanup the listener when the component unmounts
+        return () => {
+            window.removeEventListener('taskAdded', handleRefresh);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchTerm, selectedProject, selectedRole, dateFilter, customDate]);
+
+
     const fetchUpdates = () => {
         setLoading(true);
-        let queryDate = new Date().toISOString().split('T')[0];
 
-        if (dateFilter === 'Yesterday') {
+        let queryDate = ''; // Blank means fetch ALL
+        if (dateFilter === 'Today') {
+            queryDate = new Date().toISOString().split('T')[0];
+        } else if (dateFilter === 'Yesterday') {
             const d = new Date();
             d.setDate(d.getDate() - 1);
             queryDate = d.toISOString().split('T')[0];
@@ -69,12 +90,18 @@ const TeamUpdates = () => {
             queryDate = customDate;
         }
 
-        const params = new URLSearchParams({
-            date: queryDate,
-            search: searchTerm,
-            project: selectedProject,
-            role: selectedRole
-        });
+        // Cleanly construct URL parameters
+        const params = new URLSearchParams();
+        
+        // ONLY add the date parameter if we actually have a date to filter by
+        if (queryDate) {
+            params.append('date', queryDate);
+        }
+        
+        // Always add the other filters (assuming your backend handles "All Projects" properly)
+        params.append('search', searchTerm);
+        params.append('project', selectedProject);
+        params.append('role', selectedRole);
 
         fetch(`${API_BASE_URL}/api/team-updates/?${params.toString()}`, {
             headers: getAuthHeaders()
@@ -87,6 +114,9 @@ const TeamUpdates = () => {
                 return res.json();
             })
             .then(data => {
+                // Quick debug step: Check your console to ensure the backend is sending 'previous' tasks
+                console.log("Fetched Data:", data); 
+
                 if (Array.isArray(data)) {
                     setEmployees(data);
                 } else {

@@ -27,7 +27,7 @@ const TeamUpdatesFilterBar = ({
     });
 
     // Format the selected custom date (if one is selected)
-    const formattedCustomDate = customDate 
+    const formattedCustomDate = customDate
         ? new Date(customDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         : '';
 
@@ -45,7 +45,7 @@ const TeamUpdatesFilterBar = ({
     const handleDateSelect = (value) => {
         setDateFilter(value);
         setIsDateDropdownOpen(false);
-        
+
         // Auto-open calendar for custom date
         if (value === 'Custom' && dateInputRef.current && 'showPicker' in HTMLInputElement.prototype) {
             try {
@@ -98,49 +98,34 @@ const TeamUpdatesFilterBar = ({
 
             {/* Custom Date Dropdown Section */}
             <div ref={dateContainerRef} className="date-dropdown-container">
-                
+
                 {/* The "Select" Pill */}
-                <div 
-                    className="filter-item-wrapper date-dropdown-pill" 
-                    onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
-                >
+                <div className="filter-item-wrapper date-dropdown-pill" onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}>
                     <DateIcon />
                     <div className="date-dropdown-content">
-                        {dateFilter === 'Today' && (
-                            <>Today <span className="date-subtext">({formattedToday})</span></>
-                        )}
-                        {dateFilter === 'Yesterday' && (
-                            <>Yesterday <span className="date-subtext">({formattedYesterday})</span></>
-                        )}
-                        {dateFilter === 'Custom' && (
-                            <>Custom Date <span className="date-subtext">{formattedCustomDate ? `(${formattedCustomDate})` : ''}</span></>
-                        )}
+                        {dateFilter === 'Date' && 'Date'}
+                        {dateFilter === 'Today' && <>Today <span className="date-subtext">({formattedToday})</span></>}
+                        {dateFilter === 'Yesterday' && <>Yesterday <span className="date-subtext">({formattedYesterday})</span></>}
+                        {dateFilter === 'Custom' && <>Custom Date <span className="date-subtext">{formattedCustomDate ? `(${formattedCustomDate})` : ''}</span></>}
                     </div>
-                    {/* Dropdown Arrow */}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M6 9l6 6 6-6"/>
+                        <path d="M6 9l6 6 6-6" />
                     </svg>
                 </div>
 
                 {/* The Dropdown Menu List */}
                 {isDateDropdownOpen && (
                     <div className="date-dropdown-menu">
-                        <div 
-                            className="date-dropdown-item date-dropdown-item-bordered"
-                            onClick={() => handleDateSelect('Today')}
-                        >
+                        <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleDateSelect('Date')}>
+                            Date
+                        </div>
+                        <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleDateSelect('Today')}>
                             Today <span className="date-subtext">({formattedToday})</span>
                         </div>
-                        <div 
-                            className="date-dropdown-item date-dropdown-item-bordered"
-                            onClick={() => handleDateSelect('Yesterday')}
-                        >
+                        <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleDateSelect('Yesterday')}>
                             Yesterday <span className="date-subtext">({formattedYesterday})</span>
                         </div>
-                        <div 
-                            className="date-dropdown-item"
-                            onClick={() => handleDateSelect('Custom')}
-                        >
+                        <div className="date-dropdown-item" onClick={() => handleDateSelect('Custom')}>
                             Custom Date
                         </div>
                     </div>
