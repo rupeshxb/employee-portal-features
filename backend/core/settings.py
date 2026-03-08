@@ -108,7 +108,7 @@ USE_TZ = True
 
 # --- STATIC & MEDIA FILES ---
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static'
 
 # 1. Where to collect files for production (Render)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
