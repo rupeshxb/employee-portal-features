@@ -20,8 +20,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-for-dev')
 
 # 3. DEBUG MODE
-# False if running on Render, True otherwise
-DEBUG = 'RENDER' not in os.environ
+# This looks for your manual DEBUG variable. If not found, it defaults to False.
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # 4. ALLOWED HOSTS
 ALLOWED_HOSTS = ['*']
