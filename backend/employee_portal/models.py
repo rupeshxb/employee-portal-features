@@ -115,3 +115,4 @@ class DailyTask(models.Model):
 
     def __str__(self):
         return f"{self.employee.user.username} - {self.date}"
+    
