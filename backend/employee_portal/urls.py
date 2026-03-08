@@ -4,9 +4,14 @@ from .views import (
     DailyTaskListCreate, 
     DailyTaskDetail, 
     ProjectList, 
-    team_updates,
+    team_updates,           
     EmployeeProfileView,
-    ChangePasswordView
+    ChangePasswordView, 
+    SubmitDailyTasksView,
+    DepartmentListView,
+    EmployeeListView,
+    ManagerTeamUpdatesView,
+    ManagerEmployeeOverview
 )
 
 urlpatterns = [
@@ -23,7 +28,19 @@ urlpatterns = [
 
     # Projects
     path('projects/', ProjectList.as_view(), name='project-list'),
-
-    # Team Updates
-    path('team-updates/', team_updates, name='team-updates'),
+    
+    # --- NEW API ENDPOINTS ---
+    path('tasks/submit/', SubmitDailyTasksView.as_view(), name='submit-daily-tasks'),
+    path('departments/', DepartmentListView.as_view(), name='departments'),
+    path('employees/', EmployeeListView.as_view(), name='employee-list'), # <-- PATH ADDED HERE
+    
+    # --- TEAM UPDATES ENDPOINTS ---
+    # Manager's view
+    path('manager/team-updates/', ManagerTeamUpdatesView.as_view(), name='manager_team_updates'),
+    
+    # Employee's view
+    path('employee/team-updates/', team_updates, name='employee-team-updates'),
+    
+    #EmployeeOverview
+    path('manager/employee-overview/', ManagerEmployeeOverview.as_view(), name='manager-employee-overview'),
 ]

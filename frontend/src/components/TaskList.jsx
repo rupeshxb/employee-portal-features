@@ -25,7 +25,7 @@ const TaskList = ({ groupedTasks, onEdit, onDelete, onAddNewTask }) => {
   }
 
   return (
-    <div className="task-list">
+    <div className="task-list daily-tasks-task-list">
       {groupedTasks.map((group, index) => (
         <div key={index} className="date-card">
           {/* --- HEADER --- */}

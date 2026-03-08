@@ -1,24 +1,27 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { API_BASE_URL } from '../../config';
 
-const UserContext = createContext(null);
+export const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState({
-        first_name: '',
-        last_name: '',
-        avatar: null,
-        email: '',
-        designation: '',
-        avatar_version: Date.now() // Initialize with a version
-    });
+    // 1. Immediately check for existing user data to prevent loading flashes
+    const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
 
-    // Add a loading state to prevent flickering
-    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(storedUser);
+    const [loading, setLoading] = useState(!storedUser);
+
+    // 2. THE NEW LOGIN FUNCTION: Updates storage AND state instantly
+    const loginUser = (userData, token) => {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+        setLoading(false);
+    };
 
     const fetchUser = async () => {
         const token = localStorage.getItem('token');
         if (!token) {
+            setUser(null);
             setLoading(false);
             return;
         }
@@ -30,6 +33,9 @@ export const UserProvider = ({ children }) => {
             if (res.ok) {
                 const data = await res.json();
                 setUser(prev => ({ ...prev, ...data }));
+                localStorage.setItem('user', JSON.stringify(data)); // Sync storage
+            } else if (res.status === 401) {
+                logout();
             }
         } catch (error) {
             console.error("Failed to fetch user:", error);
@@ -42,25 +48,24 @@ export const UserProvider = ({ children }) => {
         fetchUser();
     }, []);
 
-    // --- MODIFIED updateUser FUNCTION ---
     const updateUser = (newData) => {
-        setUser((prev) => ({
-            ...prev,
-            ...newData,
-            // This adds a current timestamp whenever you update the profile.
-            // It forces React to see the image URL as "new" immediately.
-            avatar_version: Date.now()
-        }));
+        setUser((prev) => {
+            const updated = { ...prev, ...newData, avatar_version: Date.now() };
+            localStorage.setItem('user', JSON.stringify(updated)); // Keep storage synced
+            return updated;
+        });
     };
 
-    // Added logout function since Header.js uses it
     const logout = () => {
-        localStorage.removeItem('token');
+        // Hard wipe of everything
+        localStorage.clear();
         setUser(null);
+        // Force browser redirect to wipe all lingering JS memory
+        window.location.href = '/login';
     };
 
     return (
-        <UserContext.Provider value={{ user, updateUser, fetchUser, logout, loading }}>
+        <UserContext.Provider value={{ user, loginUser, updateUser, fetchUser, logout, loading }}>
             {children}
         </UserContext.Provider>
     );

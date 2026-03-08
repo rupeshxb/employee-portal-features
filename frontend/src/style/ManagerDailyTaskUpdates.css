@@ -1,0 +1,96 @@
+/* ManagerDailyTaskUpdates.css */
+
+.daily-tasks-container {
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Department Navigation Bar */
+.department-nav {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Occupy full width */
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 10px;
+}
+
+.department-nav button:focus {
+    outline: none;
+}
+
+.department-nav button:hover {
+    border-right: none;
+    border-left: none;
+}
+
+.dept-tab {
+    flex: 1; /* Makes all tabs equal size */
+    padding: 12px 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    background: transparent;
+    border: none;
+
+    /* FIX: Force no rounded corners to override global button styles */
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Round ONLY the extreme top-left of the first item */
+.dept-tab:first-child {
+    border-top-left-radius: 8px;
+}
+
+/* Round ONLY the extreme top-right of the last item, and remove the right border */
+.dept-tab:last-child {
+    border-top-right-radius: 8px;
+    border-right: none; /* No separator line after the last button */
+}
+
+.dept-tab:hover {
+    color: #0f172a;
+    background-color: #f8fafc; /* Subtle hover state for non-active tabs */
+}
+
+/* Active State Styles */
+.dept-tab.active {
+    color: #2563ea;
+    background-color: #ebeef9;
+    border-bottom: 2px solid #2563ea;
+}
+
+/* Department Title & Count */
+.department-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.department-header h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0;
+}
+
+.department-header .employee-count {
+    font-size: 14px;
+    color: #64748b;
+}
+
+.filter-bar{
+    background: none;
+    box-shadow: none;
+}
+
+.time-dropdown-pill {
+    min-width: 140px; 
+}

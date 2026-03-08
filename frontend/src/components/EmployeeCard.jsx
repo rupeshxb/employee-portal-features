@@ -1,7 +1,19 @@
 import React from 'react';
 import { getImageUrl, getInitials } from '../utils/teamUpdatesUtils';
-import { TodayIcon, HistoryIcon, BlockerAlertIcon } from './Icons'; // Imported SVGs
+import { TodayIcon, HistoryIcon, BlockerAlertIcon } from './Icons';
 import '../style/EmployeeCard.css';
+
+// --- NEW INLINE ICONS FOR MANAGER STATUS BAR ---
+const ClockIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+);
+const MeetingIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="14" height="10" rx="2" ry="2"></rect><polygon points="16 12 22 8 22 16 16 12"></polygon></svg>
+);
+const AlertIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+);
+
 
 // --- SUB-COMPONENTS ---
 const TaskItem = ({ task }) => (
@@ -48,7 +60,6 @@ const DaySection = ({ title, icon, tasks }) => {
             </div>
 
             <div className="task-list">
-                {/* Regular tasks AND blockers map seamlessly side-by-side here */}
                 {tasks.map(task => (
                     task.is_blocker
                         ? <BlockerItem key={task.id} task={task} />
@@ -67,88 +78,80 @@ const getLocalDateString = (dateObj) => {
     return `${year}-${month}-${day}`;
 };
 
+// --- UPDATED HELPER IN EmployeeCard.jsx ---
+const formatTimeLocal = (timeValue) => {
+    // 1. If it's empty, null, or the literal string "Not Submitted", return null
+    if (!timeValue || timeValue === "Not Submitted") return null;
+
+    // 2. Try to parse it
+    const date = new Date(timeValue);
+
+    // 3. Check if JavaScript successfully parsed it (isNaN checks for Invalid Date)
+    if (isNaN(date.getTime())) {
+        console.error("Failed to parse date string:", timeValue);
+        return null;
+    }
+
+    // 4. Return the beautifully formatted local time
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+};
+
 // --- MAIN COMPONENT: Employee Card ---
-const EmployeeCard = ({ emp }) => {
+// Added "variant" prop. Defaults to 'employee', can be set to 'manager'.
+const EmployeeCard = ({ emp, variant = 'employee' }) => {
+    console.log(`Checking tasks for ${emp.full_name}:`, emp);
     const avatarUrl = getImageUrl(emp.avatar);
 
-    // Dynamic grouping logic: Flattens ALL tasks and properly organizes them by actual date
     const groupedTasks = React.useMemo(() => {
-        if (!emp.tasks) return [];
+        // Safe fallback if tasks don't exist yet
+        if (!emp || !emp.tasks) return [];
 
-        const todayStr = getLocalDateString(new Date());
+        const groups = [];
 
-        const yest = new Date();
-        yest.setDate(yest.getDate() - 1);
-        const yesterdayStr = getLocalDateString(yest);
-
-        const allTasksMap = new Map();
-
-        // 1. Flatten all arrays safely
-        ['today', 'yesterday', 'previous', 'blockers'].forEach(groupKey => {
-            // Make sure the group actually exists and is an array
-            if (Array.isArray(emp.tasks[groupKey])) {
-                emp.tasks[groupKey].forEach((task, index) => {
-                    // Extract a clean YYYY-MM-DD string, stripping out any time data
-                    let taskDateStr = task.date || task.created_at;
-                    let cleanDate = todayStr; // default fallback
-
-                    if (taskDateStr) {
-                        cleanDate = taskDateStr.split('T')[0];
-                    } else if (groupKey === 'yesterday') {
-                        cleanDate = yesterdayStr;
-                    }
-
-                    const isBlocker = task.is_blocker || groupKey === 'blockers';
-
-                    // FALLBACK ID: If backend doesn't provide a unique task.id, tasks will overwrite each other!
-                    // We generate a fallback ID using the group, date, and index to guarantee every task renders.
-                    const safeId = task.id ? String(task.id) : `${groupKey}-${cleanDate}-${index}`;
-
-                    if (allTasksMap.has(safeId)) {
-                        // If it exists (e.g., found in both 'today' and 'blockers'), retain the blocker status
-                        if (isBlocker) allTasksMap.get(safeId).is_blocker = true;
-                    } else {
-                        allTasksMap.set(safeId, { ...task, is_blocker: isBlocker, _computedDate: cleanDate });
-                    }
-                });
-            }
-        });
-
-        // 2. Group by the cleaned date string
-        const groups = Array.from(allTasksMap.values()).reduce((acc, task) => {
-            const d = task._computedDate;
-            if (!acc[d]) acc[d] = [];
-            acc[d].push(task);
-            return acc;
-        }, {});
-
-        // 3. Sort dates descending and format titles without timezone bugs
-        return Object.keys(groups)
-            .sort((a, b) => new Date(b) - new Date(a))
-            .map(dateKey => {
-                let title = '';
-                let icon = <HistoryIcon />;
-
-                if (dateKey === todayStr) {
-                    title = "TODAY";
-                    icon = <TodayIcon />;
-                } else if (dateKey === yesterdayStr) {
-                    title = "YESTERDAY";
-                } else {
-                    // Manually parse parts to avoid timezone shift bugs
-                    const [yyyy, mm, dd] = dateKey.split('-');
-                    const localDateObj = new Date(parseInt(yyyy, 10), parseInt(mm, 10) - 1, parseInt(dd, 10));
-                    title = localDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
-                }
-
-                return {
-                    dateKey,
-                    title,
-                    icon,
-                    tasks: groups[dateKey]
-                };
+        // 1. Today's Tasks
+        if (emp.tasks.today && emp.tasks.today.length > 0) {
+            groups.push({
+                dateKey: 'today',
+                title: 'TODAY',
+                icon: <TodayIcon />,
+                tasks: emp.tasks.today
             });
+        }
+
+        // 2. Yesterday's Tasks
+        if (emp.tasks.yesterday && emp.tasks.yesterday.length > 0) {
+            groups.push({
+                dateKey: 'yesterday',
+                title: 'YESTERDAY',
+                icon: <HistoryIcon />,
+                tasks: emp.tasks.yesterday
+            });
+        }
+
+        // 3. Previous Tasks (Crucial for the Employee Portal!)
+        if (emp.tasks.previous && emp.tasks.previous.length > 0) {
+            groups.push({
+                dateKey: 'previous',
+                title: 'PREVIOUS',
+                icon: <HistoryIcon />,
+                tasks: emp.tasks.previous
+            });
+        }
+
+        // 4. Blockers
+        if (emp.tasks.blockers && emp.tasks.blockers.length > 0) {
+            groups.push({
+                dateKey: 'blockers',
+                title: 'BLOCKERS',
+                icon: <HistoryIcon />, // Use a warning icon here if you have one!
+                tasks: emp.tasks.blockers
+            });
+        }
+
+        return groups;
     }, [emp.tasks]);
+
+    console.log(`Checking time for ${emp.full_name}:`, emp.submittedTime);
 
     return (
         <div className="employee-card">
@@ -192,6 +195,31 @@ const EmployeeCard = ({ emp }) => {
                     <span>{emp.designation}</span>
                 </div>
             </div>
+
+            {/* --- MANAGER STATUS BAR (Conditionally Rendered) --- */}
+            {variant === 'manager' && (() => {
+                // Calculate it once per render
+                const safeTime = formatTimeLocal(emp.submittedTime);
+
+                return (
+                    <div className="card-status-bar">
+                        <div className={`status-pill ${!safeTime ? 'disabled' : ''}`}>
+                            <ClockIcon />
+                            {safeTime ? `Submitted ${safeTime}` : 'Not Submitted'}
+                        </div>
+
+                        <div className={`status-pill ${!emp.meetings ? 'disabled' : ''}`}>
+                            <MeetingIcon /> {emp.meetings ? `${emp.meetings} meetings` : 'No meetings'}
+                        </div>
+
+                        {emp.blockers > 0 && (
+                            <div className="status-pill alert">
+                                <AlertIcon /> {emp.blockers} blockers
+                            </div>
+                        )}
+                    </div>
+                );
+            })()}
 
             {/* Scrollable Content Area */}
             <div className="card-scroll-area">

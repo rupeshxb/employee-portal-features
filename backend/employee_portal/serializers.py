@@ -1,9 +1,14 @@
 from rest_framework import serializers
-from .models import Employee, Project, DailyTask
 from django.contrib.auth.models import User
+from .models import Employee, Project, DailyTask, Department, DailySubmission
 
-# --- 1. USER SERIALIZER (NEW) ---
-# This is required to handle raw User model data
+# --- NEW: Department Serializer ---
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ['id', 'name']
+
+# --- 1. USER SERIALIZER ---
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -17,14 +22,15 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = '__all__'
 
-# UPDATED: Added first_name, last_name, full_name, and avatar here
-# This fixes the "Header loading..." issue.
 class EmployeeSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     first_name = serializers.CharField(source='user.first_name', read_only=True)
     last_name = serializers.CharField(source='user.last_name', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
     full_name = serializers.SerializerMethodField()
+    
+    # NEW: Fetch department name directly for the UI
+    department_name = serializers.CharField(source='department.name', read_only=True)
 
     class Meta:
         model = Employee
@@ -37,7 +43,10 @@ class EmployeeSerializer(serializers.ModelSerializer):
             'email',
             'designation', 
             'department', 
-            'avatar'
+            'department_name', # Added
+            'role',            # Added
+            'avatar',
+            'is_manager',      # Added for frontend logic
         ]
 
     def get_full_name(self, obj):
@@ -47,15 +56,10 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 
 class DailyTaskSerializer(serializers.ModelSerializer):
-    # --- READ ONLY: Nested Project Details for the UI Cards ---
     project_details = ProjectSerializer(source='project', read_only=True)
-
-    # --- WRITE ONLY: Accepting IDs from the Frontend Form ---
     project_id = serializers.PrimaryKeyRelatedField(
         queryset=Project.objects.all(), source='project', write_only=True
     )
-
-    # Custom Date Formatting
     created_at_formatted = serializers.SerializerMethodField()
 
     class Meta:
@@ -64,11 +68,12 @@ class DailyTaskSerializer(serializers.ModelSerializer):
             'id', 
             'content', 
             'is_blocker', 
-            'project_id',      # Input
-            'project_details', # Output
+            'project_id', 
+            'project_details', 
             'date',
             'created_at', 
             'created_at_formatted',
+            'submission', # NEW: Allows linking to the daily wrapper
         ]
         read_only_fields = ['employee', 'created_at']
 
@@ -76,8 +81,16 @@ class DailyTaskSerializer(serializers.ModelSerializer):
         return obj.created_at.strftime("%b %d, %Y")
 
 
-# --- 3. TEAM UPDATES SERIALIZER ---
+# --- NEW: Manager's Daily Submission Serializer ---
+class ManagerDailySubmissionSerializer(serializers.ModelSerializer):
+    tasks = DailyTaskSerializer(many=True, read_only=True)
 
+    class Meta:
+        model = DailySubmission
+        fields = ['id', 'date', 'submitted_at', 'meeting_count', 'tasks']
+
+
+# --- 3. TEAM UPDATES SERIALIZER ---
 class TeamUpdateEmployeeSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField()
@@ -87,13 +100,11 @@ class TeamUpdateEmployeeSerializer(serializers.ModelSerializer):
         fields = ['id', 'full_name', 'designation', 'avatar']
 
     def get_full_name(self, obj):
-        # Tries to get First+Last, falls back to Username
         if obj.user.first_name and obj.user.last_name:
             return f"{obj.user.first_name} {obj.user.last_name}"
         return obj.user.username
 
     def get_avatar(self, obj):
-        # Generates a dynamic avatar based on their name if no image exists
         if obj.avatar:
             return obj.avatar.url
         name = self.get_full_name(obj)
@@ -101,24 +112,24 @@ class TeamUpdateEmployeeSerializer(serializers.ModelSerializer):
     
 
 # --- 4. PROFILE & SETTINGS SERIALIZERS ---
-
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
 
 class EmployeeProfileSerializer(serializers.ModelSerializer):
-    # We include User fields (first_name, last_name, email) via read/write logic
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
     email = serializers.EmailField(source='user.email')
     username = serializers.CharField(source='user.username', read_only=True)
+    
+    # Expose department_name for profile view safely
+    department_name = serializers.CharField(source='department.name', read_only=True)
 
     class Meta:
         model = Employee
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'designation', 'department', 'avatar']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'designation', 'department', 'department_name', 'avatar','is_manager', 'role']
 
     def update(self, instance, validated_data):
-        # 1. Update User Model Fields
         user_data = validated_data.pop('user', {})
         user = instance.user
         
@@ -130,5 +141,41 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
             user.email = user_data['email']
         user.save()
 
-        # 2. Update Employee Model Fields (Avatar, etc)
         return super().update(instance, validated_data)
+    
+
+
+
+# --- 5. Project Pill Serializer ---
+# We just need the name and color for the frontend pills
+class ProjectPillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ['id', 'name', 'color_code']
+
+# --- 6. Employee Overview Serializer ---
+class EmployeeOverviewSerializer(serializers.ModelSerializer):
+    # Flattening user data so frontend doesn't have to dig for it
+    full_name = serializers.SerializerMethodField()
+    email = serializers.EmailField(source='user.email', read_only=True)
+    
+    # Nested projects for the colored pills
+    projects = ProjectPillSerializer(many=True, read_only=True)
+    
+    # Getting the actual string name of the manager
+    reports_to_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Employee
+        fields = [
+            'id', 'full_name', 'email', 'avatar', 'phone_number', 
+            'designation', 'status', 'projects', 'reports_to', 'reports_to_name'
+        ]
+
+    def get_full_name(self, obj):
+        return obj.user.get_full_name() or obj.user.username
+
+    def get_reports_to_name(self, obj):
+        if obj.reports_to:
+            return obj.reports_to.user.get_full_name() or obj.reports_to.user.username
+        return "Unassigned"

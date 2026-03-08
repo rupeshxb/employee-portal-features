@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
@@ -9,66 +9,84 @@ import AddTask from './components/AddTask';
 import TeamUpdates from './components/TeamUpdates';
 import Settings from './components/Settings';
 import LoginPage from './components/LoginPage';
+import ProtectedRoute from './components/ProtectedRoute';
+import ManagerDailyTaskUpdates from './components/ManagerDailyTaskUpdates';
+import EmployeeOverview from './components/EmployeeOverview';
 
-// 1. IMPORT THE PROVIDER
-import { UserProvider } from '../src/context/UserContext';
+// Import Context
+import { UserProvider, UserContext } from '../src/context/UserContext';
 
-const App = () => {
-  // 2. Manage Token Only (User data is now handled by Context)
-  const [token, setToken] = useState(localStorage.getItem('token'));
+const RootRedirect = () => {
+  const { user } = useContext(UserContext);
 
-  const handleLoginState = (newToken) => {
-    setToken(newToken);
-    // No need to manually set user here anymore
-    // The UserProvider will automatically fetch it when it mounts
-  };
+  if (!user) return <Navigate to="/login" replace />;
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user'); // Optional, but good cleanup
-    setToken(null);
-  };
+  const isManager = user.is_manager === true || user.role === 'Manager' || user.designation === 'Admin';
+  if (isManager) return <Navigate to="/manager/dashboard" replace />;
+  return <Navigate to="/employee/dashboard" replace />;
+};
+
+const AppContent = () => {
+  const { user, loading, logout } = useContext(UserContext);
+
+  if (loading) return null; // Or add a <div className="loading-screen">Loading...</div>
 
   return (
-    <Router>
-      <div className="app-container">
+    <div className="app-container">
+      {/* If there is no user, ONLY show the login page */}
+      {!user ? (
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      ) : (
+        /* If there IS a user, show the App layout */
+        <>
+          <Sidebar />
+          <div className="main-content">
+            <Header onLogout={logout} />
+            <div className="content-area">
+              <Routes>
+                <Route path="/" element={<RootRedirect />} />
 
-        {/* IF NO TOKEN -> SHOW LOGIN PAGE */}
-        {!token ? (
-          <Routes>
-            <Route path="*" element={<LoginPage setToken={handleLoginState} />} />
-          </Routes>
-        ) : (
-          /* IF TOKEN EXISTS -> SHOW DASHBOARD LAYOUT */
-          /* 3. WRAP THE AUTHENTICATED APP IN USER PROVIDER */
-          <UserProvider>
+                {/* EMPLOYEE ZONE */}
+                <Route element={<ProtectedRoute allowedRoles={['Employee', 'Manager']} />}>
+                  <Route path="/employee/dashboard" element={<AddTask />} />
+                  {/* NEW ROUTE: Employee's view of Team Updates */}
+                  <Route path="/employee/team-updates" element={<TeamUpdates />} />
+                </Route>
 
-            <Sidebar />
+                {/* MANAGER ZONE */}
+                <Route element={<ProtectedRoute allowedRoles={['Manager']} />}>
+                  {/* The initial login alias */}
+                  <Route path="/manager/dashboard" element={<ManagerDailyTaskUpdates />} />
 
-            <div className="main-content">
-              {/* 4. REMOVED 'user={user}' PROP - Header uses context now */}
-              <Header onLogout={handleLogout} />
+                  {/* The actual menu link they use going forward */}
+                  <Route path="/manager/daily-tasks" element={<ManagerDailyTaskUpdates />} />
 
-              <div className="content-area">
-                <Routes>
-                  {/* Route 1: Home (Add Task) */}
-                  <Route path="/" element={<AddTask />} />
+                  {/* EMPLOYEE OVERVIEW ROUTE */}
+                  <Route path="/manager/employee-overview" element={<EmployeeOverview />} />
+                </Route>
 
-                  {/* Route 2: Team Updates */}
-                  <Route path="/team-updates" element={<TeamUpdates />} />
-
-                  {/* Route 3: Settings */}
-                  <Route path="/settings" element={<Settings />} />
-
-                  {/* Fallback - Redirect unknown routes to Home */}
-                  <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
-              </div>
+                {/* SHARED ZONE */}
+                <Route path="/settings" element={<Settings />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
             </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
 
-          </UserProvider>
-        )}
-      </div>
+const App = () => {
+  return (
+    <Router>
+      {/* UserProvider wraps EVERYTHING so AppContent can read it immediately */}
+      <UserProvider>
+        <AppContent />
+      </UserProvider>
     </Router>
   );
 };

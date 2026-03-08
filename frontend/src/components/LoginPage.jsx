@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Mail, Lock, Eye, EyeOff, LogIn, ArrowRight } from 'lucide-react';
 import { API_BASE_URL } from '../../config';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/UserContext'; // <-- Import Context
 
-const Login = ({ setToken }) => {
+const Login = () => { // <-- Removed setToken prop
     const [credentials, setCredentials] = useState({ username: '', password: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
+    const navigate = useNavigate();
+    const { loginUser } = useContext(UserContext); // <-- Use the new function
+
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
-        setError(''); // Clear error on typing
+        setError('');
     };
 
     const handleLogin = async (e) => {
@@ -28,22 +33,27 @@ const Login = ({ setToken }) => {
             const data = await response.json();
 
             if (response.ok) {
-                console.log("Login Successful:", data); // Debug log
+                console.log("Login Successful:", data);
 
-                // 1. Save to LocalStorage
-                localStorage.setItem('token', data.token);
-
-                // 2. Save user details (Optional but useful)
-                localStorage.setItem('user', JSON.stringify({
+                // 1. Let the Context handle storage and state updates IMMEDIATELY
+                const userData = {
                     username: data.username,
+                    is_manager: data.is_manager,
                     role: data.role,
-                    avatar: data.avatar
-                }));
+                    avatar: data.avatar,
+                    first_name: data.first_name,
+                    designation: data.designation
+                };
 
-                // 3. Update App State (This switches the view)
-                setToken(data.token);
+                loginUser(userData, data.token);
 
-                // REMOVED: window.location.reload(); <--- Don't do this yet
+                // 2. Route the user based on their role
+                if (data.role === 'Manager' || data.is_manager || data.designation === 'Admin') {
+                    navigate('/manager/dashboard');
+                } else {
+                    navigate('/employee/dashboard');
+                }
+
             } else {
                 setError(data.error || 'Invalid username or password');
             }

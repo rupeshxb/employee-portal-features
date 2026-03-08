@@ -185,3 +185,7 @@
   margin-top: 2px;
   font-weight: 500;
 }
+
+.task-list.daily-tasks-task-list {
+  gap: 10px;
+}

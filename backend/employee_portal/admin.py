@@ -2,19 +2,19 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django import forms
 from django.utils.html import format_html
-from .models import Project, Employee, DailyTask
+# ADDED: Imported Department here
+from .models import Project, Employee, DailyTask, Department
 
 # --- 1. CUSTOM FORM FOR PROJECT ---
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = '__all__'
-        # CHANGE: Use RadioSelect to show all colors at once
         widgets = {
             'color_code': forms.RadioSelect,
         }
 
-# --- 2. PROJECT ADMIN (UPDATED) ---
+# --- 2. PROJECT ADMIN ---
 class ProjectAdmin(admin.ModelAdmin):
     form = ProjectForm
     
@@ -22,11 +22,9 @@ class ProjectAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_filter = ('status',)
 
-    # INJECT JAVASCRIPT: This loads your static/admin_colors.js file
     class Media:
         js = ('admin_colors.js',) 
 
-    # List View Color Preview
     def color_display(self, obj):
         return format_html(
             '<span style="background-color: {}; color: #fff; padding: 5px 10px; border-radius: 15px; font-weight: bold; text-shadow: 0px 0px 3px #000;">{}</span>',
@@ -37,12 +35,19 @@ class ProjectAdmin(admin.ModelAdmin):
 
 admin.site.register(Project, ProjectAdmin)
 
+# --- 3. DEPARTMENT ADMIN (NEW) ---
+# ADDED: This creates the Department section in the admin panel
+@admin.register(Department)
+class DepartmentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'created_at')
+    search_fields = ('name',)
 
-# --- 3. DAILY TASK ADMIN (Standard) ---
+
+# --- 4. DAILY TASK ADMIN ---
 admin.site.register(DailyTask)
 
 
-# --- 4. CUSTOM FORM FOR EMPLOYEE CREATION (Kept same) ---
+# --- 5. CUSTOM FORM FOR EMPLOYEE CREATION ---
 class EmployeeCreationForm(forms.ModelForm):
     username = forms.CharField(label="Username")
     password = forms.CharField(widget=forms.PasswordInput, label="Password")
@@ -53,7 +58,7 @@ class EmployeeCreationForm(forms.ModelForm):
     class Meta:
         model = Employee
         exclude = ['user'] 
-        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'designation', 'department']
+        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'designation', 'department', 'is_manager']
 
     def save(self, commit=True):
         user = User.objects.create_user(
@@ -69,10 +74,12 @@ class EmployeeCreationForm(forms.ModelForm):
             employee.save()
         return employee
 
-# --- 5. EMPLOYEE ADMIN CONFIG (Kept same) ---
+# --- 6. EMPLOYEE ADMIN CONFIG ---
+@admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('get_username', 'designation', 'department')
+    list_display = ('get_username', 'designation', 'department', 'is_manager')
     search_fields = ('user__username', 'user__first_name')
+    list_filter = ('is_manager', 'department')
 
     def get_form(self, request, obj=None, **kwargs):
         if obj is None:
@@ -82,5 +89,3 @@ class EmployeeAdmin(admin.ModelAdmin):
     def get_username(self, obj):
         return obj.user.username
     get_username.short_description = 'Username'
-
-admin.site.register(Employee, EmployeeAdmin)

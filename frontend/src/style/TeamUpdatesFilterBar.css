@@ -136,3 +136,154 @@
     pointer-events: none;
     color-scheme: light;
 }
+
+/* --- CUSTOM PROJECT DROPDOWN --- */
+.custom-project-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.custom-project-trigger {
+    cursor: pointer;
+    user-select: none;
+    min-width: 170px;
+    justify-content: space-between;
+    padding: 8px 12px; /* Adjust to match your existing wrappers */
+}
+
+.project-trigger-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #334155;
+    margin: 0 8px;
+    white-space: nowrap;
+}
+
+.project-caret {
+    transition: transform 0.2s ease;
+}
+
+.project-caret.open {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu Box */
+.custom-project-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 260px; /* Match Figma width */
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    overflow: hidden;
+    padding: 12px 0 8px 0;
+}
+
+/* Internal Search Bar */
+.project-menu-search {
+    display: flex;
+    align-items: center;
+    margin: 0 12px 12px 12px;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    gap: 8px;
+}
+
+.project-menu-search input {
+    border: none;
+    width: 100%;
+    outline: none;
+    font-size: 13px;
+    color: #334155;
+    background-color: transparent;
+}
+
+.project-menu-search input::placeholder {
+    color: #94a3b8;
+}
+
+.project-menu-search svg {
+    width: 16px;
+    height: 16px;
+    color: #94a3b8;
+}
+
+/* Menu List & Scrollbar */
+.project-menu-list {
+    max-height: 175px;
+    overflow-y: auto;
+}
+
+/* Customizing the scrollbar for the menu list to match Figma */
+.project-menu-list::-webkit-scrollbar {
+    width: 6px;
+}
+.project-menu-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.project-menu-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.project-menu-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.project-menu-item:hover {
+    background-color: #f8fafc;
+}
+
+.project-no-results {
+    padding: 12px 16px;
+    color: #64748b;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* --- PROJECT PILLS --- */
+/* For the pills inside the dropdown menu */
+.project-pill {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* For the pill inside the active trigger box */
+.selected-project-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 6px 4px 12px;
+    border-radius: 20px;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    gap: 6px;
+}
+
+.clear-project-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 2px;
+    transition: background 0.2s;
+}
+
+.clear-project-btn:hover {
+    background: rgba(255, 255, 255, 0.45);
+}

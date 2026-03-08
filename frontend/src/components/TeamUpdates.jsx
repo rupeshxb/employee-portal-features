@@ -103,7 +103,7 @@ const TeamUpdates = () => {
         params.append('project', selectedProject);
         params.append('role', selectedRole);
 
-        fetch(`${API_BASE_URL}/api/team-updates/?${params.toString()}`, {
+        fetch(`${API_BASE_URL}/api/employee/team-updates/?${params.toString()}`, {
             headers: getAuthHeaders()
         })
             .then(res => {
