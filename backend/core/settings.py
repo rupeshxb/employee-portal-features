@@ -39,9 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    # Cloudinary Apps (Order matters: cloudinary_storage first)
+    'django.contrib.staticfiles',
     'cloudinary_storage',
-    'django.contrib.staticfiles', # staticfiles must be here
     'cloudinary',
 ]
 
@@ -111,7 +110,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # 1. Where to collect files for production (Render)
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(str(BASE_DIR), 'staticfiles')
 
 # 2. Where to look for extra static files
 STATICFILES_DIRS = [
