@@ -58,6 +58,7 @@ class Employee(models.Model):
     is_manager = models.BooleanField(default=False, help_text="Check this box if the employee is a manager.")
     
     department = models.ForeignKey('Department', on_delete=models.SET_NULL, null=True, blank=True, related_name='employees')
+    temp_migration_fix = models.BooleanField(default=False)
     
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Employee')
     
