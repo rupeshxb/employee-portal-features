@@ -1,28 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../style/ProjectsOverview.css';
 import { ProjectsOverviewEmptyIcon } from './Icons';
 import ProjectsOverviewFilterBar from './ProjectsOverviewFilterBar';
 import ProjectModal from './ProjectModal';
 import ProjectCard from './ProjectCard';
 
+// Define your Render backend URL (falls back to localhost for local development)
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 const ProjectsOverview = () => {
-  const [projects, setProjects] = useState(() => {
-    const saved = localStorage.getItem('hamrosalary_projects');
-    return saved ? JSON.parse(saved) : [];
-  });
-  
+  // 1. Initialize state as an empty array (No more localStorage)
+  const [projects, setProjects] = useState([]);
+
   // Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
-  const [selectedProject, setSelectedProject] = useState(null); // Data for editing
-  
+  const [modalMode, setModalMode] = useState('add');
+  const [selectedProject, setSelectedProject] = useState(null);
+
   // Delete Confirmation States
   const [projectToDelete, setProjectToDelete] = useState(null);
-  
+
   const [notification, setNotification] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [teamSizeFilter, setTeamSizeFilter] = useState('All');
+
+  // --- NEW: Fetch projects from Django on page load ---
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/projects/`, {
+          headers: {
+            'Authorization': `token ${localStorage.getItem('token')}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setProjects(data);
+        } else {
+          console.error("Failed to fetch projects from server");
+        }
+      } catch (error) {
+        console.error("Network error fetching projects:", error);
+      }
+    };
+    fetchProjects();
+  }, []);
 
   // --- Handlers for Add/Edit Form ---
   const handleOpenAddModal = () => {
@@ -37,21 +60,44 @@ const ProjectsOverview = () => {
     setIsModalOpen(true);
   };
 
-  const handleSaveProject = (projectData) => {
-    let updatedProjects;
-    
-    if (modalMode === 'add') {
-      updatedProjects = [...projects, projectData];
-      setNotification(`Project ${projectData.projectName} added successfully.`);
-    } else {
-      updatedProjects = projects.map(p => p.id === projectData.id ? projectData : p);
-      setNotification(`Project ${projectData.projectName} updated successfully.`);
-    }
+  // --- UPDATED: Save directly to Django Database ---
+  const handleSaveProject = async (projectData) => {
+    try {
+      const isAddMode = modalMode === 'add';
+      const method = isAddMode ? 'POST' : 'PUT';
+      // If adding, hit /api/projects/. If editing, hit /api/projects/{id}/
+      const endpoint = isAddMode
+        ? `${API_URL}/api/projects/`
+        : `${API_URL}/api/projects/${projectData.id}/`;
 
-    setProjects(updatedProjects);
-    localStorage.setItem('hamrosalary_projects', JSON.stringify(updatedProjects));
-    setIsModalOpen(false);
-    setTimeout(() => setNotification(null), 3000);
+      const response = await fetch(endpoint, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `token ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(projectData)
+      });
+
+      if (response.ok) {
+        const savedProject = await response.json();
+
+        if (isAddMode) {
+          setProjects([...projects, savedProject]);
+          setNotification(`Project ${savedProject.projectName} added successfully.`);
+        } else {
+          setProjects(projects.map(p => p.id === savedProject.id ? savedProject : p));
+          setNotification(`Project ${savedProject.projectName} updated successfully.`);
+        }
+
+        setIsModalOpen(false);
+        setTimeout(() => setNotification(null), 3000);
+      } else {
+        console.error("Server rejected the project data");
+      }
+    } catch (error) {
+      console.error("Network error saving project:", error);
+    }
   };
 
   // --- Handlers for Delete ---
@@ -59,21 +105,35 @@ const ProjectsOverview = () => {
     setProjectToDelete(project);
   };
 
-  const confirmDeleteProject = () => {
+  // --- UPDATED: Delete from Django Database ---
+  const confirmDeleteProject = async () => {
     if (!projectToDelete) return;
-    const updatedProjects = projects.filter(p => p.id !== projectToDelete.id);
-    
-    setProjects(updatedProjects);
-    localStorage.setItem('hamrosalary_projects', JSON.stringify(updatedProjects));
-    setProjectToDelete(null); // Close delete modal
-    
-    setNotification(`Project deleted successfully.`);
-    setTimeout(() => setNotification(null), 3000);
+
+    try {
+      const response = await fetch(`${API_URL}/api/projects/${projectToDelete.id}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `token ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.ok) {
+        // Remove from the React UI only after the database confirms deletion
+        setProjects(projects.filter(p => p.id !== projectToDelete.id));
+        setProjectToDelete(null);
+        setNotification(`Project deleted successfully.`);
+        setTimeout(() => setNotification(null), 3000);
+      } else {
+        console.error("Server failed to delete project");
+      }
+    } catch (error) {
+      console.error("Network error deleting project:", error);
+    }
   };
 
   return (
     <div className="project-overview-container" style={{ position: 'relative' }}>
-      
+
       {notification && (
         <div className="success-toast">
           <span>{notification}</span>
@@ -110,11 +170,11 @@ const ProjectsOverview = () => {
       ) : (
         <div className="projects-grid">
           {projects.map((proj) => (
-            <ProjectCard 
-              key={proj.id} 
-              project={proj} 
-              onEdit={handleOpenEditModal} 
-              onDelete={handleOpenDeleteConfirm} 
+            <ProjectCard
+              key={proj.id}
+              project={proj}
+              onEdit={handleOpenEditModal}
+              onDelete={handleOpenDeleteConfirm}
             />
           ))}
         </div>
@@ -133,15 +193,15 @@ const ProjectsOverview = () => {
       {projectToDelete && (
         <div className="modal-overlay">
           <div className="delete-confirm-box">
-             <div className="delete-header">
-                <h3>Delete Project?</h3>
-                <button className="close-icon" onClick={() => setProjectToDelete(null)}>✕</button>
-             </div>
-             <p>Are you sure you want to delete project <strong>"{projectToDelete.projectName} {projectToDelete.acronym && `(${projectToDelete.acronym})`}"</strong>? This action cannot be undone afterwards.</p>
-             <div className="delete-actions">
-               <button className="btn-cancel" onClick={() => setProjectToDelete(null)}>Cancel</button>
-               <button className="btn-confirm-delete" onClick={confirmDeleteProject}>Delete</button>
-             </div>
+            <div className="delete-header">
+              <h3>Delete Project?</h3>
+              <button className="close-icon" onClick={() => setProjectToDelete(null)}>✕</button>
+            </div>
+            <p>Are you sure you want to delete project <strong>"{projectToDelete.projectName} {projectToDelete.acronym && `(${projectToDelete.acronym})`}"</strong>? This action cannot be undone afterwards.</p>
+            <div className="delete-actions">
+              <button className="btn-cancel" onClick={() => setProjectToDelete(null)}>Cancel</button>
+              <button className="btn-confirm-delete" onClick={confirmDeleteProject}>Delete</button>
+            </div>
           </div>
         </div>
       )}
