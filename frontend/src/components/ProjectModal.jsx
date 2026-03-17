@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TeamStructureSelect from './TeamStructureSelect';
-import '../style/projectsoverview.css';
-import '../style/projectmodal.css';
+import '../style/ProjectsOverview.css';
+import '../style/ProjectModal.css';
 
 // 1. Mock Data defined OUTSIDE the component
 const TEAM_MEMBERS = [
