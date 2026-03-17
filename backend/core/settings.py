@@ -82,7 +82,8 @@ DATABASES = {
     'default': dj_database_url.config(
         # Local DB Connection String (Fallback if DATABASE_URL not in env)
         default='postgresql://postgres:root@localhost:5432/hamro_salary_db',
-        conn_max_age=600
+        conn_max_age=600,
+        conn_health_checks=True  # <--- THIS IS THE MAGIC LINE
     )
 }
 
