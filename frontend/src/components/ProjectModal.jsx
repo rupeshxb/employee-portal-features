@@ -82,15 +82,26 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
     const totalTeamSize = Object.values(teamStructure).reduce((acc, curr) => acc + curr.length, 0);
 
     const handleSubmit = () => {
-        // Combine the basic form data and the team structure into one object
+        // Translate React's camelCase state into Django's expected snake_case model fields
         const newProject = {
-            ...formData,
+            // Keep original frontend data just in case your React app needs it locally
+            ...formData, 
+            
+            // --- THE TRANSLATION FOR DJANGO ---
+            name: formData.projectName,           // Fixes: "This field is required."
+            client: formData.clientName,          // Guessing Django calls it 'client'
+            start_date: formData.startDate,       // Django usually wants snake_case dates
+            end_date: formData.endDate,           // Django usually wants snake_case dates
+            accent_color: formData.accentColor,   // Django usually wants snake_case
+            
             teamStructure,
             totalTeamSize,
-            id: mode === 'edit' ? initialData.id : Date.now()
+            // If adding a new project, don't send a fake Date.now() ID to Django. 
+            // Let the database auto-generate the real ID.
+            id: mode === 'edit' ? initialData.id : undefined 
         };
 
-        // Send it back to the main page
+        // Send it back to the main page (which makes the fetch/axios call)
         onSubmit(newProject);
 
         // Reset the form for the next time it opens
