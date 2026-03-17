@@ -4,14 +4,18 @@ from .views import (
     DailyTaskListCreate, 
     DailyTaskDetail, 
     ProjectList, 
-    team_updates,           
+    ProjectDetail,         
+    team_updates,          
     EmployeeProfileView,
     ChangePasswordView, 
     SubmitDailyTasksView,
     DepartmentListView,
     EmployeeListView,
     ManagerTeamUpdatesView,
-    ManagerEmployeeOverview
+    ManagerEmployeeOverview,
+    ManagerListView,
+    ManagerEmployeeDetailView,
+    EmployeeDetailView
 )
 
 urlpatterns = [
@@ -28,19 +32,23 @@ urlpatterns = [
 
     # Projects
     path('projects/', ProjectList.as_view(), name='project-list'),
+    path('projects/<int:pk>/', ProjectDetail.as_view(), name='project-detail'),
     
     # --- NEW API ENDPOINTS ---
     path('tasks/submit/', SubmitDailyTasksView.as_view(), name='submit-daily-tasks'),
     path('departments/', DepartmentListView.as_view(), name='departments'),
-    path('employees/', EmployeeListView.as_view(), name='employee-list'), # <-- PATH ADDED HERE
+    path('employees/', EmployeeListView.as_view(), name='employee-list'), 
     
     # --- TEAM UPDATES ENDPOINTS ---
-    # Manager's view
     path('manager/team-updates/', ManagerTeamUpdatesView.as_view(), name='manager_team_updates'),
-    
-    # Employee's view
     path('employee/team-updates/', team_updates, name='employee-team-updates'),
     
-    #EmployeeOverview
+    # --- EMPLOYEE OVERVIEW & ADDITION ---
     path('manager/employee-overview/', ManagerEmployeeOverview.as_view(), name='manager-employee-overview'),
+    
+    # --- MANAGERS LIST endpoint for dropdowns and selection in the frontend ---
+    path('manager/managers-list/', ManagerListView.as_view(), name='managers-list'),
+    
+    # --- EMPLOYEE DETAIL ENDPOINT for the modal in the frontend ---
+    path('manager/employees/<int:pk>/', EmployeeDetailView.as_view(), name='employee-detail'),
 ]

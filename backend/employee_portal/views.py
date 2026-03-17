@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from .serializers import DepartmentSerializer
 from rest_framework.pagination import PageNumberPagination
+from .serializers import ManagerDropdownSerializer, EmployeeCreateSerializer
 
 # Use local imports since we are in the same app
 from .models import DailyTask, Employee, Project, Department, DailySubmission
@@ -26,7 +27,8 @@ from .serializers import (
     DepartmentSerializer,
     EmployeeSerializer,
     ManagerDailySubmissionSerializer,
-    EmployeeOverviewSerializer
+    EmployeeOverviewSerializer,
+    EmployeeDetailSerializer
 )
 
 
@@ -466,3 +468,94 @@ class ManagerEmployeeOverview(APIView):
             'total_count': total_count,
             'employees': serializer.data
         })
+        
+    def post(self, request):
+        # 1. Security Check: Ensure user is a manager or superuser
+        is_superuser = request.user.is_superuser
+        is_manager = False
+        if hasattr(request.user, 'employee'):
+            emp = request.user.employee
+            if (emp.role and emp.role.lower() == 'manager') or getattr(emp, 'is_manager', False):
+                is_manager = True
+
+        if not (is_superuser or is_manager):
+            return Response({"error": "Forbidden. Managers only."}, status=403)
+
+        # 2. Pass the incoming React data to a Serializer
+        # Note: You will need a Serializer designed for creation (e.g., EmployeeCreateSerializer)
+        serializer = EmployeeCreateSerializer(data=request.data)
+        
+        # 3. Validate and Save
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Employee created successfully!", "data": serializer.data}, status=201)
+        
+        # If the data from React is invalid, send back the exact errors
+        return Response(serializer.errors, status=400)
+    
+# --- EMPLOYEE DETAIL API (For Manager to View/Edit/Delete a specific employee) ---
+
+class ManagerEmployeeDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Handles GET (view details), PUT/PATCH (edit), and DELETE for a single employee.
+    """
+    # Use select_related to grab user and department data in one query (efficiency!)
+    queryset = Employee.objects.select_related('user', 'department', 'reports_to__user').all()
+    serializer_class = EmployeeProfileSerializer # Assuming this serializes all needed fields
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id' # Expects /<id>/ in the URL
+
+    def check_permissions(self, request):
+        """Re-using your exact security check from ManagerEmployeeOverview"""
+        super().check_permissions(request)
+        is_superuser = request.user.is_superuser
+        is_manager = False
+        
+        if hasattr(request.user, 'employee'):
+            emp = request.user.employee
+            if (emp.role and emp.role.lower() == 'manager') or getattr(emp, 'is_manager', False):
+                is_manager = True
+
+        if not (is_superuser or is_manager):
+            self.permission_denied(request, message="Forbidden. Managers only.")
+
+# --- 6. PROJECT OVERVIEW VIEWS ---
+    
+class ProjectList(generics.ListCreateAPIView):
+    """Handles GET (list all) and POST (create new) for Projects"""
+    queryset = Project.objects.all().order_by('-id') # Newest first
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+
+class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
+    """Handles GET (read one), PUT/PATCH (update), and DELETE for a single Project"""
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+
+# --- MANAGER list view for DROPDOWN ---
+class ManagerListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ManagerDropdownSerializer
+    pagination_class = None 
+
+    def get_queryset(self):
+        # Added select_related('user') to prevent N+1 query crashes!
+        # Also ensuring we only pull Active managers.
+        return Employee.objects.select_related('user').filter(is_manager=True, status='Active')
+    
+# --- Employee Detail / Delete View (by the manager) ---
+class EmployeeDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Handles fetching detail data for the Modal (GET), 
+    deleting an employee (DELETE), and can be used for editing (PUT/PATCH).
+    """
+    queryset = Employee.objects.select_related('user', 'department', 'reports_to').all()
+    serializer_class = EmployeeDetailSerializer
+    permission_classes = [IsAuthenticated] # Ensure only logged-in users can access
+
+    def perform_destroy(self, instance):
+        # Overriding this to ensure that deleting the Employee ALSO deletes the linked Django User
+        user = instance.user
+        instance.delete()
+        user.delete()

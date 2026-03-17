@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django import forms
 from django.utils.html import format_html
-# ADDED: Imported Department here
-from .models import Project, Employee, DailyTask, Department
+# ADDED: Imported DailySubmission as well
+from .models import Project, Employee, DailyTask, Department, DailySubmission
 
 # --- 1. CUSTOM FORM FOR PROJECT ---
 class ProjectForm(forms.ModelForm):
@@ -18,9 +18,12 @@ class ProjectForm(forms.ModelForm):
 class ProjectAdmin(admin.ModelAdmin):
     form = ProjectForm
     
-    list_display = ('name', 'color_display', 'status')
-    search_fields = ('name',)
-    list_filter = ('status',)
+    # UPDATED: Added client_name, acronym, start_date, and end_date to the list view
+    list_display = ('name', 'client_name', 'acronym', 'start_date', 'end_date', 'color_display', 'status')
+    
+    # UPDATED: Added new fields to the search bar and filter sidebar
+    search_fields = ('name', 'client_name', 'acronym')
+    list_filter = ('status', 'color_code')
 
     class Media:
         js = ('admin_colors.js',) 
@@ -35,17 +38,27 @@ class ProjectAdmin(admin.ModelAdmin):
 
 admin.site.register(Project, ProjectAdmin)
 
-# --- 3. DEPARTMENT ADMIN (NEW) ---
-# ADDED: This creates the Department section in the admin panel
+# --- 3. DEPARTMENT ADMIN ---
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ('name', 'created_at')
     search_fields = ('name',)
 
-
 # --- 4. DAILY TASK ADMIN ---
-admin.site.register(DailyTask)
+# UPDATED: Made this a bit more robust so you can easily filter tasks
+@admin.register(DailyTask)
+class DailyTaskAdmin(admin.ModelAdmin):
+    list_display = ('employee', 'project', 'date', 'is_blocker')
+    list_filter = ('is_blocker', 'date', 'project')
+    search_fields = ('employee__user__username', 'content')
 
+# --- 4.5. DAILY SUBMISSION ADMIN (NEW) ---
+# ADDED: This makes it easier to track when people submitted their updates
+@admin.register(DailySubmission)
+class DailySubmissionAdmin(admin.ModelAdmin):
+    list_display = ('employee', 'date', 'meeting_count', 'submitted_at')
+    list_filter = ('date',)
+    search_fields = ('employee__user__username',)
 
 # --- 5. CUSTOM FORM FOR EMPLOYEE CREATION ---
 class EmployeeCreationForm(forms.ModelForm):
@@ -80,6 +93,9 @@ class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('get_username', 'designation', 'department', 'is_manager')
     search_fields = ('user__username', 'user__first_name')
     list_filter = ('is_manager', 'department')
+    
+    # ADDED: This creates a beautiful side-by-side selection box for assigning multiple projects!
+    filter_horizontal = ('projects',)
 
     def get_form(self, request, obj=None, **kwargs):
         if obj is None:

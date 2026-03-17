@@ -104,7 +104,7 @@ const Sidebar = () => {
               <span>Daily Task Updates</span>
             </NavLink>
 
-            <NavLink to="/manager/projects" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/manager/projects-overview" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <ClipboardList size={20} />
               <span>Projects Overview</span>
             </NavLink>

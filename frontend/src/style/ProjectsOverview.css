@@ -1,0 +1,301 @@
+.project-overview-container {
+  padding: 0px;
+  background-color: transparent;
+  min-height: 100vh;
+  font-family: "Figtree", sans-serif !important;
+}
+
+/* --- STANDARD HEADER STYLES --- */
+.page-header {
+  position: relative;
+  background: linear-gradient(90.82deg, #e0eafc 6.42%, #cfdef3 92.16%);
+  border-radius: 16px;
+  padding: 32px 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.page-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+  position: relative;
+  z-index: 10;
+}
+
+.page-header p {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.header-decor {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(80.05deg, rgba(191, 90, 224, 0.4) 19.27%, rgba(168, 17, 218, 0.4) 70.01%);
+  z-index: 1;
+}
+
+.bubble-large {
+  width: 154px;
+  height: 154px;
+  right: 80px;
+  top: 50px;
+}
+
+.bubble-small {
+  width: 77px;
+  height: 77px;
+  right: 450px;
+  top: -30px;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* Inner wrapper to put text on left, button on right */
+.projects-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 10; /* Keep above bubbles */
+  width: 100%;
+}
+
+/* --- BUTTONS --- */
+.add-project-btn {
+  background-color: #1e293b;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-project-btn:hover {
+  background-color: #0f172a;
+}
+
+.add-project-btn-primary {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.add-project-btn-primary:hover {
+  background-color: #2563eb;
+}
+
+/* --- EMPTY STATE --- */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 80px;
+  text-align: center;
+}
+
+.empty-state h3 {
+  color: #0f172a;
+  margin: 16px 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.empty-state p {
+  color: #64748b;
+  margin: 0 0 24px 0;
+  font-size: 14px;
+}
+
+/* --- MODAL OVERLAY BASICS --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 500px;
+}
+
+/* Add Project Button */
+.add-project-button {
+  margin-left: auto; /* Pushes the button to the far right */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0 16px;
+  height: 42px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.add-project-button:hover {
+  background-color: #1d4ed8;
+}
+
+.add-project-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* --- PROJECT FILTER BAR SPECIFICS --- */
+.project-filter-bar {
+  justify-content: flex-start;
+}
+
+/* --- Custom Date Range Picker Menu --- */
+.custom-date-range-menu {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  min-width: 280px;
+  z-index: 100;
+}
+
+/* Stack the Start and End inputs vertically */
+.date-range-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* Style the individual input wrappers */
+.date-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Label text styling */
+.date-input-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+/* Container to hold the input and custom icon together */
+.custom-date-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* The actual date inputs */
+.custom-date-input-wrapper input[type="date"] {
+  width: 100%;
+  background-color: #ffffff;
+  color: #111827;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 10px 36px 10px 12px; /* 36px right padding leaves space for the custom icon */
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  color-scheme: light; /* Forces the light popup */
+}
+
+/* Highlight the border when user clicks the input */
+.custom-date-input-wrapper input[type="date"]:focus {
+  border-color: #111827;
+}
+
+/* Make the ugly default browser calendar icon invisible but stretch it over the input */
+.custom-date-input-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0 !important; /* Hides the native icon completely */
+  cursor: pointer !important;
+  background: transparent;
+}
+
+/* Position your custom icon nicely at the end */
+.input-calendar-icon {
+  position: absolute;
+  right: 12px;
+  pointer-events: none; /* Lets the click pass through to the invisible native input */
+}
+
+/* --- Action Buttons (Clear & Apply) --- */
+.date-range-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+}
+
+.clear-dates-btn {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.clear-dates-btn:hover {
+  color: #111827;
+}
+
+.apply-dates-btn {
+  background-color: #111827;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.apply-dates-btn:hover {
+  background-color: #374151;
+}

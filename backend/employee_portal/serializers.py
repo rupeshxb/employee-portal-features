@@ -18,9 +18,27 @@ class UserSerializer(serializers.ModelSerializer):
 # --- 2. EXISTING SERIALIZERS (UPDATED) ---
 
 class ProjectSerializer(serializers.ModelSerializer):
+    # This is a read-only field we create to send the team size to the frontend
+    team_size = serializers.SerializerMethodField()
+    
     class Meta:
         model = Project
-        fields = '__all__'
+        fields = [
+            'id', 
+            'name', 
+            'client_name', 
+            'acronym', 
+            'description', 
+            'color_code', 
+            'start_date', 
+            'end_date', 
+            'status',
+            'team_size'
+        ]
+
+    def get_team_size(self, obj):
+        # Count how many employees have this project in their 'projects' ManyToMany field
+        return obj.assigned_employees.count()
 
 class EmployeeSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
@@ -159,6 +177,9 @@ class EmployeeOverviewSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     email = serializers.EmailField(source='user.email', read_only=True)
     
+    # NEW: Grab the string name of the department
+    department_name = serializers.CharField(source='department.name', read_only=True)
+    
     # Nested projects for the colored pills
     projects = ProjectPillSerializer(many=True, read_only=True)
     
@@ -169,7 +190,8 @@ class EmployeeOverviewSerializer(serializers.ModelSerializer):
         model = Employee
         fields = [
             'id', 'full_name', 'email', 'avatar', 'phone_number', 
-            'designation', 'status', 'projects', 'reports_to', 'reports_to_name'
+            'designation', 'department_name', 'status', 'projects', 
+            'reports_to', 'reports_to_name', 'date_joined'
         ]
 
     def get_full_name(self, obj):
@@ -179,3 +201,135 @@ class EmployeeOverviewSerializer(serializers.ModelSerializer):
         if obj.reports_to:
             return obj.reports_to.user.get_full_name() or obj.reports_to.user.username
         return "Unassigned"
+    
+    # --- NEW: Manager Dropdown Serializer ---
+class ManagerDropdownSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Employee
+        fields = ['id', 'username', 'full_name']
+
+    def get_full_name(self, obj):
+        # The try/except prevents a 500 crash if the linked User is missing
+        try:
+            full_name = obj.user.get_full_name()
+            return full_name if full_name else obj.user.username
+        except Exception:
+            return "Unknown User"
+
+# --- Employee Detail Serializer (For the Modal) ---
+class EmployeeDetailSerializer(serializers.ModelSerializer):
+    # Notice we removed read_only=True for these three fields so we can accept incoming data
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+    email = serializers.EmailField(source='user.email')
+    
+    username = serializers.CharField(source='user.username', read_only=True)
+    department_name = serializers.CharField(source='department.name', read_only=True)
+    reports_to_name = serializers.SerializerMethodField()
+    date_joined = serializers.SerializerMethodField()
+    
+    # Map frontend 'reporting_manager' to 'reports_to'
+    reporting_manager = serializers.PrimaryKeyRelatedField(
+        queryset=Employee.objects.filter(role='Manager'), 
+        source='reports_to', 
+        required=False, 
+        allow_null=True
+    )
+
+    class Meta:
+        model = Employee
+        fields = [
+            'id', 'first_name', 'last_name', 'email', 'username', 'avatar',
+            'employee_id', 'pan_number', 'personal_email', 'phone_number', 
+            'emergency_contact', 'employment_type', 'status', 'designation', 
+            'department', 'department_name', 'reports_to_name', 'date_joined',
+            'reporting_manager'
+        ]
+
+    def get_reports_to_name(self, obj):
+        if obj.reports_to:
+            return obj.reports_to.user.get_full_name() or obj.reports_to.user.username
+        return "Unassigned"
+
+    def get_date_joined(self, obj):
+        if hasattr(obj, 'joined_date') and obj.joined_date:
+            return obj.joined_date.strftime("%Y-%m-%d") # Format specifically for HTML Date Input
+        return "-"
+
+    # NEW: Override update to catch User model updates
+    def update(self, instance, validated_data):
+        # 1. Pop out User data
+        user_data = validated_data.pop('user', {})
+        user = instance.user
+        
+        # 2. Update User model fields
+        if 'first_name' in user_data:
+            user.first_name = user_data['first_name']
+        if 'last_name' in user_data:
+            user.last_name = user_data['last_name']
+        if 'email' in user_data:
+            user.email = user_data['email']
+        
+        # Note: If you want to handle password changes here, you can intercept `password` 
+        # from the request context and call `user.set_password()`, though it's usually 
+        # handled in a separate endpoint.
+        
+        user.save()
+
+        # 3. Update the rest of the Employee model fields
+        return super().update(instance, validated_data)
+
+class EmployeeCreateSerializer(serializers.ModelSerializer):
+    # 1. Explicitly define User fields so the frontend can send them flatly
+    username = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
+    first_name = serializers.CharField(write_only=True)
+    last_name = serializers.CharField(write_only=True)
+    official_email = serializers.EmailField(write_only=True) # Maps to User.email
+
+    # 2. Map frontend 'reporting_manager' to backend 'reports_to'
+    reporting_manager = serializers.PrimaryKeyRelatedField(
+        queryset=Employee.objects.filter(role='Manager'), 
+        source='reports_to', 
+        required=False, 
+        allow_null=True
+    )
+
+    class Meta:
+        model = Employee
+        fields = [
+            # User Data
+            'username', 'password', 'first_name', 'last_name', 'official_email',
+            
+            # New Form Data (Assuming you added these to your Employee model)
+            'employee_id', 'joined_date', 'pan_number', 'personal_email', 
+            'emergency_contact', 'employment_type', 
+            
+            # Existing Employee Data
+            'designation', 'department', 'phone_number', 'status', 'reporting_manager'
+        ]
+
+    def create(self, validated_data):
+        # 1. Pop out all the User-specific data
+        username = validated_data.pop('username')
+        password = validated_data.pop('password')
+        first_name = validated_data.pop('first_name')
+        last_name = validated_data.pop('last_name')
+        email = validated_data.pop('official_email')
+
+        # 2. Create the User object (create_user automatically hashes the password)
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+            email=email
+        )
+
+        # 3. Create the Employee object with the remaining validated data
+        employee = Employee.objects.create(user=user, **validated_data)
+        
+        return employee

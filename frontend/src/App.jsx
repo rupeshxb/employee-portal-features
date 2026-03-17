@@ -12,6 +12,9 @@ import LoginPage from './components/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ManagerDailyTaskUpdates from './components/ManagerDailyTaskUpdates';
 import EmployeeOverview from './components/EmployeeOverview';
+import ProjectsOverview from './components/ProjectsOverview'; 
+import AddEmployee from './components/AddEmployee';
+import EditEmployee from './components/EditEmployee';
 
 // Import Context
 import { UserProvider, UserContext } from '../src/context/UserContext';
@@ -64,8 +67,13 @@ const AppContent = () => {
                   {/* The actual menu link they use going forward */}
                   <Route path="/manager/daily-tasks" element={<ManagerDailyTaskUpdates />} />
 
+                  <Route path="/manager/projects-overview" element={<ProjectsOverview />} />
+
                   {/* EMPLOYEE OVERVIEW ROUTE */}
                   <Route path="/manager/employee-overview" element={<EmployeeOverview />} />
+
+                  <Route path="/manager/employee-overview/add-employee" element={<AddEmployee />} />
+                  <Route path="/manager/employee-overview/edit/:id" element={<EditEmployee />} />
                 </Route>
 
                 {/* SHARED ZONE */}

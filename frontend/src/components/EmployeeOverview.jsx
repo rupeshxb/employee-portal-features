@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import EmployeeOverviewFilterBar from './EmployeeOverviewFilterBar';
+import EmployeeDetailsModal from './EmployeeDetailsModal'; // <-- NEW IMPORT
 import '../style/EmployeeOverview.css';
-
-// Basic Icons for the table actions
-const PlusIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14" /><path d="M12 5v14" /></svg>;
-const MoreVerticalIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" /></svg>;
-const EyeIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
-const EditIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /></svg>;
-const TrashIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>;
+import { PlusIcon, MoreVerticalIcon, EyeIcon, EditIcon, TrashIcon } from './Icons';
+import { useNavigate } from 'react-router-dom';
 
 const EmployeeOverview = () => {
     // --- State for the reusable Filter Bar ---
@@ -23,11 +19,15 @@ const EmployeeOverview = () => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [openMenuId, setOpenMenuId] = useState(null);
+    const navigate = useNavigate();
 
-    // Get Auth Token (Adjust this depending on if you use 'Token' or 'Bearer')
+    // --- NEW: State for the Details Modal ---
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+
     const token = localStorage.getItem('token');
 
-    // --- 1. FETCH PROJECTS (For Filter Bar Dropdown) ---
+    // --- 1. FETCH PROJECTS ---
     useEffect(() => {
         const fetchProjects = async () => {
             try {
@@ -45,64 +45,50 @@ const EmployeeOverview = () => {
         fetchProjects();
     }, [token]);
 
-    // --- 2. FETCH EMPLOYEES (Runs on mount & whenever filters/page change) ---
-    useEffect(() => {
-        const fetchEmployees = async () => {
-            setLoading(true);
-            try {
-                // Build the dynamic URL query string
-                const queryParams = new URLSearchParams({
-                    page: page,
-                    search: searchTerm,
-                    status: statusFilter === 'All Status' ? 'All' : statusFilter,
-                    project: selectedProject === 'All Projects' ? 'All Projects' : selectedProject,
-                    // Note: 'teamFilter' isn't explicitly handled by Phase 2 backend yet, 
-                    // but we can add it to the URL in case you add backend support later.
-                    team: teamFilter === 'All Team' ? 'All' : teamFilter
-                });
+    // --- 2. FETCH EMPLOYEES ---
+    const fetchEmployees = async () => {
+        setLoading(true);
+        try {
+            const queryParams = new URLSearchParams({
+                page: page,
+                search: searchTerm,
+                status: statusFilter === 'All Status' ? 'All' : statusFilter,
+                project: selectedProject === 'All Projects' ? 'All Projects' : selectedProject,
+                team: teamFilter === 'All Team' ? 'All' : teamFilter
+            });
 
-                const res = await fetch(`/api/manager/employee-overview/?${queryParams.toString()}`, {
-                    headers: {
-                        'Authorization': `Token ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    console.log("EMPLOYEE API RESPONSE:", data);
-
-                    // 1. Check if Django nested it inside results.employees
-                    if (data.results && data.results.employees) {
-                        setEmployees(data.results.employees);
-                    } else {
-                        // Fallback just in case
-                        setEmployees(data.results || data.employees || []);
-                    }
-
-                    // 2. Set total count (Django's paginator automatically provides 'count')
-                    setTotalCount(data.count || data.total_count || 0);
-                } else {
-                    console.error("Failed to fetch employee overview.");
+            const res = await fetch(`/api/manager/employee-overview/?${queryParams.toString()}`, {
+                headers: {
+                    'Authorization': `Token ${token}`,
+                    'Content-Type': 'application/json'
                 }
-            } catch (err) {
-                console.error("Error fetching data:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
+            });
 
-        // Adding a slight debounce to search to prevent API spam while typing
+            if (res.ok) {
+                const data = await res.json();
+                if (data.results && data.results.employees) {
+                    setEmployees(data.results.employees);
+                } else {
+                    setEmployees(data.results || data.employees || []);
+                }
+                setTotalCount(data.count || data.total_count || 0);
+            }
+        } catch (err) {
+            console.error("Error fetching data:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         const timeoutId = setTimeout(() => {
             fetchEmployees();
         }, 300);
-
         return () => clearTimeout(timeoutId);
-
     }, [page, searchTerm, selectedProject, teamFilter, statusFilter, token]);
 
 
-    // --- Action Menu Handlers ---
+    // --- Action Menu UI Handlers ---
     const toggleMenu = (id) => setOpenMenuId(openMenuId === id ? null : id);
 
     useEffect(() => {
@@ -110,6 +96,41 @@ const EmployeeOverview = () => {
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);
+
+    // --- NEW: Action Logic Handlers ---
+    const handleViewDetails = (id) => {
+        setSelectedEmployeeId(id);
+        setIsDetailsModalOpen(true);
+        setOpenMenuId(null); // Close the dropdown menu
+    };
+
+    const handleEditDetails = (id) => {
+        // Navigates to your edit form. Adjust route as necessary!
+        console.log("edit clicked for id:", id);
+        navigate(`/manager/employee-overview/edit/${id}`);
+        setOpenMenuId(null);
+        setIsDetailsModalOpen(false); // Ensure modal is closed if triggered from inside the modal
+    };
+
+    const handleDeleteEmployee = async (id) => {
+        setOpenMenuId(null);
+        if (!window.confirm("Are you sure you want to permanently delete this employee?")) return;
+        
+        try {
+            // Pointing to the new detail endpoint we discussed
+            const res = await fetch(`/api/manager/employees/${id}/`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Token ${token}` }
+            });
+            if (res.ok) {
+                fetchEmployees(); // Refresh the table
+            } else {
+                alert("Failed to delete employee.");
+            }
+        } catch (err) {
+            console.error("Delete error:", err);
+        }
+    };
 
     // --- Render Helpers ---
     const renderProjectPills = (projects) => {
@@ -129,23 +150,21 @@ const EmployeeOverview = () => {
 
     return (
         <div className="employee-overview-page">
-            {/* 1. HEADER BANNER */}
+            {/* ... 1, 2, and 3 (Header, Title, FilterBar) remain exactly the same ... */}
             <div className="overview-header-banner">
                 <div className="banner-content">
                     <h1>Employee Overview</h1>
                     <p>Control employee access, activation status, and account credentials.</p>
                 </div>
-                <button className="btn-add-employee">
+                <button className="btn-add-employee" onClick={() => navigate('/manager/employee-overview/add-employee')}>
                     <PlusIcon /> Add Employee
                 </button>
             </div>
 
-            {/* 2. TITLE */}
             <div className="table-header-title">
                 <h2>Employee <span>(Total {totalCount})</span></h2>
             </div>
 
-            {/* 3. REUSABLE FILTER BAR */}
             <EmployeeOverviewFilterBar
                 searchTerm={searchTerm} setSearchTerm={setSearchTerm}
                 selectedProject={selectedProject} setSelectedProject={setSelectedProject}
@@ -177,7 +196,7 @@ const EmployeeOverview = () => {
                             <tr key={emp.id}>
                                 <td>
                                     <div className="overview-emp-cell">
-                                        <div className="overview-avatar">
+                                        <div className="overview-avatar employee-individual-avatar">
                                             {emp.avatar ? <img src={emp.avatar} alt="avatar" /> : emp.full_name.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="overview-emp-details">
@@ -194,7 +213,7 @@ const EmployeeOverview = () => {
                                         <span className="status-dot"></span> {emp.status || 'Inactive'}
                                     </div>
                                 </td>
-                                <td>{emp.reports_to_name}</td>
+                                <td>{emp.reports_to_name || '-'}</td>
                                 <td className="overview-action-cell">
                                     <button className="action-btn-icon" onClick={(e) => { e.stopPropagation(); toggleMenu(emp.id); }}>
                                         <MoreVerticalIcon />
@@ -202,9 +221,15 @@ const EmployeeOverview = () => {
 
                                     {openMenuId === emp.id && (
                                         <div className="table-action-menu" onClick={(e) => e.stopPropagation()}>
-                                            <button className="menu-item"><EyeIcon /> View Details</button>
-                                            <button className="menu-item"><EditIcon /> Edit Details</button>
-                                            <button className="menu-item text-danger"><TrashIcon /> Delete Employee</button>
+                                            <button className="menu-item" onClick={() => handleViewDetails(emp.id)}>
+                                                <EyeIcon /> View Details
+                                            </button>
+                                            <button className="menu-item" onClick={() => handleEditDetails(emp.id)}>
+                                                <EditIcon /> Edit Details
+                                            </button>
+                                            <button className="menu-item text-danger" onClick={() => handleDeleteEmployee(emp.id)}>
+                                                <TrashIcon /> Delete Employee
+                                            </button>
                                         </div>
                                     )}
                                 </td>
@@ -214,19 +239,24 @@ const EmployeeOverview = () => {
                 </table>
             </div>
 
-            {/* 5. PAGINATION (Static visually, but tied to functional 'page' state) */}
+            {/* 5. PAGINATION */}
             <div className="overview-pagination">
                 <span className="pagination-text">Showing {employees.length} entries of {totalCount} total</span>
                 <div className="pagination-controls">
                     <button className="page-btn text-btn" onClick={() => setPage(1)} disabled={page === 1}>First</button>
                     <button className="page-btn icon-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>&lt;</button>
-
                     <button className="page-btn active">{page}</button>
-                    {/* Real math for max pages would rely on Math.ceil(totalCount / 10) based on Phase 2 pagination */}
-
                     <button className="page-btn icon-btn" onClick={() => setPage(p => p + 1)} disabled={employees.length < 10}>&gt;</button>
                 </div>
             </div>
+
+            {/* 6. MODAL COMPONENT */}
+            <EmployeeDetailsModal 
+                isOpen={isDetailsModalOpen} 
+                onClose={() => setIsDetailsModalOpen(false)} 
+                employeeId={selectedEmployeeId}
+                onEditClick={handleEditDetails}
+            />
         </div>
     );
 };

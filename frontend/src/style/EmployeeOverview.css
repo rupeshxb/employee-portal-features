@@ -116,6 +116,11 @@
     font-weight: 600;
     color: #475569;
 }
+
+.employee-individual-avatar img{
+    width: 100%;
+    border-radius: 50%;
+}
 .overview-emp-details {
     display: flex;
     flex-direction: column;

@@ -1,26 +1,18 @@
 import os
 import sys
-import django
 import random
 from datetime import timedelta
-from django.utils import timezone
 
 # --- 1. PRODUCTION GUARD ---
-# This ensures that even if this file is imported by accident on Render,
-# it will stop immediately and not mess with your production DB.
 if any([os.environ.get('RENDER'), os.environ.get('VERCEL')]):
     print("\n[!] SAFEGUARD: Seed script execution blocked on Production (Render/Vercel).")
-    # We use return if imported, or exit if run directly
-    if __name__ == "__main__":
-        sys.exit(0)
+    sys.exit(0)
 
 # --- 2. DJANGO SETUP ---
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-if BASE_DIR not in sys.path:
-    sys.path.append(BASE_DIR)
-
+# Set up Django environment so we can access models
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings') 
 
+import django
 try:
     django.setup()
     print("--- Django Setup Successful ---")
@@ -29,20 +21,17 @@ except Exception as e:
     sys.exit(1)
 
 # --- 3. SEEDING LOGIC ---
-def seed_db():
-    """
-    Imports are inside the function to prevent 'Table Not Found' 
-    errors during the initial Django migration/deployment phase.
-    """
-    from faker import Faker
-    from django.contrib.auth.models import User
-    # Lazy import models so they don't trigger database queries on startup
-    from employee_portal.models import Department, Project, Employee, DailySubmission, DailyTask
+# Import models *after* django.setup()
+from django.utils import timezone
+from faker import Faker
+from django.contrib.auth.models import User
+from employee_portal.models import Department, Project, Employee, DailySubmission, DailyTask
 
+def seed_db():
     fake = Faker()
 
     # CONFIGURATION
-    KEEP_USERNAMES = ['test_manager', 'rupeshxb', 'b.shakya', 'shashank.a'] 
+    KEEP_USERNAMES = ['test_manager', 'rupeshxb', 'b.shakya', 'shashank.a', 'admin'] # Added 'admin' so it doesn't delete your superuser!
     TECH_ROLES = [
         'Frontend Developer', 'Backend Developer', 'Full Stack Engineer', 
         'DevOps Engineer', 'UI/UX Designer', 'QA Automation Engineer', 
@@ -57,11 +46,13 @@ def seed_db():
 
     print("--- Starting Tech-Focused Database Seed ---")
 
-    # A. Fetch Existing Departments
+    # A. Fetch or Create Departments
     dept_objs = list(Department.objects.all())
     if not dept_objs:
-        print("\n[!] ERROR: No departments found. Please add a Department in Admin first.")
-        return
+        print("--- No departments found. Creating default departments... ---")
+        for d_name in ['Engineering', 'Product Design', 'Quality Assurance', 'Data Science']:
+            d = Department.objects.create(name=d_name)
+            dept_objs.append(d)
     
     # B. Projects
     project_names = ['Cloud Migration', 'Mobile API Redesign', 'Security Audit 2026', 'AI Chatbot Integration']
@@ -117,7 +108,7 @@ def seed_db():
                     date=target_date
                 )
 
-    print("\n--- Success! Populated 20 Tech Users. ---")
+    print("\n--- Success! Populated 20 Tech Users with tasks. ---")
 
 if __name__ == "__main__":
     seed_db()

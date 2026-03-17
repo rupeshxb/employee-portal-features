@@ -28,21 +28,75 @@ class Department(models.Model):
 # --- 3. PROJECT TABLE ---
 class Project(models.Model):
     name = models.CharField(max_length=100)
+    client_name = models.CharField(max_length=100, blank=True, null=True)  
+    acronym = models.CharField(max_length=15, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     
+    # This acts as our "Accent Color" from the Figma design
     color_code = models.CharField(
         max_length=20, 
         default="#3366ff", 
         choices=PROJECT_COLORS 
     )
     
+    start_date = models.DateField(blank=True, null=True)  # NEW
+    end_date = models.DateField(blank=True, null=True)    # NEW
+    
     status = models.CharField(max_length=20, default="Active")
 
     def __str__(self):
         return self.name
 
-# --- 4. EMPLOYEE TABLE ---
+# --- 4. EMPLOYEE MODEL TABLE ---
 class Employee(models.Model):
+    ROLE_CHOICES = (
+        ('Employee', 'Employee'),
+        ('Manager', 'Manager'),
+    )
+    
+    STATUS_CHOICES = (
+        ('Active', 'Active'),
+        ('Inactive', 'Inactive'),
+    )
+
+    # NEW: Choices for the dropdown in React
+    EMPLOYMENT_TYPE_CHOICES = (
+        ('Full-Time', 'Full-Time'),
+        ('Part-Time', 'Part-Time'),
+        ('Contract', 'Contract'),
+        ('Internship', 'Internship'),
+    )
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    
+    # --- NEW FIELDS FROM FRONTEND ---
+    employee_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    employment_type = models.CharField(max_length=20, choices=EMPLOYMENT_TYPE_CHOICES, default='Full-Time')
+    personal_email = models.EmailField(blank=True, null=True)
+    emergency_contact = models.CharField(max_length=20, blank=True, null=True)
+    pan_number = models.CharField(max_length=20, blank=True, null=True)
+    joined_date = models.DateField(null=True, blank=True) # The date from the form
+    # --------------------------------
+    
+    designation = models.CharField(max_length=100)
+    is_manager = models.BooleanField(default=False, help_text="Check this box if the employee is a manager.")
+    
+    department = models.ForeignKey('Department', on_delete=models.SET_NULL, null=True, blank=True, related_name='employees')
+    temp_migration_fix = models.BooleanField(default=False)
+    
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Employee')
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
+    
+    reports_to = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subordinates', limit_choices_to={'role': 'Manager'})
+    projects = models.ManyToManyField('Project', related_name='assigned_employees', blank=True)
+    
+    date_joined = models.DateTimeField(auto_now_add=True) # Internal DB creation time
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+
+    def __str__(self):
+        full_name = self.user.get_full_name()
+        return full_name if full_name else self.user.username
     ROLE_CHOICES = (
         ('Employee', 'Employee'),
         ('Manager', 'Manager'),
