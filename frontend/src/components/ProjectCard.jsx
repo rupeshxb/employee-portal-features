@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import '../style/projectcard.css';
+import '../style/ProjectCard.css';
 
 const ProjectCard = ({ project, onEdit, onDelete }) => {
     const [showMenu, setShowMenu] = useState(false);
