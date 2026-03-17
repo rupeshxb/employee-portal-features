@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import '../style/projectsoverview.css';
+import '../style/ProjectsOverview.css';
 import {
     SearchIcon,
     CalendarIcon,
