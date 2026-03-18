@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../style/AddEmployee.css'; // Reusing the exact same styles
+import { API_BASE_URL } from "../../config";
 
 const EditEmployee = () => {
     const { id } = useParams(); // Get the employee ID from the URL
@@ -38,7 +39,7 @@ const EditEmployee = () => {
         const fetchAllData = async () => {
             try {
                 // 1. Fetch Managers
-                const mgrRes = await fetch('/api/manager/managers-list/', {
+                const mgrRes = await fetch(`${API_BASE_URL}/api/manager/managers-list/`, {
                     headers: { 'Authorization': `Token ${token}` }
                 });
                 if (mgrRes.ok) {
@@ -47,7 +48,7 @@ const EditEmployee = () => {
                 }
 
                 // 2. Fetch Departments
-                const deptRes = await fetch('/api/departments/', {
+                const deptRes = await fetch(`${API_BASE_URL}/api/departments/`, {
                     headers: { 'Authorization': `Token ${token}` }
                 });
                 if (deptRes.ok) {
@@ -56,7 +57,7 @@ const EditEmployee = () => {
                 }
 
                 // 3. Fetch Existing Employee Data
-                const empRes = await fetch(`/api/manager/employees/${id}/`, {
+                const empRes = await fetch(`${API_BASE_URL}/api/manager/employees/${id}/`, {
                     headers: { 'Authorization': `Token ${token}` }
                 });
                 if (empRes.ok) {
@@ -119,7 +120,7 @@ const EditEmployee = () => {
 
         try {
             // Notice this is a PATCH or PUT request to the specific ID
-            const res = await fetch(`/api/manager/employees/${id}/`, {
+            const res = await fetch(`${API_BASE_URL}/api/manager/employees/${id}/`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Token ${token}`,

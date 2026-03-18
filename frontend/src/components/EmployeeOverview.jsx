@@ -4,6 +4,7 @@ import EmployeeDetailsModal from './EmployeeDetailsModal'; // <-- NEW IMPORT
 import '../style/EmployeeOverview.css';
 import { PlusIcon, MoreVerticalIcon, EyeIcon, EditIcon, TrashIcon } from './Icons';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from "../../config";
 
 const EmployeeOverview = () => {
     // --- State for the reusable Filter Bar ---
@@ -31,7 +32,7 @@ const EmployeeOverview = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const res = await fetch('/api/projects/', {
+                const res = await fetch(`${API_BASE_URL}/api/projects/`, {
                     headers: { 'Authorization': `Token ${token}` }
                 });
                 if (res.ok) {
@@ -57,7 +58,7 @@ const EmployeeOverview = () => {
                 team: teamFilter === 'All Team' ? 'All' : teamFilter
             });
 
-            const res = await fetch(`/api/manager/employee-overview/?${queryParams.toString()}`, {
+            const res = await fetch(`${API_BASE_URL}/api/manager/employee-overview/?${queryParams.toString()}`, {
                 headers: {
                     'Authorization': `Token ${token}`,
                     'Content-Type': 'application/json'
@@ -118,7 +119,7 @@ const EmployeeOverview = () => {
         
         try {
             // Pointing to the new detail endpoint we discussed
-            const res = await fetch(`/api/manager/employees/${id}/`, {
+            const res = await fetch(`${API_BASE_URL}/api/manager/employees/${id}/`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Token ${token}` }
             });

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../style/AddEmployee.css';
+import { API_BASE_URL } from "../../config";
 
 const AddEmployee = () => {
     const navigate = useNavigate();
@@ -41,7 +42,7 @@ const AddEmployee = () => {
         const fetchDropdownData = async () => {
             try {
                 // Fetch Managers
-                const mgrRes = await fetch('/api/manager/managers-list/', {
+                const mgrRes = await fetch(`${API_BASE_URL}/api/manager/managers-list/`, {
                     headers: { 'Authorization': `Token ${token}` }
                 });
                 if (mgrRes.ok) {
@@ -50,11 +51,12 @@ const AddEmployee = () => {
                 }
 
                 // Fetch Departments
-                const deptRes = await fetch('/api/departments/', {
+                const deptRes = await fetch(`${API_BASE_URL}/api/departments/`, {
                     headers: { 'Authorization': `Token ${token}` }
                 });
                 if (deptRes.ok) {
                     const deptData = await deptRes.json();
+                    console.log("Departments from Django:", deptData)
                     setDepartments(deptData.results || deptData);
                 }
             } catch (err) {
@@ -85,7 +87,7 @@ const AddEmployee = () => {
         setError('');
 
         try {
-            const res = await fetch('/api/manager/employee-overview/', {
+            const res = await fetch(`${API_BASE_URL}/api/manager/employee-overview/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Token ${token}`,

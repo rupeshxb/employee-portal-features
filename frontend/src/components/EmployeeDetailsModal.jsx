@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../style/EmployeeDetailsModal.css';
+import { API_BASE_URL } from "../../config";
 
 const EmployeeDetailsModal = ({ isOpen, onClose, employeeId, onEditClick }) => {
     const [employeeData, setEmployeeData] = useState(null);
@@ -15,7 +16,7 @@ const EmployeeDetailsModal = ({ isOpen, onClose, employeeId, onEditClick }) => {
         setLoading(true);
         try {
             // This expects the endpoint we created in step 1 of the Django backend setup
-            const response = await fetch(`/api/manager/employees/${employeeId}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/manager/employees/${employeeId}/`, {
                 headers: {
                     'Authorization': `Token ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json'

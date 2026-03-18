@@ -91,9 +91,8 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
             client_name: formData.clientName,     // FIXED: Matches client_name
             color_code: formData.accentColor,     // FIXED: Matches color_code
             acronym: formData.acronym,
-            start_date: formData.startDate,       
-            end_date: formData.endDate,           
-            
+            start_date: formData.startDate || null,       
+            end_date: formData.endDate || null,         
             teamStructure,
             totalTeamSize,
             id: mode === 'edit' ? initialData.id : undefined 
