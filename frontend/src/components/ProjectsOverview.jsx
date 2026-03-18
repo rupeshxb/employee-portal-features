@@ -9,7 +9,6 @@ import ProjectCard from './ProjectCard';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const ProjectsOverview = () => {
-  // 1. Initialize state as an empty array (No more localStorage)
   const [projects, setProjects] = useState([]);
 
   // Modal States
@@ -25,7 +24,7 @@ const ProjectsOverview = () => {
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [teamSizeFilter, setTeamSizeFilter] = useState('All');
 
-  // --- NEW: Fetch projects from Django on page load ---
+  // --- Fetch projects from Django on page load ---
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -56,11 +55,20 @@ const ProjectsOverview = () => {
 
   const handleOpenEditModal = (project) => {
     setModalMode('edit');
-    setSelectedProject(project);
+    // Translate Django's snake_case back to camelCase so ProjectModal can read it!
+    setSelectedProject({
+      ...project,
+      projectName: project.name,
+      clientName: project.client,
+      accentColor: project.accent_color,
+      startDate: project.start_date,
+      endDate: project.end_date,
+      teamStructure: project.team_structure || project.teamStructure,
+    });
     setIsModalOpen(true);
   };
 
-  // --- UPDATED: Save directly to Django Database ---
+  // --- Save directly to Django Database ---
   const handleSaveProject = async (projectData) => {
     try {
       const isAddMode = modalMode === 'add';
@@ -84,10 +92,11 @@ const ProjectsOverview = () => {
 
         if (isAddMode) {
           setProjects([...projects, savedProject]);
-          setNotification(`Project ${savedProject.projectName} added successfully.`);
+          // Notification uses savedProject.name now
+          setNotification(`Project ${savedProject.name} added successfully.`);
         } else {
           setProjects(projects.map(p => p.id === savedProject.id ? savedProject : p));
-          setNotification(`Project ${savedProject.projectName} updated successfully.`);
+          setNotification(`Project ${savedProject.name} updated successfully.`);
         }
 
         setIsModalOpen(false);
@@ -105,7 +114,7 @@ const ProjectsOverview = () => {
     setProjectToDelete(project);
   };
 
-  // --- UPDATED: Delete from Django Database ---
+  // --- Delete from Django Database ---
   const confirmDeleteProject = async () => {
     if (!projectToDelete) return;
 
@@ -118,7 +127,6 @@ const ProjectsOverview = () => {
       });
 
       if (response.ok) {
-        // Remove from the React UI only after the database confirms deletion
         setProjects(projects.filter(p => p.id !== projectToDelete.id));
         setProjectToDelete(null);
         setNotification(`Project deleted successfully.`);
@@ -197,7 +205,8 @@ const ProjectsOverview = () => {
               <h3>Delete Project?</h3>
               <button className="close-icon" onClick={() => setProjectToDelete(null)}>✕</button>
             </div>
-            <p>Are you sure you want to delete project <strong>"{projectToDelete.projectName} {projectToDelete.acronym && `(${projectToDelete.acronym})`}"</strong>? This action cannot be undone afterwards.</p>
+            {/* Modal text uses projectToDelete.name now */}
+            <p>Are you sure you want to delete project <strong>"{projectToDelete.name} {projectToDelete.acronym && `(${projectToDelete.acronym})`}"</strong>? This action cannot be undone afterwards.</p>
             <div className="delete-actions">
               <button className="btn-cancel" onClick={() => setProjectToDelete(null)}>Cancel</button>
               <button className="btn-confirm-delete" onClick={confirmDeleteProject}>Delete</button>

@@ -21,11 +21,15 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
         return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     };
 
+    // Grab team structure, handling both Django's snake_case or React's camelCase
+    const team = project.team_structure || project.teamStructure || {};
+
     return (
-        <div className="project-card" style={{ backgroundColor: project.accentColor }}>
+        <div className="project-card" style={{ backgroundColor: project.accent_color || project.accentColor || '#0FB7FE' }}>
             <div className="card-header">
                 <div className="title-row" ref={menuRef} style={{ position: 'relative' }}>
-                    <h3>{project.projectName} {project.acronym && `(${project.acronym})`}</h3>
+                    {/* Updated to project.name */}
+                    <h3>{project.name} {project.acronym && `(${project.acronym})`}</h3>
 
                     <button className="more-options-btn" onClick={() => setShowMenu(!showMenu)}>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
@@ -47,19 +51,23 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
                 </div>
 
                 <div className="meta-row">
-                    <span className="meta-item">{project.clientName || 'Unknown'}</span>
-                    <span className="meta-item">{formatDate(project.startDate)}</span>
+                    {/* Updated to project.client and project.start_date */}
+                    <span className="meta-item">{project.client || 'Unknown'}</span>
+                    <span className="meta-item">{formatDate(project.start_date)}</span>
                 </div>
             </div>
 
             <div className="card-body">
                 <div className="team-structure-list">
                     <div className="list-title">TEAM STRUCTURE</div>
-                    <div className="list-item"><span>Front-end Developers</span><span>{project.teamStructure?.frontend?.length || '-'}</span></div>
-                    <div className="list-item"><span>Back-end Developers</span><span>{project.teamStructure?.backend?.length || '-'}</span></div>
-                    <div className="list-item"><span>UI/UX Designers</span><span>{project.teamStructure?.uiux?.length || '-'}</span></div>
+                    <div className="list-item"><span>Front-end Developers</span><span>{team.frontend?.length || '-'}</span></div>
+                    <div className="list-item"><span>Back-end Developers</span><span>{team.backend?.length || '-'}</span></div>
+                    <div className="list-item"><span>UI/UX Designers</span><span>{team.uiux?.length || '-'}</span></div>
                 </div>
-                <div className="card-footer-total"><span>Total</span><span className="total-number">{project.totalTeamSize || '-'}</span></div>
+                <div className="card-footer-total">
+                    <span>Total</span>
+                    <span className="total-number">{project.total_team_size || project.totalTeamSize || '-'}</span>
+                </div>
             </div>
         </div>
     );
