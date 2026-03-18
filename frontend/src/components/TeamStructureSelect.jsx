@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import '../style/TeamStructureSelect.css'
 
 const TeamStructureSelect = ({ label, options, selected, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -32,11 +33,18 @@ const TeamStructureSelect = ({ label, options, selected, onChange }) => {
         onChange(selected.filter(item => item.id !== userId));
     };
 
+    // Updated to use full_name based on your JSON
     const filteredOptions = options.filter(user =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase())
+        user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Limit how many tags show in the closed box to prevent it from getting too tall
+    // Helper function for Avatar fallback
+    const getAvatarSrc = (user) => {
+        if (user.avatar) return user.avatar;
+        // Fallback to UI Avatars if null
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&background=random&color=fff`;
+    };
+
     const displayLimit = 4;
     const visibleSelected = selected.slice(0, displayLimit);
     const hiddenCount = selected.length - displayLimit;
@@ -52,8 +60,8 @@ const TeamStructureSelect = ({ label, options, selected, onChange }) => {
                     
                     {visibleSelected.map(user => (
                         <span key={user.id} className="selected-tag">
-                            <img src={user.avatar} alt={user.name} className="tag-avatar" />
-                            <span className="tag-name">{user.name}</span>
+                            <img src={getAvatarSrc(user)} alt={user.full_name} className="tag-avatar" />
+                            <span className="tag-name">{user.full_name}</span>
                             <button className="remove-tag-btn" onClick={(e) => removeOption(e, user.id)}>
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                                     <path d="M9 3L3 9M3 3l6 6"/>
@@ -90,15 +98,16 @@ const TeamStructureSelect = ({ label, options, selected, onChange }) => {
                         />
                     </div>
 
-                    <div className="options-list">
+                    {/* Updated to display results as inline pills */}
+                    <div className="options-list pill-layout">
                         {filteredOptions.map(user => {
                             const isSelected = selected.some(s => s.id === user.id);
-                            if (isSelected) return null; // Hide already selected items from the top list
+                            if (isSelected) return null; 
                             
                             return (
-                                <div key={user.id} className="option-pill" onClick={() => toggleOption(user)}>
-                                    <img src={user.avatar} alt={user.name} className="option-avatar" />
-                                    {user.name}
+                                <div key={user.id} className="search-result-pill" onClick={() => toggleOption(user)}>
+                                    <img src={getAvatarSrc(user)} alt={user.full_name} className="result-avatar" />
+                                    <span className="result-name">{user.full_name}</span>
                                 </div>
                             );
                         })}
@@ -112,8 +121,8 @@ const TeamStructureSelect = ({ label, options, selected, onChange }) => {
                             <div className="selected-tags-container">
                                 {selected.map(user => (
                                     <span key={user.id} className="selected-tag">
-                                        <img src={user.avatar} alt={user.name} className="tag-avatar" />
-                                        <span className="tag-name">{user.name}</span>
+                                        <img src={getAvatarSrc(user)} alt={user.full_name} className="tag-avatar" />
+                                        <span className="tag-name">{user.full_name}</span>
                                         <button className="remove-tag-btn" onClick={(e) => removeOption(e, user.id)}>
                                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                                                 <path d="M9 3L3 9M3 3l6 6"/>

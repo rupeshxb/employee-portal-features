@@ -69,22 +69,33 @@ const ProjectsOverview = () => {
   };
 
   // --- Save directly to Django Database ---
+  // --- Save directly to Django Database ---
   const handleSaveProject = async (projectData) => {
     try {
       const isAddMode = modalMode === 'add';
       const method = isAddMode ? 'POST' : 'PUT';
-      // If adding, hit /api/projects/. If editing, hit /api/projects/{id}/
       const endpoint = isAddMode
         ? `${API_URL}/api/projects/`
         : `${API_URL}/api/projects/${projectData.id}/`;
+
+      // 1. Clean the payload: Only send what Django actually expects
+      const djangoPayload = {
+          name: projectData.name,
+          client_name: projectData.client_name,
+          color_code: projectData.color_code,
+          acronym: projectData.acronym,
+          start_date: projectData.start_date,
+          end_date: projectData.end_date,
+          assigned_employees: projectData.assigned_employees // Array of IDs [1, 2, 5]
+      };
 
       const response = await fetch(endpoint, {
         method: method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `token ${localStorage.getItem('token')}`
+          'Authorization': `token ${localStorage.getItem('token')}` // Matching your existing auth format
         },
-        body: JSON.stringify(projectData)
+        body: JSON.stringify(djangoPayload) // Send the cleaned payload
       });
 
       if (response.ok) {
@@ -92,7 +103,6 @@ const ProjectsOverview = () => {
 
         if (isAddMode) {
           setProjects([...projects, savedProject]);
-          // Notification uses savedProject.name now
           setNotification(`Project ${savedProject.name} added successfully.`);
         } else {
           setProjects(projects.map(p => p.id === savedProject.id ? savedProject : p));
@@ -102,7 +112,8 @@ const ProjectsOverview = () => {
         setIsModalOpen(false);
         setTimeout(() => setNotification(null), 3000);
       } else {
-        console.error("Server rejected the project data");
+        const errorData = await response.json();
+        console.error("Server rejected the project data:", errorData);
       }
     } catch (error) {
       console.error("Network error saving project:", error);

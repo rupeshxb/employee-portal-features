@@ -33,7 +33,8 @@ class ProjectSerializer(serializers.ModelSerializer):
             'start_date', 
             'end_date', 
             'status',
-            'team_size'
+            'team_size',
+            'assigned_employees'
         ]
 
     def get_team_size(self, obj):

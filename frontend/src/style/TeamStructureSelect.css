@@ -1,0 +1,43 @@
+/* ---CSS for Team Structure Search Results --- */
+
+/* Make the options list a flex container so pills wrap nicely */
+.options-list.pill-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Style individual unselected search results like pills */
+.search-result-pill {
+    display: inline-flex;
+    align-items: center;
+    background-color: #F1F5F9; /* Light grey background */
+    border: 1px solid #E2E8F0;
+    border-radius: 20px;
+    padding: 4px 12px 4px 4px; /* Less padding on left for avatar */
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    font-size: 13px;
+    color: #334155;
+}
+
+.search-result-pill:hover {
+    background-color: #E2E8F0;
+    border-color: #CBD5E1;
+}
+
+/* Avatar inside the unselected pill */
+.result-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 8px;
+    object-fit: cover;
+}
+
+.result-name {
+    font-weight: 500;
+}

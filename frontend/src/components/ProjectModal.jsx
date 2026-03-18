@@ -1,23 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import TeamStructureSelect from './TeamStructureSelect';
 import '../style/ProjectsOverview.css';
 import '../style/ProjectModal.css';
-
-// 1. Mock Data defined OUTSIDE the component
-const TEAM_MEMBERS = [
-    { id: 1, name: 'Sachin K.', avatar: 'https://i.pravatar.cc/150?img=11' },
-    { id: 2, name: 'Priyanka R.', avatar: 'https://i.pravatar.cc/150?img=5' },
-    { id: 3, name: 'Jasmine P.', avatar: 'https://i.pravatar.cc/150?img=9' },
-    { id: 4, name: 'Diwakar J.', avatar: 'https://i.pravatar.cc/150?img=12' },
-    { id: 5, name: 'Aisha K.', avatar: 'https://i.pravatar.cc/150?img=20' },
-    { id: 6, name: 'Marco T.', avatar: 'https://i.pravatar.cc/150?img=33' },
-    { id: 7, name: 'Selina P.', avatar: 'https://i.pravatar.cc/150?img=41' },
-    { id: 8, name: 'Haruto Y.', avatar: 'https://i.pravatar.cc/150?img=52' },
-];
+import { API_BASE_URL } from '../../config';
 
 const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = null }) => {
     // Tab State
     const [activeTab, setActiveTab] = useState('details');
+
+    // Dynamic Data States
+    const [departments, setDepartments] = useState([]);
+    const [employees, setEmployees] = useState([]);
+    const [isLoadingData, setIsLoadingData] = useState(false);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -29,40 +24,63 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
         endDate: initialData?.endDate || ''
     });
 
-    // Team Structure State
-    const [teamStructure, setTeamStructure] = useState({
-        frontend: [],
-        backend: [],
-        uiux: [],
-        qa: [],
-        pm: [],
-        ba: []
-    });
+    // Dynamic Team Structure State (Keys will be department IDs)
+    const [teamStructure, setTeamStructure] = useState({});
 
-    // Watch for modal open/close and mode changes to populate data correctly
+    // Watch for modal open/close to fetch real data
     useEffect(() => {
         if (isOpen) {
-            setActiveTab('details'); // Reset to first tab
-            if (mode === 'edit' && initialData) {
-                setFormData({
-                    projectName: initialData.projectName || '',
-                    clientName: initialData.clientName || '',
-                    accentColor: initialData.accentColor || '#0FB7FE',
-                    acronym: initialData.acronym || '',
-                    startDate: initialData.startDate || '',
-                    endDate: initialData.endDate || ''
-                });
-                setTeamStructure(initialData.teamStructure || {
-                    frontend: [], backend: [], uiux: [], qa: [], pm: [], ba: []
-                });
-            } else {
-                // Clear form for 'add' mode
-                setFormData({
-                    projectName: '', clientName: '', accentColor: '#0FB7FE',
-                    acronym: '', startDate: '', endDate: ''
-                });
-                setTeamStructure({ frontend: [], backend: [], uiux: [], qa: [], pm: [], ba: [] });
-            }
+            setActiveTab('details');
+
+            const fetchData = async () => {
+                setIsLoadingData(true);
+                try {
+                    const token = localStorage.getItem('access_token');
+                    const headers = { Authorization: `Bearer ${token}` };
+
+                    // 1. Fetch Departments
+                    const deptRes = await axios.get(`${API_BASE_URL}/api/departments/`, { headers });
+                    const fetchedDepartments = deptRes.data;
+                    setDepartments(fetchedDepartments);
+
+                    // 2. Fetch Employees
+                    const empRes = await axios.get(`${API_BASE_URL}/api/employees/`, { headers });
+                    // Handle pagination wrapper if it exists (based on your JSON structure)
+                    const fetchedEmployees = empRes.data.results?.employees || empRes.data || [];
+                    setEmployees(fetchedEmployees);
+
+                    // 3. Initialize the team structure dictionary based on real departments
+                    const initialTeamState = {};
+                    fetchedDepartments.forEach(dept => {
+                        initialTeamState[dept.id] = [];
+                    });
+
+                    if (mode === 'edit' && initialData) {
+                        setFormData({
+                            projectName: initialData.projectName || '',
+                            clientName: initialData.clientName || '',
+                            accentColor: initialData.accentColor || '#0FB7FE',
+                            acronym: initialData.acronym || '',
+                            startDate: initialData.startDate || '',
+                            endDate: initialData.endDate || ''
+                        });
+                        setTeamStructure(initialData.teamStructure || initialTeamState);
+                    } else {
+                        // Clear form for 'add' mode
+                        setFormData({
+                            projectName: '', clientName: '', accentColor: '#0FB7FE',
+                            acronym: '', startDate: '', endDate: ''
+                        });
+                        setTeamStructure(initialTeamState);
+                    }
+                } catch (error) {
+                    console.error("Error fetching modal data:", error);
+                } finally {
+                    setIsLoadingData(false);
+                }
+            };
+
+            fetchData();
         }
     }, [isOpen, mode, initialData]);
 
@@ -74,38 +92,41 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleTeamChange = (category, selectedUsers) => {
-        setTeamStructure(prev => ({ ...prev, [category]: selectedUsers }));
+    const handleTeamChange = (departmentId, selectedUsers) => {
+        setTeamStructure(prev => ({ ...prev, [departmentId]: selectedUsers }));
     };
 
     // Calculate total team size for the badge
     const totalTeamSize = Object.values(teamStructure).reduce((acc, curr) => acc + curr.length, 0);
 
     const handleSubmit = () => {
-        // Translate React's camelCase state into Django's expected snake_case model fields
+        // Flatten the team members into an array of IDs for Django's ManyToManyField
+        const assignedEmployeeIds = Object.values(teamStructure)
+            .flat()
+            .map(emp => emp.id);
+
         const newProject = {
             ...formData, 
             
             // --- PERFECT MATCH FOR DJANGO ---
-            name: formData.projectName,           
-            client_name: formData.clientName,     // FIXED: Matches client_name
-            color_code: formData.accentColor,     // FIXED: Matches color_code
+            name: formData.projectName,            
+            client_name: formData.clientName,     
+            color_code: formData.accentColor,     
             acronym: formData.acronym,
             start_date: formData.startDate || null,       
-            end_date: formData.endDate || null,         
+            end_date: formData.endDate || null,
+            
+            // Raw structure for frontend reference if needed
             teamStructure,
             totalTeamSize,
+
+            // IMPORTANT: Flattened array of IDs to send to Django!
+            assigned_employees: assignedEmployeeIds, 
+            
             id: mode === 'edit' ? initialData.id : undefined 
         };
-        // Send it back to the main page (which makes the fetch/axios call)
+        
         onSubmit(newProject);
-
-        // Reset the form for the next time it opens
-        setFormData({
-            projectName: '', clientName: '', accentColor: '#0FB7FE',
-            acronym: '', startDate: '', endDate: ''
-        });
-        setTeamStructure({ frontend: [], backend: [], uiux: [], qa: [], pm: [], ba: [] });
     };
 
     return (
@@ -138,6 +159,7 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                     <button
                         className={`tab-btn ${activeTab === 'team' ? 'active' : ''}`}
                         onClick={() => setActiveTab('team')}
+                        disabled={isLoadingData}
                     >
                         Team Structure {totalTeamSize > 0 && <span className="team-badge">{totalTeamSize}</span>}
                     </button>
@@ -184,36 +206,24 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                         </div>
                     ) : (
                         <div className="team-structure-wrapper">
-                            <TeamStructureSelect
-                                label="Front-end Developers"
-                                options={TEAM_MEMBERS}
-                                selected={teamStructure.frontend}
-                                onChange={(users) => handleTeamChange('frontend', users)}
-                            />
-                            <TeamStructureSelect
-                                label="Back-end Developers"
-                                options={TEAM_MEMBERS}
-                                selected={teamStructure.backend}
-                                onChange={(users) => handleTeamChange('backend', users)}
-                            />
-                            <TeamStructureSelect
-                                label="UI/UX"
-                                options={TEAM_MEMBERS}
-                                selected={teamStructure.uiux}
-                                onChange={(users) => handleTeamChange('uiux', users)}
-                            />
-                            <TeamStructureSelect
-                                label="QA"
-                                options={TEAM_MEMBERS}
-                                selected={teamStructure.qa}
-                                onChange={(users) => handleTeamChange('qa', users)}
-                            />
-                            <TeamStructureSelect
-                                label="Project Manager"
-                                options={TEAM_MEMBERS}
-                                selected={teamStructure.pm}
-                                onChange={(users) => handleTeamChange('pm', users)}
-                            />
+                            {isLoadingData ? (
+                                <p style={{ padding: '20px', color: '#64748B' }}>Loading team data...</p>
+                            ) : departments.length > 0 ? (
+                                // Dynamically render a select dropdown for every department from your database
+                                departments.map(dept => (
+                                    <TeamStructureSelect
+                                        key={dept.id}
+                                        label={dept.name}
+                                        options={employees} 
+                                        // Optional: To only show employees that belong to this dept comment the above line, and uncomment the below one
+                                        // options={employees.filter(emp => emp.department_name === dept.name)}
+                                        selected={teamStructure[dept.id] || []}
+                                        onChange={(users) => handleTeamChange(dept.id, users)}
+                                    />
+                                ))
+                            ) : (
+                                <p style={{ padding: '20px', color: '#64748B' }}>No departments found.</p>
+                            )}
                         </div>
                     )}
                 </div>
