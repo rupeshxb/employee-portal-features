@@ -2,21 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-# --- 1. SAFE COLOR PALETTE ---
-PROJECT_COLORS = [
-    ("#FF3B6B", "Noveon Pink"),
-    ("#FF9F2D", "Frillio Orange"),
-    ("#22C55E", "Success Green"),
-    ("#D946EF", "Splendid Purple"),
-    ("#0EA5E9", "Zofund Blue"),
-    ("#06B6D4", "Informatics Cyan"),
-    ("#8B5CF6", "Violet"),
-    ("#EC4899", "Deep Pink"),
-    ("#64748B", "Slate Grey"),      # Safe Neutral
-    ("#F59E0B", "Amber"),           # Darker than yellow, readable with white text
-    ("#3366ff", "Default Blue"),
-]
-
 # --- 2. DEPARTMENT TABLE (NEW) ---
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -35,8 +20,7 @@ class Project(models.Model):
     # This acts as our "Accent Color" from the Figma design
     color_code = models.CharField(
         max_length=20, 
-        default="#3366ff", 
-        choices=PROJECT_COLORS 
+        default="#3366ff"
     )
     
     start_date = models.DateField(blank=True, null=True)  # NEW

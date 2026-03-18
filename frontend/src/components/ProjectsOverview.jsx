@@ -55,14 +55,14 @@ const ProjectsOverview = () => {
 
   const handleOpenEditModal = (project) => {
     setModalMode('edit');
-    // Translate Django's snake_case back to camelCase so ProjectModal can read it!
     setSelectedProject({
       ...project,
       projectName: project.name,
-      clientName: project.client,
-      accentColor: project.accent_color,
+      clientName: project.client_name,     // FIXED
+      accentColor: project.color_code,     // FIXED
       startDate: project.start_date,
       endDate: project.end_date,
+      acronym: project.acronym,
       teamStructure: project.team_structure || project.teamStructure,
     });
     setIsModalOpen(true);

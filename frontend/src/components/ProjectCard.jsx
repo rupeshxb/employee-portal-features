@@ -25,7 +25,7 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
     const team = project.team_structure || project.teamStructure || {};
 
     return (
-        <div className="project-card" style={{ backgroundColor: project.accent_color || project.accentColor || '#0FB7FE' }}>
+        <div className="project-card" style={{ backgroundColor: project.color_code || project.accentColor || '#0FB7FE' }}>
             <div className="card-header">
                 <div className="title-row" ref={menuRef} style={{ position: 'relative' }}>
                     {/* Updated to project.name */}
@@ -52,7 +52,7 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
 
                 <div className="meta-row">
                     {/* Updated to project.client and project.start_date */}
-                    <span className="meta-item">{project.client || 'Unknown'}</span>
+                    <span className="meta-item">{project.client_name || 'Unknown'}</span>
                     <span className="meta-item">{formatDate(project.start_date)}</span>
                 </div>
             </div>
