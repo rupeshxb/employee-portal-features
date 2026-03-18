@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import TeamStructureSelect from './TeamStructureSelect';
 import '../style/ProjectsOverview.css';
 import '../style/ProjectModal.css';
-import { API_BASE_URL } from '../../config';
+
+// Import your new Axios instance instead of standard axios
+import axiosInstance from '../utils/axiosInstance'; 
 
 const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = null }) => {
     // Tab State
@@ -35,16 +36,13 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
             const fetchData = async () => {
                 setIsLoadingData(true);
                 try {
-                    const token = localStorage.getItem('access_token');
-                    const headers = { Authorization: `Bearer ${token}` };
-
-                    // 1. Fetch Departments
-                    const deptRes = await axios.get(`${API_BASE_URL}/api/departments/`, { headers });
+                    // 1. Fetch Departments (Look how clean this is now!)
+                    const deptRes = await axiosInstance.get('/api/departments/');
                     const fetchedDepartments = deptRes.data;
                     setDepartments(fetchedDepartments);
 
                     // 2. Fetch Employees
-                    const empRes = await axios.get(`${API_BASE_URL}/api/employees/`, { headers });
+                    const empRes = await axiosInstance.get('/api/employees/');
                     // Handle pagination wrapper if it exists (based on your JSON structure)
                     const fetchedEmployees = empRes.data.results?.employees || empRes.data || [];
                     setEmployees(fetchedEmployees);
@@ -113,7 +111,7 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
             client_name: formData.clientName,     
             color_code: formData.accentColor,     
             acronym: formData.acronym,
-            start_date: formData.startDate || null,       
+            start_date: formData.startDate || null,        
             end_date: formData.endDate || null,
             
             // Raw structure for frontend reference if needed
