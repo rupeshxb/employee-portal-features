@@ -55,14 +55,18 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
 
                     if (mode === 'edit' && initialData) {
                         setFormData({
-                            projectName: initialData.projectName || '',
-                            clientName: initialData.clientName || '',
-                            accentColor: initialData.accentColor || '#0FB7FE',
+                            projectName: initialData.name || initialData.projectName || '',
+                            clientName: initialData.client_name || initialData.clientName || '',
+                            accentColor: initialData.color_code || initialData.accentColor || '#0FB7FE',
                             acronym: initialData.acronym || '',
-                            startDate: initialData.startDate || '',
-                            endDate: initialData.endDate || ''
+                            startDate: initialData.start_date || initialData.startDate || '',
+                            endDate: initialData.end_date || initialData.endDate || ''
                         });
-                        setTeamStructure(initialData.teamStructure || initialTeamState);
+                        
+                        // NEW: Merge the empty template with the actual assigned employees from Django
+                        const loadedTeam = { ...initialTeamState, ...initialData.assigned_employees_grouped };
+                        setTeamStructure(loadedTeam);
+                        
                     } else {
                         // Clear form for 'add' mode
                         setFormData({

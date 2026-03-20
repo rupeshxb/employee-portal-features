@@ -60,13 +60,25 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
             <div className="card-body">
                 <div className="team-structure-list">
                     <div className="list-title">TEAM STRUCTURE</div>
-                    <div className="list-item"><span>Front-end Developers</span><span>{team.frontend?.length || '-'}</span></div>
-                    <div className="list-item"><span>Back-end Developers</span><span>{team.backend?.length || '-'}</span></div>
-                    <div className="list-item"><span>UI/UX Designers</span><span>{team.uiux?.length || '-'}</span></div>
+                    
+                    {/* Dynamically render the team structure sent from Django */}
+                    {project.team_structure && Object.keys(project.team_structure).length > 0 ? (
+                        Object.entries(project.team_structure).map(([deptName, count]) => (
+                            <div className="list-item" key={deptName}>
+                                <span>{deptName}</span>
+                                <span>{count}</span>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="list-item" style={{ color: '#94a3b8', justifyContent: 'center' }}>
+                            No team assigned yet
+                        </div>
+                    )}
                 </div>
+                
                 <div className="card-footer-total">
                     <span>Total</span>
-                    <span className="total-number">{project.total_team_size || project.totalTeamSize || '-'}</span>
+                    <span className="total-number">{project.team_size || project.total_team_size || '-'}</span>
                 </div>
             </div>
         </div>

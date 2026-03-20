@@ -18,8 +18,13 @@ class UserSerializer(serializers.ModelSerializer):
 # --- 2. EXISTING SERIALIZERS (UPDATED) ---
 
 class ProjectSerializer(serializers.ModelSerializer):
-    # This is a read-only field we create to send the team size to the frontend
     team_size = serializers.SerializerMethodField()
+    
+    # NEW: Calculates counts for the Project Card (e.g., {"Front-end Developers": 4})
+    team_structure = serializers.SerializerMethodField() 
+    
+    # NEW: Groups employee objects by department ID for the Project Modal
+    assigned_employees_grouped = serializers.SerializerMethodField() 
     
     class Meta:
         model = Project
@@ -34,12 +39,36 @@ class ProjectSerializer(serializers.ModelSerializer):
             'end_date', 
             'status',
             'team_size',
+            'team_structure',             # Added
+            'assigned_employees_grouped', # Added
             'assigned_employees'
         ]
 
     def get_team_size(self, obj):
-        # Count how many employees have this project in their 'projects' ManyToMany field
         return obj.assigned_employees.count()
+
+    def get_team_structure(self, obj):
+        breakdown = {}
+        for emp in obj.assigned_employees.all():
+            dept_name = emp.department.name if emp.department else 'Unassigned'
+            breakdown[dept_name] = breakdown.get(dept_name, 0) + 1
+        return breakdown
+
+    def get_assigned_employees_grouped(self, obj):
+        grouped = {}
+        for emp in obj.assigned_employees.all():
+            dept_id = str(emp.department.id) if emp.department else 'unassigned'
+            if dept_id not in grouped:
+                grouped[dept_id] = []
+            
+            # Send back the minimal data needed for your TeamStructureSelect component
+            grouped[dept_id].append({
+                'id': emp.id,
+                'full_name': emp.user.get_full_name() or emp.user.username,
+                'avatar': emp.avatar.url if emp.avatar else None,
+                'designation': emp.designation
+            })
+        return grouped
 
 class EmployeeSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
