@@ -4,7 +4,7 @@ import '../style/ProjectsOverview.css';
 import '../style/ProjectModal.css';
 
 // Import your new Axios instance instead of standard axios
-import axiosInstance from '../utils/axiosInstance'; 
+import axiosInstance from '../utils/axiosInstance';
 
 const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = null }) => {
     // Tab State
@@ -54,19 +54,24 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                     });
 
                     if (mode === 'edit' && initialData) {
+                        // 1. Safe date formatting: Slice at 'T' just in case Django sends a full ISO string
+                        const safeStartDate = (initialData.start_date || initialData.startDate || '').split('T')[0];
+                        const safeEndDate = (initialData.end_date || initialData.endDate || '').split('T')[0];
+
                         setFormData({
                             projectName: initialData.name || initialData.projectName || '',
                             clientName: initialData.client_name || initialData.clientName || '',
                             accentColor: initialData.color_code || initialData.accentColor || '#0FB7FE',
                             acronym: initialData.acronym || '',
-                            startDate: initialData.start_date || initialData.startDate || '',
-                            endDate: initialData.end_date || initialData.endDate || ''
+                            startDate: safeStartDate,
+                            endDate: safeEndDate
                         });
-                        
-                        // NEW: Merge the empty template with the actual assigned employees from Django
-                        const loadedTeam = { ...initialTeamState, ...initialData.assigned_employees_grouped };
+
+                        // 2. FIXED: Use initialData.teamStructure to match what ProjectsOverview sends
+                        const existingTeam = initialData.teamStructure || initialData.team_structure || {};
+                        const loadedTeam = { ...initialTeamState, ...existingTeam };
                         setTeamStructure(loadedTeam);
-                        
+
                     } else {
                         // Clear form for 'add' mode
                         setFormData({
@@ -105,29 +110,29 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
         // Flatten the team members into an array of IDs for Django's ManyToManyField
         const assignedEmployeeIds = Object.values(teamStructure)
             .flat()
-            .map(emp => emp.id);
+            .map(emp => typeof emp === 'object' ? emp.id : emp);
 
         const newProject = {
-            ...formData, 
-            
+            ...formData,
+
             // --- PERFECT MATCH FOR DJANGO ---
-            name: formData.projectName,            
-            client_name: formData.clientName,     
-            color_code: formData.accentColor,     
+            name: formData.projectName,
+            client_name: formData.clientName,
+            color_code: formData.accentColor,
             acronym: formData.acronym,
-            start_date: formData.startDate || null,        
+            start_date: formData.startDate || null,
             end_date: formData.endDate || null,
-            
+
             // Raw structure for frontend reference if needed
             teamStructure,
             totalTeamSize,
 
             // IMPORTANT: Flattened array of IDs to send to Django!
-            assigned_employees: assignedEmployeeIds, 
-            
-            id: mode === 'edit' ? initialData.id : undefined 
+            assigned_employees: assignedEmployeeIds,
+
+            id: mode === 'edit' ? initialData.id : undefined
         };
-        
+
         onSubmit(newProject);
     };
 
@@ -216,7 +221,7 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                                     <TeamStructureSelect
                                         key={dept.id}
                                         label={dept.name}
-                                        options={employees} 
+                                        options={employees}
                                         // Optional: To only show employees that belong to this dept comment the above line, and uncomment the below one
                                         // options={employees.filter(emp => emp.department_name === dept.name)}
                                         selected={teamStructure[dept.id] || []}

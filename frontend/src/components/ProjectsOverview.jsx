@@ -150,6 +150,44 @@ const ProjectsOverview = () => {
     }
   };
 
+  // --- FILTERING LOGIC ---
+  const filteredProjects = projects.filter((project) => {
+    // 1. Search Term Filter (checks project name or acronym)
+    const searchLower = searchTerm.toLowerCase();
+    const matchesSearch = 
+      project.name?.toLowerCase().includes(searchLower) || 
+      project.acronym?.toLowerCase().includes(searchLower) ||
+      project.client_name?.toLowerCase().includes(searchLower);
+
+    // 2. Team Size Filter
+    let matchesTeamSize = true;
+    const teamSize = project.assigned_employees ? project.assigned_employees.length : 0;
+    
+    if (teamSizeFilter === 'Small (1-5)') {
+      matchesTeamSize = teamSize >= 1 && teamSize <= 5;
+    } else if (teamSizeFilter === 'Medium (6-10)') {
+      matchesTeamSize = teamSize >= 6 && teamSize <= 10;
+    } else if (teamSizeFilter === 'Large (10+)') {
+      matchesTeamSize = teamSize > 10;
+    }
+
+    // 3. Date Range Filter (Checks if the project overlaps with the selected range)
+    let matchesDate = true;
+    if (dateRange.start && dateRange.end) {
+      const filterStart = new Date(dateRange.start);
+      const filterEnd = new Date(dateRange.end);
+      const projStart = new Date(project.start_date);
+      const projEnd = new Date(project.end_date);
+
+      // Check for valid dates, then see if the project overlaps with the filter range
+      if (!isNaN(projStart) && !isNaN(projEnd)) {
+        matchesDate = projStart <= filterEnd && projEnd >= filterStart;
+      }
+    }
+
+    return matchesSearch && matchesTeamSize && matchesDate;
+  });
+
   return (
     <div className="project-overview-container" style={{ position: 'relative' }}>
 
@@ -179,6 +217,7 @@ const ProjectsOverview = () => {
         onAddProjectClick={handleOpenAddModal}
       />
 
+      {/* Show empty state if NO projects exist at all, OR if filters hide them all */}
       {projects.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon"><ProjectsOverviewEmptyIcon /></div>
@@ -186,9 +225,19 @@ const ProjectsOverview = () => {
           <p>Projects once added will be shown here.</p>
           <button className="add-project-btn-primary" onClick={handleOpenAddModal}>+ Add Project</button>
         </div>
+      ) : filteredProjects.length === 0 ? (
+        <div className="empty-state">
+          <h3>No matching projects</h3>
+          <p>Try adjusting your search or filters.</p>
+          <button className="add-project-btn-primary" onClick={() => {
+             setSearchTerm(''); 
+             setTeamSizeFilter('All'); 
+             setDateRange({start: '', end: ''});
+          }}>Clear Filters</button>
+        </div>
       ) : (
         <div className="projects-grid">
-          {projects.map((proj) => (
+          {filteredProjects.map((proj) => (
             <ProjectCard
               key={proj.id}
               project={proj}
