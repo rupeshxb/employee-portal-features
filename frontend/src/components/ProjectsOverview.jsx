@@ -11,6 +11,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const ProjectsOverview = () => {
   const [projects, setProjects] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   // Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add');
@@ -27,6 +29,7 @@ const ProjectsOverview = () => {
   // --- Fetch projects from Django on page load ---
   useEffect(() => {
     const fetchProjects = async () => {
+      setIsLoading(true); // Ensure loading is true when we start
       try {
         const response = await fetch(`${API_URL}/api/projects/`, {
           headers: {
@@ -41,6 +44,8 @@ const ProjectsOverview = () => {
         }
       } catch (error) {
         console.error("Network error fetching projects:", error);
+      } finally {
+        setIsLoading(false); // <-- NEW: Stop loading no matter what happens
       }
     };
     fetchProjects();
@@ -80,13 +85,13 @@ const ProjectsOverview = () => {
 
       // 1. Clean the payload: Only send what Django actually expects
       const djangoPayload = {
-          name: projectData.name,
-          client_name: projectData.client_name,
-          color_code: projectData.color_code,
-          acronym: projectData.acronym,
-          start_date: projectData.start_date,
-          end_date: projectData.end_date,
-          assigned_employees: projectData.assigned_employees // Array of IDs [1, 2, 5]
+        name: projectData.name,
+        client_name: projectData.client_name,
+        color_code: projectData.color_code,
+        acronym: projectData.acronym,
+        start_date: projectData.start_date,
+        end_date: projectData.end_date,
+        assigned_employees: projectData.assigned_employees // Array of IDs [1, 2, 5]
       };
 
       const response = await fetch(endpoint, {
@@ -154,15 +159,15 @@ const ProjectsOverview = () => {
   const filteredProjects = projects.filter((project) => {
     // 1. Search Term Filter (checks project name or acronym)
     const searchLower = searchTerm.toLowerCase();
-    const matchesSearch = 
-      project.name?.toLowerCase().includes(searchLower) || 
+    const matchesSearch =
+      project.name?.toLowerCase().includes(searchLower) ||
       project.acronym?.toLowerCase().includes(searchLower) ||
       project.client_name?.toLowerCase().includes(searchLower);
 
     // 2. Team Size Filter
     let matchesTeamSize = true;
     const teamSize = project.assigned_employees ? project.assigned_employees.length : 0;
-    
+
     if (teamSizeFilter === 'Small (1-5)') {
       matchesTeamSize = teamSize >= 1 && teamSize <= 5;
     } else if (teamSizeFilter === 'Medium (6-10)') {
@@ -198,6 +203,7 @@ const ProjectsOverview = () => {
         </div>
       )}
 
+      {/* Header renders immediately */}
       <div className="page-header">
         <div className="header-decor bubble-small"></div>
         <div className="header-decor bubble-large"></div>
@@ -210,6 +216,7 @@ const ProjectsOverview = () => {
         </div>
       </div>
 
+      {/* Filters render immediately */}
       <ProjectsOverviewFilterBar
         searchTerm={searchTerm} setSearchTerm={setSearchTerm}
         dateRange={dateRange} setDateRange={setDateRange}
@@ -217,8 +224,12 @@ const ProjectsOverview = () => {
         onAddProjectClick={handleOpenAddModal}
       />
 
-      {/* Show empty state if NO projects exist at all, OR if filters hide them all */}
-      {projects.length === 0 ? (
+      {/* --- LOADING & PROJECTS DISPLAY AREA --- */}
+      {isLoading ? (
+        <div className="empty-state" style={{ marginTop: '60px' }}>
+          <div className="custom-spinner"></div>
+        </div>
+      ) : projects.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon"><ProjectsOverviewEmptyIcon /></div>
           <h3>No projects added yet!</h3>
@@ -230,9 +241,9 @@ const ProjectsOverview = () => {
           <h3>No matching projects</h3>
           <p>Try adjusting your search or filters.</p>
           <button className="add-project-btn-primary" onClick={() => {
-             setSearchTerm(''); 
-             setTeamSizeFilter('All'); 
-             setDateRange({start: '', end: ''});
+            setSearchTerm('');
+            setTeamSizeFilter('All');
+            setDateRange({ start: '', end: '' });
           }}>Clear Filters</button>
         </div>
       ) : (
@@ -265,7 +276,6 @@ const ProjectsOverview = () => {
               <h3>Delete Project?</h3>
               <button className="close-icon" onClick={() => setProjectToDelete(null)}>✕</button>
             </div>
-            {/* Modal text uses projectToDelete.name now */}
             <p>Are you sure you want to delete project <strong>"{projectToDelete.name} {projectToDelete.acronym && `(${projectToDelete.acronym})`}"</strong>? This action cannot be undone afterwards.</p>
             <div className="delete-actions">
               <button className="btn-cancel" onClick={() => setProjectToDelete(null)}>Cancel</button>
@@ -274,9 +284,7 @@ const ProjectsOverview = () => {
           </div>
         </div>
       )}
-
     </div>
   );
-};
 
-export default ProjectsOverview;
+  export default ProjectsOverview;

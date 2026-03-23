@@ -116,7 +116,7 @@ const EmployeeOverview = () => {
     const handleDeleteEmployee = async (id) => {
         setOpenMenuId(null);
         if (!window.confirm("Are you sure you want to permanently delete this employee?")) return;
-        
+
         try {
             // Pointing to the new detail endpoint we discussed
             const res = await fetch(`${API_BASE_URL}/api/manager/employees/${id}/`, {
@@ -190,7 +190,11 @@ const EmployeeOverview = () => {
                     </thead>
                     <tbody>
                         {loading ? (
-                            <tr><td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>Loading...</td></tr>
+                            <tr>
+                                <td colSpan="7" style={{ textAlign: 'center', padding: '4rem 0' }}>
+                                    <div className="custom-spinner"></div>
+                                </td>
+                            </tr>
                         ) : employees.length === 0 ? (
                             <tr><td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>No employees found.</td></tr>
                         ) : employees.map((emp) => (
@@ -252,9 +256,9 @@ const EmployeeOverview = () => {
             </div>
 
             {/* 6. MODAL COMPONENT */}
-            <EmployeeDetailsModal 
-                isOpen={isDetailsModalOpen} 
-                onClose={() => setIsDetailsModalOpen(false)} 
+            <EmployeeDetailsModal
+                isOpen={isDetailsModalOpen}
+                onClose={() => setIsDetailsModalOpen(false)}
                 employeeId={selectedEmployeeId}
                 onEditClick={handleEditDetails}
             />
