@@ -22,7 +22,7 @@ const ManagerDailyTaskUpdates = () => {
     // Filter States
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedProject, setSelectedProject] = useState('All Projects');
-    const [dateFilter, setDateFilter] = useState('Today');
+    const [dateFilter, setDateFilter] = useState('Date');
     const [customDate, setCustomDate] = useState(new Date().toISOString().split('T')[0]);
     const [timeFilter, setTimeFilter] = useState('Time');
 
