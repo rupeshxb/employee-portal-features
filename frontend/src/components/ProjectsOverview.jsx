@@ -286,5 +286,6 @@ const ProjectsOverview = () => {
       )}
     </div>
   );
+};
 
-  export default ProjectsOverview;
+export default ProjectsOverview;
