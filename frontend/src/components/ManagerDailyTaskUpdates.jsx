@@ -194,14 +194,19 @@ const ManagerDailyTaskUpdates = () => {
             />
 
             <div className="manager-daily-update-employee-card employee-cards-grid">
-                {filteredEmployees.length > 0 ? (
+                {loading ? (
+                    <div className="loading-container">
+                        <div className="spinner"></div>
+                        <span>Loading team updates...</span>
+                    </div>
+                ) : filteredEmployees.length > 0 ? (
                     filteredEmployees.map(emp => (
                         <EmployeeCard key={emp.id} emp={emp} variant="manager" />
                     ))
                 ) : (
-                    <p style={{ color: '#64748b', marginTop: '20px' }}>
-                        {loading ? 'Loading tasks...' : 'No employees found for this filter.'}
-                    </p>
+                    <div className="empty-state-message">
+                        No employees found for this filter.
+                    </div>
                 )}
             </div>
         </div>

@@ -1,3 +1,4 @@
+from django.db.models import Q, Prefetch
 from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -9,7 +10,6 @@ from django.contrib.auth import authenticate
 from django.utils.dateparse import parse_date
 from django.utils import timezone
 from datetime import timedelta, date
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from .serializers import DepartmentSerializer
@@ -185,7 +185,6 @@ def team_updates(request):
     return Response(response_data)
 
 
-#--- 3. TEAM UPDATES VIEW (MANAGERS) ---
 class ManagerTeamUpdatesView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -223,7 +222,26 @@ class ManagerTeamUpdatesView(APIView):
         search_query = request.query_params.get('search', '')
         project_filter = request.query_params.get('project', 'All Projects')
 
+        # =====================================================================
+        # PREFETCHING: Fetch all required related data upfront (Kills N+1)
+        # =====================================================================
+        
+        # Prefetch tasks and their linked projects
+        tasks_qs = DailyTask.objects.select_related('project').order_by('-date', '-created_at')
+        if project_filter != 'All Projects':
+            tasks_qs = tasks_qs.filter(project__name__iexact=project_filter)
+
+        # Prefetch submissions for the target date
+        submissions_qs = DailySubmission.objects.filter(date=target_date)
+
+        # Base employee query with select_related for the user
         employees = Employee.objects.select_related('user').filter(role='Employee')
+
+        # Apply prefetches
+        employees = employees.prefetch_related(
+            Prefetch('dailytask_set', queryset=tasks_qs, to_attr='prefetched_tasks'),
+            Prefetch('daily_submissions', queryset=submissions_qs, to_attr='prefetched_target_submissions')
+        )
 
         if department_filter and department_filter.lower() != 'all':
             employees = employees.filter(department__name__iexact=department_filter)
@@ -240,9 +258,12 @@ class ManagerTeamUpdatesView(APIView):
         formatted_employees = []
 
         for emp in employees:
-            # Submission logic remains exactly the same
-            submission = DailySubmission.objects.filter(employee=emp, date=target_date).first()
-            latest_task = DailyTask.objects.filter(employee=emp, date=target_date).order_by('-created_at').first()
+            # Retrieve from our prefetched cache instead of querying the DB!
+            submission = emp.prefetched_target_submissions[0] if emp.prefetched_target_submissions else None
+            emp_tasks = emp.prefetched_tasks
+            
+            # Find the latest task for the target date from our cached list
+            latest_task = next((t for t in emp_tasks if t.date == target_date), None)
             
             if time_filter == 'not_submitted' and (submission is not None or latest_task is not None):
                 continue 
@@ -260,43 +281,35 @@ class ManagerTeamUpdatesView(APIView):
             elif time_filter in ['before_10', 'after_10']:
                 continue 
 
-            # NEW TASK FETCHING LOGIC: Order by date and created_at (latest first)
-            tasks_query = DailyTask.objects.filter(employee=emp).order_by('-date', '-created_at')
-            
-            if project_filter != 'All Projects':
-                tasks_query = tasks_query.filter(project__name__iexact=project_filter)
+            # Create buckets in fast Python memory
+            today_tasks, yesterday_tasks, previous_tasks, blockers = [], [], [], []
 
             # Dynamic Bucketing based on what the user requested
-            if date_str in ['all', '']:
-                today_tasks = tasks_query.filter(date=real_today, is_blocker=False)
-                yesterday_tasks = tasks_query.filter(date=real_yesterday, is_blocker=False)
-                previous_tasks = tasks_query.exclude(date__in=[real_today, real_yesterday]).filter(is_blocker=False)
-                blockers = tasks_query.filter(is_blocker=True)
-            elif date_str == 'today':
-                today_tasks = tasks_query.filter(date=real_today, is_blocker=False)
-                yesterday_tasks = tasks_query.none()
-                previous_tasks = tasks_query.none()
-                blockers = tasks_query.filter(date=real_today, is_blocker=True)
-            elif date_str == 'yesterday':
-                today_tasks = tasks_query.none()
-                yesterday_tasks = tasks_query.filter(date=real_yesterday, is_blocker=False)
-                previous_tasks = tasks_query.none()
-                blockers = tasks_query.filter(date=real_yesterday, is_blocker=True)
-            else:
-                today_tasks = tasks_query.none()
-                yesterday_tasks = tasks_query.none()
-                previous_tasks = tasks_query.filter(date=target_date, is_blocker=False)
-                blockers = tasks_query.filter(date=target_date, is_blocker=True)
-            
+            for t in emp_tasks:
+                if date_str in ['all', '']:
+                    if t.is_blocker: blockers.append(t)
+                    elif t.date == real_today: today_tasks.append(t)
+                    elif t.date == real_yesterday: yesterday_tasks.append(t)
+                    else: previous_tasks.append(t)
+                elif date_str == 'today':
+                    if t.date == real_today and t.is_blocker: blockers.append(t)
+                    elif t.date == real_today and not t.is_blocker: today_tasks.append(t)
+                elif date_str == 'yesterday':
+                    if t.date == real_yesterday and t.is_blocker: blockers.append(t)
+                    elif t.date == real_yesterday and not t.is_blocker: yesterday_tasks.append(t)
+                else:
+                    if t.date == target_date and t.is_blocker: blockers.append(t)
+                    elif t.date == target_date and not t.is_blocker: previous_tasks.append(t)
+
             submitted_time_iso = actual_submit_time.isoformat() if actual_submit_time else None
 
             emp_data = TeamUpdateEmployeeSerializer(emp).data
             
             emp_data['submittedTime'] = submitted_time_iso
             emp_data['meetings'] = submission.meeting_count if submission else 0
-            emp_data['blockers'] = blockers.count()
+            emp_data['blockers'] = len(blockers)  # Used len() since it's now a Python list
             
-            # Fill the buckets for React
+            # Fill the buckets for React (Serializers accept lists just like querysets)
             emp_data['tasks'] = {
                 'today': DailyTaskSerializer(today_tasks, many=True).data,
                 'yesterday': DailyTaskSerializer(yesterday_tasks, many=True).data,
@@ -330,7 +343,7 @@ class ManagerTeamUpdatesView(APIView):
             "total_in_department": total_in_department,
             "employees": final_employees_list
         })
-        
+
 # --- 4. AUTHENTICATION VIEWS (UPDATED) ---
 class CustomLoginView(APIView):
     permission_classes = [AllowAny]
