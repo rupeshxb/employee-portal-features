@@ -18,14 +18,12 @@ const AlertIcon = () => (
 // --- SUB-COMPONENTS ---
 const TaskItem = ({ task }) => (
     <div className="update-item">
-        <div style={{ minWidth: 'fit-content' }}>
-            <span
-                className="mini-tag"
-                style={{ backgroundColor: task.project_details?.color_code || '#9CA3AF' }}
-            >
-                {task.project_details?.name || 'No Project'}
-            </span>
-        </div>
+        <span
+            className="mini-tag"
+            style={{ backgroundColor: task.project_details?.color_code || '#9CA3AF' }}
+        >
+            {task.project_details?.name || 'No Project'}
+        </span>
         <span>{task.content}</span>
     </div>
 );
@@ -36,14 +34,12 @@ const BlockerItem = ({ task }) => (
             <BlockerAlertIcon />
         </div>
         <div className="blocker-content">
-            <div style={{ minWidth: 'fit-content', marginBottom: '6px' }}>
-                <span
-                    className="mini-tag"
-                    style={{ backgroundColor: task.project_details?.color_code || '#FF493F' }}
-                >
-                    {task.project_details?.name || 'No Project'}
-                </span>
-            </div>
+            <span
+                className="mini-tag"
+                style={{ backgroundColor: task.project_details?.color_code || '#FF493F' }}
+            >
+                {task.project_details?.name || 'No Project'}
+            </span>
             <span>{task.content}</span>
         </div>
     </div>
