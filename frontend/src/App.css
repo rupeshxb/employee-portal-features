@@ -1108,6 +1108,10 @@ svg {
   gap: 1.5rem;
 }
 
+.login-form .input-wrapper input{
+  padding: 14px 16px 14px 48px !important;
+}
+
 .input-group label {
   display: block;
   font-size: 0.875rem;
@@ -1410,7 +1414,8 @@ svg {
   margin: 0 0 1.5rem 0;
   color: #334155;
   border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 1rem;
+  padding-bottom: 0;
+  font-family: Figtree;
 }
 
 /* =========================================

@@ -195,9 +195,17 @@
     margin: 0;
 }
 
+/* Apply this to the wrappers for Designation, Password, and the Button */
+.designation-wrapper, 
+.password-wrapper, 
+.action-row {
+    grid-column: span 2; /* Forces these elements to take up both columns */
+}
+
 /* --- Form Styles --- */
 .form-grid {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     flex-direction: column;
     gap: 24px;
 }
@@ -217,8 +225,10 @@
     color: #334155;
 }
 .text-input {
+    width: 100%;
+    box-sizing: border-box; 
     height: 52px;
-    background: #f8fafc;
+    background: #F6F7FB !important;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: 0 16px;
@@ -515,6 +525,12 @@
     border: 2px solid white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     margin-top: -6px; /* Centers thumb on the 6px track */
+}
+
+.action-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px; /* Optional: adds a bit of extra space above the button */
 }
 
 /* Firefox support */

@@ -224,28 +224,35 @@ const Settings = () => {
                     <div className="panel-header"><h3>Account & Security</h3></div>
                     <div className="panel-body">
                         <div className="form-grid">
-                            <div className="form-row">
-                                <div className="input-group">
-                                    <label>First Name</label>
-                                    <input type="text" className="text-input" value={profile.first_name || ''} onChange={e => setProfile({ ...profile, first_name: e.target.value })} />
-                                </div>
-                                <div className="input-group">
-                                    <label>Last Name</label>
-                                    <input type="text" className="text-input" value={profile.last_name || ''} onChange={e => setProfile({ ...profile, last_name: e.target.value })} />
-                                </div>
+                            {/* Row 1: Direct children, they will naturally take Col 1 and Col 2 */}
+                            <div className="input-group">
+                                <label>First Name</label>
+                                <input type="text" className="text-input" value={profile.first_name || ''} onChange={e => setProfile({ ...profile, first_name: e.target.value })} />
                             </div>
                             <div className="input-group">
+                                <label>Last Name</label>
+                                <input type="text" className="text-input" value={profile.last_name || ''} onChange={e => setProfile({ ...profile, last_name: e.target.value })} />
+                            </div>
+
+                            {/* Row 2: Designation. Adding 'designation-wrapper' triggers your 'grid-column: span 2' CSS */}
+                            <div className="input-group designation-wrapper">
                                 <label>Designation</label>
                                 <input type="text" className="text-input disabled" value={profile.designation || ''} disabled />
                             </div>
-                            <div className="input-group">
+
+                            {/* Row 3: Password. We use an inline style to span 2 columns here so we don't break the relative positioning of your inner password-wrapper! */}
+                            <div className="input-group" style={{ gridColumn: 'span 2' }}>
                                 <label>Password</label>
                                 <div className="password-wrapper">
                                     <div className="text-input password-dots">••••••••••••••••••••</div>
                                     <button className="edit-password-btn" onClick={() => setIsPasswordModalOpen(true)}><Edit2 size={16} /> Edit</button>
                                 </div>
                             </div>
-                            <div className="action-row"><button className="save-btn" onClick={handleTextSave}>Save Details</button></div>
+
+                            {/* Row 4: Action Row. Your CSS already sets this to span 2 columns and align to the right */}
+                            <div className="action-row">
+                                <button className="save-btn" onClick={handleTextSave}>Save Details</button>
+                            </div>
                         </div>
                     </div>
                 </div>
