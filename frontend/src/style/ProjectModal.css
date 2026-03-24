@@ -317,3 +317,28 @@
   display: block; /* Removes default inline baseline spacing that causes bottom-alignment */
   margin: 0;
 }
+
+/* --- Validation & Errors --- */
+.required-asterisk {
+    color: #EF4444; /* Red asterisk */
+    margin-left: 2px;
+}
+
+.optional-text {
+    color: #94A3B8;
+    font-weight: 400;
+    margin-left: 4px;
+}
+
+.input-error {
+    border-color: #EF4444 !important; /* Forces red border on invalid input */
+    background-color: #FEF2F2 !important; /* Very faint red background */
+}
+
+.error-text {
+    display: block;
+    color: #EF4444;
+    font-size: 12px;
+    margin-top: 6px;
+    font-weight: 500;
+}

@@ -3,7 +3,6 @@ import TeamStructureSelect from './TeamStructureSelect';
 import '../style/ProjectsOverview.css';
 import '../style/ProjectModal.css';
 
-// Import your new Axios instance instead of standard axios
 import axiosInstance from '../utils/axiosInstance';
 
 const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = null }) => {
@@ -15,46 +14,41 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
     const [employees, setEmployees] = useState([]);
     const [isLoadingData, setIsLoadingData] = useState(false);
 
-    // Form State
+    // Form & Error State
     const [formData, setFormData] = useState({
-        projectName: initialData?.projectName || '',
-        clientName: initialData?.clientName || '',
-        accentColor: initialData?.accentColor || '#0FB7FE',
-        acronym: initialData?.acronym || '',
-        startDate: initialData?.startDate || '',
-        endDate: initialData?.endDate || ''
+        projectName: '',
+        clientName: '',
+        accentColor: '#0FB7FE',
+        acronym: '',
+        startDate: '',
+        endDate: ''
     });
+    const [errors, setErrors] = useState({}); // Tracks which fields are missing
 
-    // Dynamic Team Structure State (Keys will be department IDs)
     const [teamStructure, setTeamStructure] = useState({});
 
-    // Watch for modal open/close to fetch real data
     useEffect(() => {
         if (isOpen) {
             setActiveTab('details');
+            setErrors({}); // Clear any old errors on open
 
             const fetchData = async () => {
                 setIsLoadingData(true);
                 try {
-                    // 1. Fetch Departments (Look how clean this is now!)
                     const deptRes = await axiosInstance.get('/api/departments/');
                     const fetchedDepartments = deptRes.data;
                     setDepartments(fetchedDepartments);
 
-                    // 2. Fetch Employees
                     const empRes = await axiosInstance.get('/api/employees/');
-                    // Handle pagination wrapper if it exists (based on your JSON structure)
                     const fetchedEmployees = empRes.data.results?.employees || empRes.data || [];
                     setEmployees(fetchedEmployees);
 
-                    // 3. Initialize the team structure dictionary based on real departments
                     const initialTeamState = {};
                     fetchedDepartments.forEach(dept => {
                         initialTeamState[dept.id] = [];
                     });
 
                     if (mode === 'edit' && initialData) {
-                        // 1. Safe date formatting: Slice at 'T' just in case Django sends a full ISO string
                         const safeStartDate = (initialData.start_date || initialData.startDate || '').split('T')[0];
                         const safeEndDate = (initialData.end_date || initialData.endDate || '').split('T')[0];
 
@@ -67,13 +61,11 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                             endDate: safeEndDate
                         });
 
-                        // 2. FIXED: Use initialData.teamStructure to match what ProjectsOverview sends
                         const existingTeam = initialData.teamStructure || initialData.team_structure || {};
                         const loadedTeam = { ...initialTeamState, ...existingTeam };
                         setTeamStructure(loadedTeam);
 
                     } else {
-                        // Clear form for 'add' mode
                         setFormData({
                             projectName: '', clientName: '', accentColor: '#0FB7FE',
                             acronym: '', startDate: '', endDate: ''
@@ -93,43 +85,58 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
 
     if (!isOpen) return null;
 
-    // Handlers
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+        
+        // If user starts typing, remove the error for that specific field
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
+        }
     };
 
     const handleTeamChange = (departmentId, selectedUsers) => {
         setTeamStructure(prev => ({ ...prev, [departmentId]: selectedUsers }));
     };
 
-    // Calculate total team size for the badge
     const totalTeamSize = Object.values(teamStructure).reduce((acc, curr) => acc + curr.length, 0);
 
     const handleSubmit = () => {
-        // Flatten the team members into an array of IDs for Django's ManyToManyField
+        // --- 1. VALIDATION CHECK ---
+        const newErrors = {};
+        if (!formData.projectName.trim()) newErrors.projectName = "Project name is required.";
+        if (!formData.clientName.trim()) newErrors.clientName = "Client name is required.";
+        if (!formData.startDate) newErrors.startDate = "Start date is required.";
+        if (!formData.endDate) newErrors.endDate = "End date is required.";
+        
+        // Optional logic: Check if end date is before start date
+        if (formData.startDate && formData.endDate && formData.startDate > formData.endDate) {
+            newErrors.endDate = "End date cannot be before start date.";
+        }
+
+        // --- 2. HANDLE VALIDATION FAILURE ---
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            setActiveTab('details'); // Force switch to details tab to show the errors!
+            return; // STOP execution here, do not submit!
+        }
+
+        // --- 3. PROCEED WITH SUBMISSION ---
         const assignedEmployeeIds = Object.values(teamStructure)
             .flat()
             .map(emp => typeof emp === 'object' ? emp.id : emp);
 
         const newProject = {
             ...formData,
-
-            // --- PERFECT MATCH FOR DJANGO ---
             name: formData.projectName,
             client_name: formData.clientName,
             color_code: formData.accentColor,
             acronym: formData.acronym,
             start_date: formData.startDate || null,
             end_date: formData.endDate || null,
-
-            // Raw structure for frontend reference if needed
             teamStructure,
             totalTeamSize,
-
-            // IMPORTANT: Flattened array of IDs to send to Django!
             assigned_employees: assignedEmployeeIds,
-
             id: mode === 'edit' ? initialData.id : undefined
         };
 
@@ -148,7 +155,7 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                             ? 'Add new project by defining its basic details, start date.'
                             : 'Edit & update project details, timelines and team structure.'}</p>
                     </div>
-                    <button className="close-modal-btn" onClick={onClose}>
+                    <button type="button" className="close-modal-btn" onClick={onClose}>
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M18 6L6 18M6 6l12 12" />
                         </svg>
@@ -158,17 +165,18 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                 {/* Tabs */}
                 <div className="modal-tabs">
                     <button
+                        type="button"
                         className={`tab-btn ${activeTab === 'details' ? 'active' : ''}`}
                         onClick={() => setActiveTab('details')}
                     >
                         Project Details
                     </button>
                     <button
+                        type="button"
                         className={`tab-btn ${activeTab === 'team' ? 'active' : ''}`}
                         onClick={() => setActiveTab('team')}
                         disabled={isLoadingData}
                     >
-                        {/* CHANGED: Removed totalTeamSize > 0 check so it always shows, even if 0 */}
                         Team Structure <span className="team-badge">{totalTeamSize}</span>
                     </button>
                 </div>
@@ -178,18 +186,33 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                     {activeTab === 'details' ? (
                         <div className="form-grid">
                             <div className="form-group full-width">
-                                <label>Project Name</label>
-                                <input type="text" name="projectName" placeholder="Enter project name" value={formData.projectName} onChange={handleInputChange} />
+                                <label>Project Name <span className="required-asterisk">*</span></label>
+                                <input 
+                                    type="text" 
+                                    name="projectName" 
+                                    placeholder="Enter project name" 
+                                    value={formData.projectName} 
+                                    onChange={handleInputChange} 
+                                    className={errors.projectName ? 'input-error' : ''}
+                                />
+                                {errors.projectName && <span className="error-text">{errors.projectName}</span>}
                             </div>
 
                             <div className="form-group full-width">
-                                <label>Client/Company Name</label>
-                                <input type="text" name="clientName" placeholder="Enter client/company name" value={formData.clientName} onChange={handleInputChange} />
+                                <label>Client/Company Name <span className="required-asterisk">*</span></label>
+                                <input 
+                                    type="text" 
+                                    name="clientName" 
+                                    placeholder="Enter client/company name" 
+                                    value={formData.clientName} 
+                                    onChange={handleInputChange} 
+                                    className={errors.clientName ? 'input-error' : ''}
+                                />
+                                {errors.clientName && <span className="error-text">{errors.clientName}</span>}
                             </div>
 
                             <div className="form-group full-width">
-                                <label>Accent Color</label>
-                                {/* CHANGED: Restructured to separate the color block and the text input */}
+                                <label>Accent Color <span className="required-asterisk">*</span></label>
                                 <div className="color-input-container">
                                     <div className="color-box" style={{ backgroundColor: formData.accentColor }}>
                                         <input type="color" name="accentColor" value={formData.accentColor} onChange={handleInputChange} />
@@ -199,15 +222,20 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                             </div>
 
                             <div className="form-group full-width">
-                                <label>Project Acronym (optional)</label>
+                                <label>Project Acronym <span className="optional-text">(optional)</span></label>
                                 <input type="text" name="acronym" placeholder="e.g., MUS" value={formData.acronym} onChange={handleInputChange} />
                             </div>
 
                             <div className="form-group half-width">
-                                <label>Start Date</label>
-                                {/* CHANGED: Added wrapper and custom SVG icon */}
+                                <label>Start Date <span className="required-asterisk">*</span></label>
                                 <div className="date-input-wrapper">
-                                    <input type="date" name="startDate" value={formData.startDate} onChange={handleInputChange} />
+                                    <input 
+                                        type="date" 
+                                        name="startDate" 
+                                        value={formData.startDate} 
+                                        onChange={handleInputChange} 
+                                        className={errors.startDate ? 'input-error' : ''}
+                                    />
                                     <svg className="calendar-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                         <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -215,13 +243,19 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                                         <line x1="3" y1="10" x2="21" y2="10"></line>
                                     </svg>
                                 </div>
+                                {errors.startDate && <span className="error-text">{errors.startDate}</span>}
                             </div>
 
                             <div className="form-group half-width">
-                                <label>End Date</label>
-                                {/* CHANGED: Added wrapper and custom SVG icon */}
+                                <label>End Date <span className="required-asterisk">*</span></label>
                                 <div className="date-input-wrapper">
-                                    <input type="date" name="endDate" value={formData.endDate} onChange={handleInputChange} />
+                                    <input 
+                                        type="date" 
+                                        name="endDate" 
+                                        value={formData.endDate} 
+                                        onChange={handleInputChange} 
+                                        className={errors.endDate ? 'input-error' : ''}
+                                    />
                                     <svg className="calendar-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                         <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -229,6 +263,7 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                                         <line x1="3" y1="10" x2="21" y2="10"></line>
                                     </svg>
                                 </div>
+                                {errors.endDate && <span className="error-text">{errors.endDate}</span>}
                             </div>
                         </div>
                     ) : (
@@ -236,14 +271,11 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                             {isLoadingData ? (
                                 <p style={{ padding: '20px', color: '#64748B' }}>Loading team data...</p>
                             ) : departments.length > 0 ? (
-                                // Dynamically render a select dropdown for every department from your database
                                 departments.map(dept => (
                                     <TeamStructureSelect
                                         key={dept.id}
                                         label={dept.name}
                                         options={employees}
-                                        // Optional: To only show employees that belong to this dept comment the above line, and uncomment the below one
-                                        // options={employees.filter(emp => emp.department_name === dept.name)}
                                         selected={teamStructure[dept.id] || []}
                                         onChange={(users) => handleTeamChange(dept.id, users)}
                                     />
@@ -257,8 +289,8 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
 
                 {/* Footer */}
                 <div className="modal-footer">
-                    <button className="btn-reset" onClick={onClose}>Cancel</button>
-                    <button className="btn-submit" onClick={handleSubmit}>{mode === 'add' ? 'Add Project' : 'Save Details'}</button>
+                    <button type="button" className="btn-reset" onClick={onClose}>Cancel</button>
+                    <button type="button" className="btn-submit" onClick={handleSubmit}>{mode === 'add' ? 'Add Project' : 'Save Details'}</button>
                 </div>
             </div>
         </div>
