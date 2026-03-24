@@ -158,43 +158,51 @@ const Settings = () => {
     const strength = getPasswordStrength(passwords.new);
 
     return (
-        <div className="settings-container">
+        <div className="settings-container" style={{ position: 'relative' }}>
+            
+            {/* --- THE TOAST (Moved outside the header so it doesn't get cut off) --- */}
+            {message.text && (
+                <div className="settings-notification-wrapper" style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 50 }}>
+                    <div className={`notification-toast ${message.type}`}>
+                        <div className="toast-content">
+                            <div className="check-circle">{message.type === 'error' ? '!' : '✓'}</div>
+                            <span>{message.text}</span>
+                        </div>
+                        <button className="toast-close" onClick={() => setMessage({ text: '', type: '' })}>×</button>
+                        <div className="toast-progress-bar"></div>
+                    </div>
+                </div>
+            )}
 
-            <div className="settings-header">
-                <div className="header-content">
-                    <h1>Settings</h1>
+            {/* --- STANDARD REUSABLE HEADER --- */}
+            <div className="page-header">
+                {/* Decoration Layer */}
+                <div className="hero-decor" aria-hidden="true">
+                    <div className="hero-circle hero-circle-1" />
+                    <div className="hero-circle hero-circle-2" />
+                    <div className="hero-circle hero-circle-3" />
+                </div>
+
+                {/* Content Layer */}
+                <div className="header-text" style={{ position: 'relative', zIndex: 1 }}>
+                    <h2>Settings</h2>
                     <p>Manage your personal details and account security.</p>
                 </div>
-                <div className="header-decor bubble-large"></div>
-                <div className="header-decor bubble-small"></div>
-                {/* --- THE TOAST --- */}
-                {message.text && (
-                    <div className="settings-notification-wrapper" style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 50 }}>
-                        <div className={`notification-toast ${message.type}`}>
-                            <div className="toast-content">
-                                <div className="check-circle">{message.type === 'error' ? '!' : '✓'}</div>
-                                <span>{message.text}</span>
-                            </div>
-                            <button className="toast-close" onClick={() => setMessage({ text: '', type: '' })}>×</button>
-                            <div className="toast-progress-bar"></div>
-                        </div>
-                    </div>
-                )}
             </div>
 
+            {/* --- SETTINGS CONTENT --- */}
             <div className="settings-card">
                 <div className="card-left">
                     <div className="panel-header"><h3>Employee Profile</h3></div>
                     <div className="panel-body">
                         <div className="avatar-section">
-                            <div className="avatar-wrapper" >
+                            <div className="avatar-wrapper">
                                 {getImageUrl(profile.avatar) ? (
                                     <img src={getImageUrl(profile.avatar)} alt="Profile" className="avatar-image" />
                                 ) : (
                                     <div className="avatar-placeholder">{getInitials(profile.first_name, profile.last_name)}</div>
                                 )}
-                                <label className="camera-btn" htmlFor="profile-image-upload"
-                                    onClick={() => console.log("Camera label clicked!")}>
+                                <label className="camera-btn" htmlFor="profile-image-upload" onClick={() => console.log("Camera label clicked!")}>
                                     <Camera size={20} color="white" />
                                     <input id="profile-image-upload" type="file" style={{ display: 'none' }} hidden onChange={handleFileChange} accept="image/*" />
                                 </label>
@@ -224,7 +232,7 @@ const Settings = () => {
                     <div className="panel-header"><h3>Account & Security</h3></div>
                     <div className="panel-body">
                         <div className="form-grid">
-                            {/* Row 1: Direct children, they will naturally take Col 1 and Col 2 */}
+                            {/* Row 1 */}
                             <div className="input-group">
                                 <label>First Name</label>
                                 <input type="text" className="text-input" value={profile.first_name || ''} onChange={e => setProfile({ ...profile, first_name: e.target.value })} />
@@ -234,13 +242,13 @@ const Settings = () => {
                                 <input type="text" className="text-input" value={profile.last_name || ''} onChange={e => setProfile({ ...profile, last_name: e.target.value })} />
                             </div>
 
-                            {/* Row 2: Designation. Adding 'designation-wrapper' triggers your 'grid-column: span 2' CSS */}
+                            {/* Row 2 */}
                             <div className="input-group designation-wrapper">
                                 <label>Designation</label>
                                 <input type="text" className="text-input disabled" value={profile.designation || ''} disabled />
                             </div>
 
-                            {/* Row 3: Password. We use an inline style to span 2 columns here so we don't break the relative positioning of your inner password-wrapper! */}
+                            {/* Row 3 */}
                             <div className="input-group" style={{ gridColumn: 'span 2' }}>
                                 <label>Password</label>
                                 <div className="password-wrapper">
@@ -249,7 +257,7 @@ const Settings = () => {
                                 </div>
                             </div>
 
-                            {/* Row 4: Action Row. Your CSS already sets this to span 2 columns and align to the right */}
+                            {/* Row 4 */}
                             <div className="action-row">
                                 <button className="save-btn" onClick={handleTextSave}>Save Details</button>
                             </div>
@@ -294,7 +302,6 @@ const Settings = () => {
                                         {showPassword.old ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
                                 </div>
-
                             </div>
 
                             <div className="form-group">
@@ -315,7 +322,7 @@ const Settings = () => {
                                     </button>
                                 </div>
 
-                                {/* Strength Meter: Red, Orange, Green logic is handled by utility */}
+                                {/* Strength Meter */}
                                 {passwords.new && (
                                     <div className="strength-meter-container">
                                         <span className="strength-text" style={{ color: strength.color }}>
@@ -364,7 +371,6 @@ const Settings = () => {
                     </div>
                 </div>
             )}
-
         </div>
     );
 };
