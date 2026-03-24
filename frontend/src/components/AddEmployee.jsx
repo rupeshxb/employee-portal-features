@@ -123,13 +123,16 @@ const AddEmployee = () => {
 
     return (
         <div className="add-employee-page">
-            <div className="page-header-row">
+            <div className="page-header page-header-row">
                 {/* BACK BUTTON: Updated to the correct manager route */}
                 <button className="back-btn" onClick={() => navigate('/manager/employee-overview')}>
                     &larr; Back to Overview
                 </button>
                 <h2>Add New Employee</h2>
                 <p>Fill in the details below to add a new employee to the system.</p>
+                <div className="header-decor hero-circle-1"></div>
+                <div className="header-decor hero-circle-2"></div>
+                <div className="header-decor hero-circle-3"></div>
             </div>
 
             {error && <div className="error-banner">{error}</div>}

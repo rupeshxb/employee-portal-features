@@ -205,8 +205,9 @@ const ProjectsOverview = () => {
 
       {/* Header renders immediately */}
       <div className="page-header">
-        <div className="header-decor bubble-small"></div>
-        <div className="header-decor bubble-large"></div>
+        <div className="header-decor hero-circle-1"></div>
+        <div className="header-decor hero-circle-2"></div>
+        <div className="header-decor hero-circle-3"></div>
         <div className="projects-header-inner">
           <div className="header-text">
             <h2>Projects Overview</h2>

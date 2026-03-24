@@ -136,8 +136,9 @@ const TeamUpdates = () => {
             <div className="page-header">
                 <h2>Team Updates</h2>
                 <p>See daily work updates from teammates working on the same project.</p>
-                <div className="header-decor bubble-small"></div>
-                <div className="header-decor bubble-large"></div>
+                <div className="header-decor hero-circle-1"></div>
+                <div className="header-decor hero-circle-2"></div>
+                <div className="header-decor hero-circle-3"></div>
             </div>
 
             {/* FILTER BAR Component */}

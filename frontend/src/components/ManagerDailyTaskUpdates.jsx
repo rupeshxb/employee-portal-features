@@ -161,8 +161,9 @@ const ManagerDailyTaskUpdates = () => {
             <div className="page-header">
                 <h2>Daily Task Updates</h2>
                 <p>View daily work updates submitted by team members across projects and teams.</p>
-                <div className="header-decor bubble-small"></div>
-                <div className="header-decor bubble-large"></div>
+                <div className="header-decor hero-circle-1"></div>
+                <div className="header-decor hero-circle-2"></div>
+                <div className="header-decor hero-circle-3"></div>
             </div>
 
             <div className="department-nav">

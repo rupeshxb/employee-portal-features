@@ -151,12 +151,15 @@ const EditEmployee = () => {
 
     return (
         <div className="add-employee-page">
-            <div className="page-header-row">
+            <div className="page-header page-header-row">
                 <button className="back-btn" onClick={() => navigate('/manager/employee-overview')}>
                     &larr; Back to Overview
                 </button>
                 <h2>Edit Employee</h2>
                 <p>Update the details for {formData.first_name} {formData.last_name}.</p>
+                <div className="header-decor hero-circle-1"></div>
+                <div className="header-decor hero-circle-2"></div>
+                <div className="header-decor hero-circle-3"></div>
             </div>
 
             {error && <div className="error-banner">{error}</div>}
