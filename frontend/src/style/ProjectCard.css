@@ -164,7 +164,7 @@
 
 .empty-state {
     color: #94A3B8;
-    display: flex;
+    display: block;
     align-items: center;
     justify-content: center;
     font-style: italic;

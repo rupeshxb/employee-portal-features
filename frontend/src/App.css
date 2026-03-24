@@ -399,30 +399,6 @@ svg {
   filter: blur(0.2px);
 }
 
-.hero-circle-1 {
-  width: 140px;
-  height: 140px;
-  top: -40px;
-  left: -30px;
-  background: rgba(124, 58, 237, 0.2);
-}
-
-.hero-circle-2 {
-  width: 110px;
-  height: 110px;
-  bottom: -35px;
-  right: 120px;
-  background: rgba(167, 139, 250, 0.25);
-}
-
-.hero-circle-3 {
-  width: 180px;
-  height: 180px;
-  top: -70px;
-  right: -70px;
-  background: rgba(139, 92, 246, 0.18);
-}
-
 /* Date Cards */
 .task-list {
   display: flex;
@@ -2406,12 +2382,13 @@ svg {
   background: linear-gradient(80.05deg, rgba(191, 90, 224, 0.4) 19.27%, rgba(168, 17, 218, 0.4) 70.01%);
 }
 
-/* Circle 1: Large one on the right */
+/* Circle 1: Large one on the bottom right */
 .hero-circle-1 {
   width: 154px;
   height: 154px;
-  right: 60px; /* Used % or right instead of left for responsiveness */
-  top: -20px;
+  right: -40px; 
+  bottom: -80px; /* Changed from top to bottom */
+  top: auto;     /* Add this just in case 'top' is being inherited from a base class */
 }
 
 /* Circle 2: Medium one */
