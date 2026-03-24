@@ -155,7 +155,7 @@ const TeamUpdates = () => {
             {loading ? (
                 <div style={{ textAlign: 'center', padding: '40px', color: '#6B7280' }}>Loading updates...</div>
             ) : (
-                <div className="updates-grid">
+                <div className="employee-cards-grid">
                     {employees.length > 0 ? (
                         employees.map(emp => (
                             <EmployeeCard key={emp.id} emp={emp} />

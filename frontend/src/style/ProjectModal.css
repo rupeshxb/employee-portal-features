@@ -1,6 +1,7 @@
-/* --- NEW MODAL STYLES --- */
+/* --- ProjectModal.css ( MODAL STYLES )--- */
 .custom-modal-content {
-  background: #FFFFFF;
+  position: relative;
+  background: #ffffff;
   border-radius: 16px;
   width: 100%;
   max-width: 600px; /* Slightly wider to match design */
@@ -15,33 +16,57 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 24px 32px 16px;
+  flex-wrap: nowrap;
+  gap: 16px;
+}
+
+.header-titles {
+  flex: 1;
 }
 
 .modal-header h2 {
   font-size: 22px;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
   margin: 0 0 4px 0;
 }
 
 .modal-header p {
   font-size: 14px;
-  color: #64748B;
+  color: #64748b;
   margin: 0;
 }
 
 .close-modal-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
   background: none;
   border: none;
   cursor: pointer;
   padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-btn:focus {
+  outline: none; /* Removes the default browser focus ring */
+}
+
+/* Optional pro-tip: If you want to keep your app accessible for keyboard users 
+   without ruining the mouse-click design, you can use :focus-visible instead! */
+.tab-btn:focus-visible {
+  outline: 2px solid #2563EB; /* Only shows when navigating with the 'Tab' key */
+  outline-offset: -2px;
 }
 
 .modal-tabs {
   display: flex;
   padding: 0 32px;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid #e2e8f0;
   margin-bottom: 24px;
+  gap: 8px;
 }
 
 .tab-btn {
@@ -51,22 +76,23 @@
   padding: 12px 0;
   font-size: 15px;
   font-weight: 500;
-  color: #64748B;
+  color: #64748b;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.2s;
 }
 
 .tab-btn.active {
-  color: #2563EB; /* Primary Blue */
-  border-bottom: 2px solid #2563EB;
+  color: #2563eb;
+  background-color: #ebeef9;
 }
 
 .team-badge {
-  background-color: #2563EB;
+  background-color: #2563eb;
   color: white;
   border-radius: 50%;
   font-size: 12px;
@@ -80,7 +106,36 @@
 .modal-body {
   padding: 0 32px;
   overflow-y: auto;
-  flex: 1;
+  flex: 1 1 auto;
+  height: 420px;
+  max-height: calc(90vh - 210px);
+}
+
+/* --- CUSTOM SCROLLBAR FOR MODAL BODY --- */
+
+/* Firefox */
+.modal-body {
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+}
+
+/* Chrome, Edge, and Safari */
+.modal-body::-webkit-scrollbar {
+  width: 6px; /* Makes it nice and thin */
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: transparent; /* Keeps the background clean */
+  margin: 8px 0; /* Keeps the scrollbar from hitting the very top/bottom edges */
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background-color: #CBD5E1; /* Soft gray to match your theme */
+  border-radius: 10px; /* Rounds the edges */
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background-color: #94A3B8; /* Darkens slightly when the user hovers over it */
 }
 
 .form-grid {
@@ -89,8 +144,18 @@
   gap: 20px;
 }
 
-.form-group.full-width { width: 100%; }
-.form-group.half-width { width: calc(50% - 10px); }
+.form-group {
+  box-sizing: border-box;
+}
+
+.form-group.full-width {
+  width: 100%;
+}
+
+.form-group.half-width {
+  flex: 1;
+  min-width: 200px;
+}
 
 .form-group label {
   display: block;
@@ -104,24 +169,60 @@
 .form-group input[type="date"] {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 14px;
-  color: #1E293B;
+  color: #1e293b;
   outline: none;
+  box-sizing: border-box;
   transition: border-color 0.2s;
 }
 
-.form-group input:focus { border-color: #2563EB; }
+.form-group input:focus {
+  border-color: #2563eb;
+}
 
 /* Custom Color Picker Styling */
 .color-picker-wrapper {
   display: flex;
   align-items: center;
   gap: 12px;
-  border: 1px solid #E2E8F0;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 8px 16px;
+}
+
+.color-input-container {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  height: 44px; /* Matches standard input height */
+}
+
+.color-box {
+  width: 44px; /* Makes it a perfect square */
+  height: 100%;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.color-box input[type="color"] {
+  opacity: 0;
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  cursor: pointer;
+}
+
+.color-input-container input[type="text"] {
+  flex: 1; /* Takes up the rest of the row */
+  height: 100%;
 }
 
 .color-preview {
@@ -150,21 +251,23 @@
   font-weight: 500;
 }
 
-.color-picker-wrapper input[type="text"]:focus { border: none; }
+.color-picker-wrapper input[type="text"]:focus {
+  border: none;
+}
 
 .modal-footer {
   display: flex;
   justify-content: center;
   gap: 16px;
   padding: 24px 32px;
-  border-top: 1px solid #E2E8F0;
+  border-top: 1px solid #e2e8f0;
   margin-top: 24px;
 }
 
 .btn-reset {
   padding: 12px 32px;
   background: white;
-  border: 1px solid #CBD5E1;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   color: #475569;
   font-weight: 500;
@@ -172,11 +275,14 @@
   transition: all 0.2s;
 }
 
-.btn-reset:hover { background: #F8FAFC; border-color: #94A3B8; }
+.btn-reset:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
 
 .btn-submit {
   padding: 12px 32px;
-  background: #2563EB;
+  background: #2563eb;
   border: none;
   border-radius: 8px;
   color: white;
@@ -185,6 +291,29 @@
   transition: background 0.2s;
 }
 
-.btn-submit:hover { background: #1D4ED8; }
+.btn-submit:hover {
+  background: #1d4ed8;
+}
 
+.date-input-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
 
+.date-input-wrapper input[type="date"] {
+  width: 100%;
+  padding-right: 40px; 
+  margin: 0; /* Prevents stray margins from throwing off the wrapper's height */
+}
+
+.calendar-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: block; /* Removes default inline baseline spacing that causes bottom-alignment */
+  margin: 0;
+}

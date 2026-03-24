@@ -58,9 +58,10 @@
 }
 
 .projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Bumped slightly from 300px for a better base square shape */
+    gap: 24px;
+    justify-content: center; /* Centers the entire grid container */
 }
 
 /* Inner wrapper to put text on left, button on right */

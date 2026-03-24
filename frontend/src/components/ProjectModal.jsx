@@ -142,7 +142,7 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
 
                 {/* Header */}
                 <div className="modal-header">
-                    <div>
+                    <div className="header-titles">
                         <h2>{mode === 'add' ? 'Add New Project' : 'Edit Project'}</h2>
                         <p>{mode === 'add'
                             ? 'Add new project by defining its basic details, start date.'
@@ -168,7 +168,8 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                         onClick={() => setActiveTab('team')}
                         disabled={isLoadingData}
                     >
-                        Team Structure {totalTeamSize > 0 && <span className="team-badge">{totalTeamSize}</span>}
+                        {/* CHANGED: Removed totalTeamSize > 0 check so it always shows, even if 0 */}
+                        Team Structure <span className="team-badge">{totalTeamSize}</span>
                     </button>
                 </div>
 
@@ -188,8 +189,9 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
 
                             <div className="form-group full-width">
                                 <label>Accent Color</label>
-                                <div className="color-picker-wrapper">
-                                    <div className="color-preview" style={{ backgroundColor: formData.accentColor }}>
+                                {/* CHANGED: Restructured to separate the color block and the text input */}
+                                <div className="color-input-container">
+                                    <div className="color-box" style={{ backgroundColor: formData.accentColor }}>
                                         <input type="color" name="accentColor" value={formData.accentColor} onChange={handleInputChange} />
                                     </div>
                                     <input type="text" name="accentColor" value={formData.accentColor.toUpperCase()} onChange={handleInputChange} />
@@ -203,12 +205,30 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
 
                             <div className="form-group half-width">
                                 <label>Start Date</label>
-                                <input type="date" name="startDate" value={formData.startDate} onChange={handleInputChange} />
+                                {/* CHANGED: Added wrapper and custom SVG icon */}
+                                <div className="date-input-wrapper">
+                                    <input type="date" name="startDate" value={formData.startDate} onChange={handleInputChange} />
+                                    <svg className="calendar-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </div>
                             </div>
 
                             <div className="form-group half-width">
                                 <label>End Date</label>
-                                <input type="date" name="endDate" value={formData.endDate} onChange={handleInputChange} />
+                                {/* CHANGED: Added wrapper and custom SVG icon */}
+                                <div className="date-input-wrapper">
+                                    <input type="date" name="endDate" value={formData.endDate} onChange={handleInputChange} />
+                                    <svg className="calendar-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     ) : (
@@ -240,7 +260,6 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                     <button className="btn-reset" onClick={onClose}>Cancel</button>
                     <button className="btn-submit" onClick={handleSubmit}>{mode === 'add' ? 'Add Project' : 'Save Details'}</button>
                 </div>
-
             </div>
         </div>
     );
