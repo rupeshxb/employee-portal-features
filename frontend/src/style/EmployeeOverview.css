@@ -7,25 +7,7 @@
 }
 
 /* --- 1. HEADER BANNER --- */
-.overview-header-banner {
-    background: linear-gradient(135deg, #e0e7ff 0%, #d8b4fe 100%);
-    border-radius: 12px;
-    padding: 32px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 32px;
-}
-.banner-content h1 {
-    margin: 0 0 8px 0;
-    font-size: 28px;
-    color: #1e293b;
-}
-.banner-content p {
-    margin: 0;
-    color: #475569;
-    font-size: 14px;
-}
+/* KEEP THIS */
 .btn-add-employee {
     background-color: #0f172a;
     color: white;
@@ -37,7 +19,15 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
+    /* Adding transition for a nice hover effect */
+    transition: background-color 0.2s ease; 
 }
+
+.btn-add-employee:hover {
+    background-color: #1e293b;
+}
+
+/* KEEP the rest of your table, pagination, etc. ... */
 
 /* --- 2. TITLE --- */
 .table-header-title h2 {

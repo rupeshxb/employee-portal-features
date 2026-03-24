@@ -152,24 +152,35 @@ const EmployeeOverview = () => {
 
     return (
         <div className="employee-overview-page">
-            {/* ... 1, 2, and 3 (Header, Title, FilterBar) remain exactly the same ... */}
-            <div className="overview-header-banner">
-                <div className="page-header banner-content">
-                    <h1>Employee Overview</h1>
-                    <p>Control employee access, activation status, and account credentials.</p>
-                    <div className="header-decor hero-circle-1"></div>
-                    <div className="header-decor hero-circle-2"></div>
-                    <div className="header-decor hero-circle-3"></div>
+
+            {/* 1. STANDARD REUSABLE HEADER */}
+            <div className="page-header">
+                {/* Decoration Layer */}
+                <div className="hero-decor" aria-hidden="true">
+                    <div className="hero-circle hero-circle-1" />
+                    <div className="hero-circle hero-circle-2" />
+                    <div className="hero-circle hero-circle-3" />
                 </div>
-                <button className="btn-add-employee" onClick={() => navigate('/manager/employee-overview/add-employee')}>
-                    <PlusIcon /> Add Employee
-                </button>
+
+                {/* Content Layer (Text left, Button right) */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 1 }}>
+                    <div className="header-text">
+                        <h2>Employee Overview</h2>
+                        <p>Control employee access, activation status, and account credentials.</p>
+                    </div>
+
+                    <button className="btn-add-employee" onClick={() => navigate('/manager/employee-overview/add-employee')}>
+                        <PlusIcon /> Add Employee
+                    </button>
+                </div>
             </div>
 
+            {/* 2. TITLE */}
             <div className="table-header-title">
                 <h2>Employee <span>(Total {totalCount})</span></h2>
             </div>
 
+            {/* 3. FILTER BAR */}
             <EmployeeOverviewFilterBar
                 searchTerm={searchTerm} setSearchTerm={setSearchTerm}
                 selectedProject={selectedProject} setSelectedProject={setSelectedProject}
@@ -178,7 +189,7 @@ const EmployeeOverview = () => {
                 projectList={projectList}
             />
 
-            {/* 4. NEW TABLE */}
+            {/* 4. TABLE */}
             <div className="overview-table-container">
                 <table className="overview-table">
                     <thead>

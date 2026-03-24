@@ -97,7 +97,8 @@ const AddTask = () => {
     })();
 
     return (
-        <div className="content-area">
+        <div> 
+            {/* className="content-area"  this classname was omitted here for UI issues in the above div. if UI issues worsen in this page use this classname in the div.*/}
             <DeleteModal
                 show={deleteModal.show}
                 task={deleteModal.task}
