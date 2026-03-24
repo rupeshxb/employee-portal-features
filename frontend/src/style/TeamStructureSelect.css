@@ -1,43 +1,217 @@
-/* ---CSS for Team Structure Search Results --- */
+.custom-multi-select {
+    position: relative;
+    margin-bottom: 24px;
+    font-family: inherit;
+    width: 100%;
+}
 
-/* Make the options list a flex container so pills wrap nicely */
+.select-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+/* --- Trigger Box --- */
+.select-trigger {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-height: 48px;
+    cursor: pointer;
+    background-color: #FFFFFF;
+    transition: border-color 0.2s;
+}
+
+.select-trigger.open {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.selected-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 1;
+    align-items: center;
+}
+
+.placeholder-text {
+    color: #94A3B8;
+    font-size: 14px;
+    margin-top: 2px;
+}
+
+.chevron-icon {
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    margin-top: 4px;
+}
+
+/* --- Blue Selected Pills --- */
+.selected-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #EBF1FF; /* This is the hex equivalent of #2563EA with opacity */
+    color: #2563EB;
+    border-radius: 20px;
+    padding: 4px 10px 4px 4px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.more-tag {
+    padding: 4px 10px;
+}
+
+.tag-avatar {
+    width: 24px;
+    height: 24px;
+    min-width: 24px; /* Stops flexbox from squishing it */
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 6px;
+}
+
+.remove-tag-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: #2563EB;
+    cursor: pointer;
+    padding: 2px;
+    margin-left: 4px;
+    border-radius: 50%;
+}
+
+.remove-tag-btn:hover {
+    background-color: rgba(37, 99, 234, 0.2);
+}
+
+/* --- Dropdown Menu --- */
+.select-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 50;
+    padding: 16px;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar for Dropdown */
+.select-dropdown-menu {
+    scrollbar-width: thin;
+    scrollbar-color: #CBD5E1 transparent;
+}
+.select-dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+.select-dropdown-menu::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 8px 0;
+}
+.select-dropdown-menu::-webkit-scrollbar-thumb {
+    background-color: #CBD5E1;
+    border-radius: 10px;
+}
+
+/* --- Search Bar --- */
+.search-bar-wrapper {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.search-bar-wrapper input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #334155;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.search-bar-wrapper input:focus {
+    border-color: #3B82F6;
+}
+
+/* --- Unselected Options (White Pills) --- */
 .options-list.pill-layout {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    padding: 12px;
-    max-height: 200px;
-    overflow-y: auto;
+    margin-bottom: 16px;
 }
 
-/* Style individual unselected search results like pills */
 .search-result-pill {
     display: inline-flex;
     align-items: center;
-    background-color: #F1F5F9; /* Light grey background */
+    background-color: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 20px;
-    padding: 4px 12px 4px 4px; /* Less padding on left for avatar */
+    padding: 4px 12px 4px 4px;
     cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
     font-size: 13px;
     color: #334155;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
 .search-result-pill:hover {
-    background-color: #E2E8F0;
+    background-color: #F8FAFC;
     border-color: #CBD5E1;
 }
 
-/* Avatar inside the unselected pill */
 .result-avatar {
     width: 24px;
     height: 24px;
+    min-width: 24px; /* Stops flexbox from squishing it */
     border-radius: 50%;
     margin-right: 8px;
     object-fit: cover;
 }
 
-.result-name {
-    font-weight: 500;
+.no-results {
+    font-size: 13px;
+    color: #64748B;
+    margin: 0;
+}
+
+/* --- Selected Section Inside Dropdown --- */
+.dropdown-selected-section {
+    border-top: 1px solid #E2E8F0;
+    padding-top: 16px;
+}
+
+.section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748B;
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+}
+
+.selected-tags-container.inside-dropdown {
+    margin-bottom: 0;
 }
