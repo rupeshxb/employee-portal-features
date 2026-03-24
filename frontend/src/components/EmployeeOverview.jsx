@@ -5,6 +5,7 @@ import '../style/EmployeeOverview.css';
 import { PlusIcon, MoreVerticalIcon, EyeIcon, EditIcon, TrashIcon } from './Icons';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from "../../config";
+import "../style/Header.css"
 
 const EmployeeOverview = () => {
     // --- State for the reusable Filter Bar ---
@@ -153,9 +154,12 @@ const EmployeeOverview = () => {
         <div className="employee-overview-page">
             {/* ... 1, 2, and 3 (Header, Title, FilterBar) remain exactly the same ... */}
             <div className="overview-header-banner">
-                <div className="banner-content">
+                <div className="page-header banner-content">
                     <h1>Employee Overview</h1>
                     <p>Control employee access, activation status, and account credentials.</p>
+                    <div className="header-decor hero-circle-1"></div>
+                    <div className="header-decor hero-circle-2"></div>
+                    <div className="header-decor hero-circle-3"></div>
                 </div>
                 <button className="btn-add-employee" onClick={() => navigate('/manager/employee-overview/add-employee')}>
                     <PlusIcon /> Add Employee
