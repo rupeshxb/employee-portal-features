@@ -1,9 +1,10 @@
+/* --- MAIN HEADER CONTAINER --- */
 .page-header {
     position: relative;
     background: linear-gradient(90.82deg, #e0eafc 6.42%, #cfdef3 92.16%);
     border-radius: 16px;
     padding: 32px 40px;
-    overflow: hidden; 
+    overflow: hidden; /* This correctly cuts off the bottom-right circle */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -11,13 +12,14 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+/* --- HEADER TEXT --- */
 .page-header h2 {
     font-size: 28px;
     font-weight: 700;
     color: #1e293b;
     margin: 0 0 8px 0;
     position: relative;
-    z-index: 10;
+    z-index: 10; /* Keeps text above the decoration */
 }
 
 .page-header p {
@@ -25,26 +27,48 @@
     color: #64748b;
     margin: 0;
     position: relative;
-    z-index: 10;
+    z-index: 10; /* Keeps text above the decoration */
 }
 
-.header-decor {
+/* --- NEW DECORATION LAYER --- */
+.hero-decor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none; /* Prevents circles from blocking clicks if you add buttons to the header */
+}
+
+/* Common gradient for all circles */
+.hero-circle {
     position: absolute;
     border-radius: 50%;
     background: linear-gradient(80.05deg, rgba(191, 90, 224, 0.4) 19.27%, rgba(168, 17, 218, 0.4) 70.01%);
-    z-index: 1;
 }
 
-.bubble-large {
+/* Circle 1: Large one on the bottom right */
+.hero-circle-1 {
     width: 154px;
     height: 154px;
-    right: 80px;
-    top: 50px;
+    right: -40px; 
+    bottom: -80px;
+    top: auto; 
 }
 
-.bubble-small {
+/* Circle 2: Medium one */
+.hero-circle-2 {
     width: 77px;
     height: 77px;
-    right: 450px;
-    top: -30px;
+    left: 50%;
+    top: -20px;
+}
+
+/* Circle 3: Small dot */
+.hero-circle-3 {
+    width: 32px;
+    height: 32px;
+    left: 48%;
+    top: 60px;
 }

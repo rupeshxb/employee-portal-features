@@ -207,25 +207,6 @@
     background: linear-gradient(80.05deg, rgba(191, 90, 224, 0.4) 19.27%, rgba(168, 17, 218, 0.4) 70.01%);
 }
 
-.hero-circle-1 {
-    width: 154px;
-    height: 154px;
-    right: -40px;
-    top: -60px;
-}
-.hero-circle-2 {
-    width: 77px;
-    height: 77px;
-    right: 30%;
-    bottom: -20px;
-}
-.hero-circle-3 {
-    width: 32px;
-    height: 32px;
-    right: 15%;
-    top: 40px;
-}
-
 /* =========================================
      4. EMPTY STATE & MOBILE
      ========================================= */
