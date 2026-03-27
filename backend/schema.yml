@@ -1,0 +1,1168 @@
+openapi: 3.0.3
+info:
+  title: HR & Project Management API
+  version: 1.0.0
+  description: |-
+    Official API documentation for the HR, Employee, and Project management system.
+
+    ### Handover Notes
+    * **Completed Modules:** Employee Management, Project Creation, Team Structure, Authentication.
+    * **Pending Modules (To be implemented):** Salary calculations, Bulk Salary generation.
+
+    All endpoints currently require Token Authentication via the `Authorization: Token <your_token>` header.
+  contact:
+    name: Rupesh Bhatta
+    email: rupesh.bhatta1234@gmail.com
+paths:
+  /api/change-password/:
+    post:
+      operationId: change_password_create
+      tags:
+      - change-password
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/departments/:
+    get:
+      operationId: departments_retrieve
+      tags:
+      - departments
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/employee/team-updates/:
+    get:
+      operationId: employee_team_updates_retrieve
+      tags:
+      - employee
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/employees/:
+    get:
+      operationId: employees_list
+      tags:
+      - employees
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+          description: ''
+  /api/login/:
+    post:
+      operationId: login_create
+      tags:
+      - login
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/manager/employee-overview/:
+    get:
+      operationId: manager_employee_overview_retrieve
+      tags:
+      - manager
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: manager_employee_overview_create
+      tags:
+      - manager
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/manager/employees/{id}/:
+    get:
+      operationId: manager_employees_retrieve
+      description: |-
+        Handles fetching detail data for the Modal (GET),
+        deleting an employee (DELETE), and can be used for editing (PUT/PATCH).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - manager
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDetail'
+          description: ''
+    put:
+      operationId: manager_employees_update
+      description: |-
+        Handles fetching detail data for the Modal (GET),
+        deleting an employee (DELETE), and can be used for editing (PUT/PATCH).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - manager
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmployeeDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmployeeDetailRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDetail'
+          description: ''
+    patch:
+      operationId: manager_employees_partial_update
+      description: |-
+        Handles fetching detail data for the Modal (GET),
+        deleting an employee (DELETE), and can be used for editing (PUT/PATCH).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - manager
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeDetailRequest'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeDetail'
+          description: ''
+    delete:
+      operationId: manager_employees_destroy
+      description: |-
+        Handles fetching detail data for the Modal (GET),
+        deleting an employee (DELETE), and can be used for editing (PUT/PATCH).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - manager
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/manager/managers-list/:
+    get:
+      operationId: manager_managers_list_list
+      tags:
+      - manager
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ManagerDropdown'
+          description: ''
+  /api/manager/team-updates/:
+    get:
+      operationId: manager_team_updates_retrieve
+      tags:
+      - manager
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/profile/:
+    get:
+      operationId: profile_retrieve
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeProfile'
+          description: ''
+    put:
+      operationId: profile_update
+      tags:
+      - profile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmployeeProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmployeeProfileRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeProfile'
+          description: ''
+    patch:
+      operationId: profile_partial_update
+      tags:
+      - profile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeProfileRequest'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeProfile'
+          description: ''
+  /api/projects/:
+    get:
+      operationId: projects_list
+      description: Handles GET (list all) and POST (create new) for Projects
+      tags:
+      - projects
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+          description: ''
+    post:
+      operationId: projects_create
+      description: Handles GET (list all) and POST (create new) for Projects
+      tags:
+      - projects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProjectRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProjectRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+  /api/projects/{id}/:
+    get:
+      operationId: projects_retrieve
+      description: Handles GET (read one), PUT/PATCH (update), and DELETE for a single
+        Project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+    put:
+      operationId: projects_update
+      description: Handles GET (read one), PUT/PATCH (update), and DELETE for a single
+        Project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProjectRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProjectRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+    patch:
+      operationId: projects_partial_update
+      description: Handles GET (read one), PUT/PATCH (update), and DELETE for a single
+        Project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectRequest'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+    delete:
+      operationId: projects_destroy
+      description: Handles GET (read one), PUT/PATCH (update), and DELETE for a single
+        Project
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - projects
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/tasks/:
+    get:
+      operationId: tasks_list
+      tags:
+      - tasks
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DailyTask'
+          description: ''
+    post:
+      operationId: tasks_create
+      tags:
+      - tasks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DailyTaskRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DailyTaskRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DailyTaskRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyTask'
+          description: ''
+  /api/tasks/{id}/:
+    get:
+      operationId: tasks_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - tasks
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyTask'
+          description: ''
+    put:
+      operationId: tasks_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - tasks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DailyTaskRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DailyTaskRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DailyTaskRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyTask'
+          description: ''
+    patch:
+      operationId: tasks_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - tasks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDailyTaskRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDailyTaskRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDailyTaskRequest'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyTask'
+          description: ''
+    delete:
+      operationId: tasks_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - tasks
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/tasks/submit/:
+    post:
+      operationId: tasks_submit_create
+      tags:
+      - tasks
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    DailyTask:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        content:
+          type: string
+        is_blocker:
+          type: boolean
+        project_details:
+          allOf:
+          - $ref: '#/components/schemas/Project'
+          readOnly: true
+        date:
+          type: string
+          format: date
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_at_formatted:
+          type: string
+          readOnly: true
+        submission:
+          type: integer
+          nullable: true
+      required:
+      - content
+      - created_at
+      - created_at_formatted
+      - id
+      - project_details
+    DailyTaskRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          minLength: 1
+        is_blocker:
+          type: boolean
+        project_id:
+          type: integer
+          writeOnly: true
+        date:
+          type: string
+          format: date
+        submission:
+          type: integer
+          nullable: true
+      required:
+      - content
+      - project_id
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+        full_name:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+        designation:
+          type: string
+          maxLength: 100
+        department:
+          type: integer
+          nullable: true
+        department_name:
+          type: string
+          readOnly: true
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        is_manager:
+          type: boolean
+          description: Check this box if the employee is a manager.
+      required:
+      - department_name
+      - designation
+      - email
+      - first_name
+      - full_name
+      - id
+      - last_name
+      - username
+    EmployeeDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+          readOnly: true
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        employee_id:
+          type: string
+          nullable: true
+          maxLength: 50
+        pan_number:
+          type: string
+          nullable: true
+          maxLength: 20
+        personal_email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        phone_number:
+          type: string
+          nullable: true
+          maxLength: 20
+        emergency_contact:
+          type: string
+          nullable: true
+          maxLength: 20
+        employment_type:
+          $ref: '#/components/schemas/EmploymentTypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        designation:
+          type: string
+          maxLength: 100
+        department:
+          type: integer
+          nullable: true
+        department_name:
+          type: string
+          readOnly: true
+        reports_to_name:
+          type: string
+          readOnly: true
+        date_joined:
+          type: string
+          readOnly: true
+        reporting_manager:
+          type: integer
+          nullable: true
+      required:
+      - date_joined
+      - department_name
+      - designation
+      - email
+      - first_name
+      - id
+      - last_name
+      - reports_to_name
+      - username
+    EmployeeDetailRequest:
+      type: object
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+        last_name:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+          minLength: 1
+        avatar:
+          type: string
+          format: binary
+          nullable: true
+        employee_id:
+          type: string
+          nullable: true
+          maxLength: 50
+        pan_number:
+          type: string
+          nullable: true
+          maxLength: 20
+        personal_email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        phone_number:
+          type: string
+          nullable: true
+          maxLength: 20
+        emergency_contact:
+          type: string
+          nullable: true
+          maxLength: 20
+        employment_type:
+          $ref: '#/components/schemas/EmploymentTypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        designation:
+          type: string
+          minLength: 1
+          maxLength: 100
+        department:
+          type: integer
+          nullable: true
+        reporting_manager:
+          type: integer
+          nullable: true
+      required:
+      - designation
+      - email
+      - first_name
+      - last_name
+    EmployeeProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        designation:
+          type: string
+          maxLength: 100
+        department:
+          type: integer
+          nullable: true
+        department_name:
+          type: string
+          readOnly: true
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        is_manager:
+          type: boolean
+          description: Check this box if the employee is a manager.
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+      - department_name
+      - designation
+      - email
+      - first_name
+      - id
+      - last_name
+      - username
+    EmployeeProfileRequest:
+      type: object
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+        last_name:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+          minLength: 1
+        designation:
+          type: string
+          minLength: 1
+          maxLength: 100
+        department:
+          type: integer
+          nullable: true
+        avatar:
+          type: string
+          format: binary
+          nullable: true
+        is_manager:
+          type: boolean
+          description: Check this box if the employee is a manager.
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+      - designation
+      - email
+      - first_name
+      - last_name
+    EmploymentTypeEnum:
+      enum:
+      - Full-Time
+      - Part-Time
+      - Contract
+      - Internship
+      type: string
+      description: |-
+        * `Full-Time` - Full-Time
+        * `Part-Time` - Part-Time
+        * `Contract` - Contract
+        * `Internship` - Internship
+    ManagerDropdown:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+        full_name:
+          type: string
+          readOnly: true
+      required:
+      - full_name
+      - id
+      - username
+    PatchedDailyTaskRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          minLength: 1
+        is_blocker:
+          type: boolean
+        project_id:
+          type: integer
+          writeOnly: true
+        date:
+          type: string
+          format: date
+        submission:
+          type: integer
+          nullable: true
+    PatchedEmployeeDetailRequest:
+      type: object
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+        last_name:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+          minLength: 1
+        avatar:
+          type: string
+          format: binary
+          nullable: true
+        employee_id:
+          type: string
+          nullable: true
+          maxLength: 50
+        pan_number:
+          type: string
+          nullable: true
+          maxLength: 20
+        personal_email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 254
+        phone_number:
+          type: string
+          nullable: true
+          maxLength: 20
+        emergency_contact:
+          type: string
+          nullable: true
+          maxLength: 20
+        employment_type:
+          $ref: '#/components/schemas/EmploymentTypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        designation:
+          type: string
+          minLength: 1
+          maxLength: 100
+        department:
+          type: integer
+          nullable: true
+        reporting_manager:
+          type: integer
+          nullable: true
+    PatchedEmployeeProfileRequest:
+      type: object
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+        last_name:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+          minLength: 1
+        designation:
+          type: string
+          minLength: 1
+          maxLength: 100
+        department:
+          type: integer
+          nullable: true
+        avatar:
+          type: string
+          format: binary
+          nullable: true
+        is_manager:
+          type: boolean
+          description: Check this box if the employee is a manager.
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+    PatchedProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        client_name:
+          type: string
+          nullable: true
+          maxLength: 100
+        acronym:
+          type: string
+          nullable: true
+          maxLength: 15
+        description:
+          type: string
+          nullable: true
+        color_code:
+          type: string
+          minLength: 1
+          maxLength: 20
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        status:
+          type: string
+          minLength: 1
+          maxLength: 20
+        assigned_employees:
+          type: array
+          items:
+            type: integer
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        client_name:
+          type: string
+          nullable: true
+          maxLength: 100
+        acronym:
+          type: string
+          nullable: true
+          maxLength: 15
+        description:
+          type: string
+          nullable: true
+        color_code:
+          type: string
+          maxLength: 20
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        status:
+          type: string
+          maxLength: 20
+        team_size:
+          type: string
+          readOnly: true
+        team_structure:
+          type: string
+          readOnly: true
+        assigned_employees_grouped:
+          type: string
+          readOnly: true
+        assigned_employees:
+          type: array
+          items:
+            type: integer
+      required:
+      - assigned_employees
+      - assigned_employees_grouped
+      - id
+      - name
+      - team_size
+      - team_structure
+    ProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        client_name:
+          type: string
+          nullable: true
+          maxLength: 100
+        acronym:
+          type: string
+          nullable: true
+          maxLength: 15
+        description:
+          type: string
+          nullable: true
+        color_code:
+          type: string
+          minLength: 1
+          maxLength: 20
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        status:
+          type: string
+          minLength: 1
+          maxLength: 20
+        assigned_employees:
+          type: array
+          items:
+            type: integer
+      required:
+      - assigned_employees
+      - name
+    RoleEnum:
+      enum:
+      - Employee
+      - Manager
+      type: string
+      description: |-
+        * `Employee` - Employee
+        * `Manager` - Manager
+    StatusEnum:
+      enum:
+      - Active
+      - Inactive
+      type: string
+      description: |-
+        * `Active` - Active
+        * `Inactive` - Inactive
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

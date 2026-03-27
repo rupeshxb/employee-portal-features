@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary_storage',
     'cloudinary',
+    'drf_spectacular', # <--- Swagger API generator
 ]
 
 MIDDLEWARE = [
@@ -154,12 +155,38 @@ CORS_ALLOW_ALL_ORIGINS = True
 # --- DRF CONFIGURATION ---
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+}
+
+# --- SWAGGER / SPECTACULAR CONFIGURATION (HANDOVER DOCS) ---
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'HR & Project Management API',
+    'DESCRIPTION': (
+        'Official API documentation for the HR, Employee, and Project management system.\n\n'
+        '### Handover Notes\n'
+        '* **Completed Modules:** Employee Management, Project Creation, Team Structure, Authentication.\n'
+        '* **Pending Modules (To be implemented):** Salary calculations, Bulk Salary generation.\n\n'
+        'All endpoints currently require Token Authentication via the `Authorization: Token <your_token>` header.'
+    ),
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {
+        'name': 'Rupesh Bhatta',
+        'email': 'rupesh.bhatta1234@gmail.com', 
+    },
+    'COMPONENT_SPLIT_REQUEST': True, # Makes request/response schemas cleaner in UI
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True, # Keeps the user logged in across page refreshes in Swagger UI
+        'displayOperationId': True,
+    },
 }
 
 #--- LOGGING CONFIGURATION FOR PRODUCTION ---
