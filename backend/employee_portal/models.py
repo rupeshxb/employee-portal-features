@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-# --- 2. DEPARTMENT TABLE (NEW) ---
+# --- 1. DEPARTMENT TABLE ---
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -10,7 +10,37 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
-# --- 3. PROJECT TABLE ---
+# --- 2. DESIGNATION TABLE (NEW) ---
+class Designation(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+# --- 3. TAG TABLE (NEW) ---
+class Tag(models.Model):
+    STATUS_CHOICES = (
+        ('Active', 'Active'),
+        ('Inactive', 'Inactive'),
+    )
+
+    display_name = models.CharField(max_length=100, unique=True)
+    system_name = models.CharField(max_length=100, unique=True, help_text="e.g., developers")
+    description = models.TextField(blank=True, null=True)
+    color = models.CharField(max_length=20, default="#000000")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
+    
+    # The crucial link: A tag can group multiple designations together
+    designations = models.ManyToManyField(Designation, related_name='tags', blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.display_name
+
+# --- 4. PROJECT TABLE ---
 class Project(models.Model):
     name = models.CharField(max_length=100)
     client_name = models.CharField(max_length=100, blank=True, null=True)  
@@ -18,20 +48,16 @@ class Project(models.Model):
     description = models.TextField(blank=True, null=True)
     
     # This acts as our "Accent Color" from the Figma design
-    color_code = models.CharField(
-        max_length=20, 
-        default="#3366ff"
-    )
+    color_code = models.CharField(max_length=20, default="#3366ff")
     
-    start_date = models.DateField(blank=True, null=True)  # NEW
-    end_date = models.DateField(blank=True, null=True)    # NEW
-    
+    start_date = models.DateField(blank=True, null=True)  
+    end_date = models.DateField(blank=True, null=True)    
     status = models.CharField(max_length=20, default="Active")
 
     def __str__(self):
         return self.name
 
-# --- 4. EMPLOYEE MODEL TABLE ---
+# --- 5. EMPLOYEE MODEL TABLE (CLEANED UP & UPDATED) ---
 class Employee(models.Model):
     ROLE_CHOICES = (
         ('Employee', 'Employee'),
@@ -43,7 +69,6 @@ class Employee(models.Model):
         ('Inactive', 'Inactive'),
     )
 
-    # NEW: Choices for the dropdown in React
     EMPLOYMENT_TYPE_CHOICES = (
         ('Full-Time', 'Full-Time'),
         ('Part-Time', 'Part-Time'),
@@ -59,12 +84,13 @@ class Employee(models.Model):
     personal_email = models.EmailField(blank=True, null=True)
     emergency_contact = models.CharField(max_length=20, blank=True, null=True)
     pan_number = models.CharField(max_length=20, blank=True, null=True)
-    joined_date = models.DateField(null=True, blank=True) # The date from the form
+    joined_date = models.DateField(null=True, blank=True)
     # --------------------------------
     
-    designation = models.CharField(max_length=100)
-    is_manager = models.BooleanField(default=False, help_text="Check this box if the employee is a manager.")
+    # --- UPDATED: Designation is now perfectly linked to the Designation Table ---
+    designation = models.ForeignKey(Designation, on_delete=models.SET_NULL, null=True, blank=True, related_name='employees')
     
+    is_manager = models.BooleanField(default=False, help_text="Check this box if the employee is a manager.")
     department = models.ForeignKey('Department', on_delete=models.SET_NULL, null=True, blank=True, related_name='employees')
     temp_migration_fix = models.BooleanField(default=False)
     
@@ -74,60 +100,19 @@ class Employee(models.Model):
     
     reports_to = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subordinates', limit_choices_to={'role': 'Manager'})
     projects = models.ManyToManyField('Project', related_name='assigned_employees', blank=True)
-    
-    date_joined = models.DateTimeField(auto_now_add=True) # Internal DB creation time
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
-
-    def __str__(self):
-        full_name = self.user.get_full_name()
-        return full_name if full_name else self.user.username
-    ROLE_CHOICES = (
-        ('Employee', 'Employee'),
-        ('Manager', 'Manager'),
-    )
-    
-    STATUS_CHOICES = (
-        ('Active', 'Active'),
-        ('Inactive', 'Inactive'),
-    )
-
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    designation = models.CharField(max_length=100)
-    is_manager = models.BooleanField(default=False, help_text="Check this box if the employee is a manager.")
-    
-    department = models.ForeignKey('Department', on_delete=models.SET_NULL, null=True, blank=True, related_name='employees')
-    temp_migration_fix = models.BooleanField(default=False)
-    
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Employee')
-    
-    # --- NEW FIELDS FOR EMPLOYEE OVERVIEW ---
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
-    
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
-    
-    # Self-referential key: An employee reports to another employee (the manager)
-    reports_to = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subordinates', limit_choices_to={'role': 'Manager'})
-    
-    # Many-to-Many: An employee can be assigned to multiple projects
-    projects = models.ManyToManyField('Project', related_name='assigned_employees', blank=True)
-    # ----------------------------------------
     
     date_joined = models.DateTimeField(auto_now_add=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
 
     def __str__(self):
-        # Fallback to email or username if full name isn't set
         full_name = self.user.get_full_name()
         return full_name if full_name else self.user.username
 
-# --- 5. DAILY SUBMISSION TABLE ---
+# --- 6. DAILY SUBMISSION TABLE ---
 class DailySubmission(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='daily_submissions')
     date = models.DateField(default=timezone.now)
-    
-    # CHANGE THIS LINE: from auto_now_add=True to auto_now=True
     submitted_at = models.DateTimeField(auto_now=True) 
-    
     meeting_count = models.PositiveIntegerField(default=0) 
 
     class Meta:
@@ -136,21 +121,18 @@ class DailySubmission(models.Model):
     def __str__(self):
         return f"{self.employee.user.username} - {self.date}"
 
-# --- 6. DAILY TASK TABLE ---
+# --- 7. DAILY TASK TABLE ---
 class DailyTask(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    
     submission = models.ForeignKey(DailySubmission, on_delete=models.CASCADE, related_name='tasks', null=True, blank=True)
     
     content = models.TextField()
     is_blocker = models.BooleanField(default=False)
     
     date = models.DateField(default=timezone.now) 
-    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.employee.user.username} - {self.date}"
-    

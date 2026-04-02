@@ -2,8 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django import forms
 from django.utils.html import format_html
-# ADDED: Imported DailySubmission as well
-from .models import Project, Employee, DailyTask, Department, DailySubmission
+
+# UPDATED: Imported Designation and Tag
+from .models import Project, Employee, DailyTask, Department, DailySubmission, Designation, Tag
 
 # --- 1. CUSTOM FORM FOR PROJECT ---
 class ProjectForm(forms.ModelForm):
@@ -15,13 +16,10 @@ class ProjectForm(forms.ModelForm):
         }
 
 # --- 2. PROJECT ADMIN ---
+@admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     form = ProjectForm
-    
-    # UPDATED: Added client_name, acronym, start_date, and end_date to the list view
     list_display = ('name', 'client_name', 'acronym', 'start_date', 'end_date', 'color_display', 'status')
-    
-    # UPDATED: Added new fields to the search bar and filter sidebar
     search_fields = ('name', 'client_name', 'acronym')
     list_filter = ('status', 'color_code')
 
@@ -32,11 +30,9 @@ class ProjectAdmin(admin.ModelAdmin):
         return format_html(
             '<span style="background-color: {}; color: #fff; padding: 5px 10px; border-radius: 15px; font-weight: bold; text-shadow: 0px 0px 3px #000;">{}</span>',
             obj.color_code,              
-            obj.get_color_code_display() 
+            obj.get_color_code_display() if hasattr(obj, 'get_color_code_display') else obj.color_code
         )
     color_display.short_description = 'Project Color'
-
-admin.site.register(Project, ProjectAdmin)
 
 # --- 3. DEPARTMENT ADMIN ---
 @admin.register(Department)
@@ -45,22 +41,44 @@ class DepartmentAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 # --- 4. DAILY TASK ADMIN ---
-# UPDATED: Made this a bit more robust so you can easily filter tasks
 @admin.register(DailyTask)
 class DailyTaskAdmin(admin.ModelAdmin):
     list_display = ('employee', 'project', 'date', 'is_blocker')
     list_filter = ('is_blocker', 'date', 'project')
     search_fields = ('employee__user__username', 'content')
 
-# --- 4.5. DAILY SUBMISSION ADMIN (NEW) ---
-# ADDED: This makes it easier to track when people submitted their updates
+# --- 5. DAILY SUBMISSION ADMIN ---
 @admin.register(DailySubmission)
 class DailySubmissionAdmin(admin.ModelAdmin):
     list_display = ('employee', 'date', 'meeting_count', 'submitted_at')
     list_filter = ('date',)
     search_fields = ('employee__user__username',)
 
-# --- 5. CUSTOM FORM FOR EMPLOYEE CREATION ---
+# --- 6. DESIGNATION ADMIN (NEW) ---
+@admin.register(Designation)
+class DesignationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'created_at')
+    search_fields = ('name',)
+
+# --- 7. TAG ADMIN (NEW) ---
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('display_name', 'system_name', 'status', 'color_display')
+    search_fields = ('display_name', 'system_name')
+    list_filter = ('status',)
+    
+    # ADDED: This creates a beautiful side-by-side selection box for assigning multiple designations!
+    filter_horizontal = ('designations',)
+
+    def color_display(self, obj):
+        return format_html(
+            '<span style="background-color: {}; color: #fff; padding: 5px 10px; border-radius: 15px; font-weight: bold; text-shadow: 0px 0px 3px #000;">{}</span>',
+            obj.color,              
+            obj.color 
+        )
+    color_display.short_description = 'Tag Color'
+
+# --- 8. CUSTOM FORM FOR EMPLOYEE CREATION ---
 class EmployeeCreationForm(forms.ModelForm):
     username = forms.CharField(label="Username")
     password = forms.CharField(widget=forms.PasswordInput, label="Password")
@@ -87,14 +105,13 @@ class EmployeeCreationForm(forms.ModelForm):
             employee.save()
         return employee
 
-# --- 6. EMPLOYEE ADMIN CONFIG ---
+# --- 9. EMPLOYEE ADMIN CONFIG ---
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('get_username', 'designation', 'department', 'is_manager')
     search_fields = ('user__username', 'user__first_name')
-    list_filter = ('is_manager', 'department')
+    list_filter = ('is_manager', 'department', 'designation')
     
-    # ADDED: This creates a beautiful side-by-side selection box for assigning multiple projects!
     filter_horizontal = ('projects',)
 
     def get_form(self, request, obj=None, **kwargs):

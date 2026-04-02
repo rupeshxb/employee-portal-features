@@ -15,6 +15,7 @@ import EmployeeOverview from './components/EmployeeOverview';
 import ProjectsOverview from './components/ProjectsOverview'; 
 import AddEmployee from './components/AddEmployee';
 import EditEmployee from './components/EditEmployee';
+import TagsManagement from "./components/TagsManagement";
 
 // Import Context
 import { UserProvider, UserContext } from '../src/context/UserContext';
@@ -32,18 +33,16 @@ const RootRedirect = () => {
 const AppContent = () => {
   const { user, loading, logout } = useContext(UserContext);
 
-  if (loading) return null; // Or add a <div className="loading-screen">Loading...</div>
+  if (loading) return null;
 
   return (
     <div className="app-container">
-      {/* If there is no user, ONLY show the login page */}
       {!user ? (
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       ) : (
-        /* If there IS a user, show the App layout */
         <>
           <Sidebar />
           <div className="main-content">
@@ -55,25 +54,20 @@ const AppContent = () => {
                 {/* EMPLOYEE ZONE */}
                 <Route element={<ProtectedRoute allowedRoles={['Employee', 'Manager']} />}>
                   <Route path="/employee/dashboard" element={<AddTask />} />
-                  {/* NEW ROUTE: Employee's view of Team Updates */}
                   <Route path="/employee/team-updates" element={<TeamUpdates />} />
                 </Route>
 
                 {/* MANAGER ZONE */}
                 <Route element={<ProtectedRoute allowedRoles={['Manager']} />}>
-                  {/* The initial login alias */}
                   <Route path="/manager/dashboard" element={<ManagerDailyTaskUpdates />} />
-
-                  {/* The actual menu link they use going forward */}
                   <Route path="/manager/daily-tasks" element={<ManagerDailyTaskUpdates />} />
-
                   <Route path="/manager/projects-overview" element={<ProjectsOverview />} />
-
-                  {/* EMPLOYEE OVERVIEW ROUTE */}
                   <Route path="/manager/employee-overview" element={<EmployeeOverview />} />
-
                   <Route path="/manager/employee-overview/add-employee" element={<AddEmployee />} />
                   <Route path="/manager/employee-overview/edit/:id" element={<EditEmployee />} />
+                  
+                  {/* <-- NEW TAGS MANAGEMENT ROUTE --> */}
+                  <Route path="/manager/tags" element={<TagsManagement />} />
                 </Route>
 
                 {/* SHARED ZONE */}
@@ -91,7 +85,6 @@ const AppContent = () => {
 const App = () => {
   return (
     <Router>
-      {/* UserProvider wraps EVERYTHING so AppContent can read it immediately */}
       <UserProvider>
         <AppContent />
       </UserProvider>

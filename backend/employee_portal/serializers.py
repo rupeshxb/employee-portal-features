@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Employee, Project, DailyTask, Department, DailySubmission
+from .models import Employee, Project, DailyTask, Department, DailySubmission, Designation, Tag
 
 # --- NEW: Department Serializer ---
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -192,8 +192,6 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
     
 
-
-
 # --- 5. Project Pill Serializer ---
 # We just need the name and color for the frontend pills
 class ProjectPillSerializer(serializers.ModelSerializer):
@@ -232,7 +230,7 @@ class EmployeeOverviewSerializer(serializers.ModelSerializer):
             return obj.reports_to.user.get_full_name() or obj.reports_to.user.username
         return "Unassigned"
     
-    # --- NEW: Manager Dropdown Serializer ---
+# --- NEW: Manager Dropdown Serializer ---
 class ManagerDropdownSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     full_name = serializers.SerializerMethodField()
@@ -363,3 +361,25 @@ class EmployeeCreateSerializer(serializers.ModelSerializer):
         employee = Employee.objects.create(user=user, **validated_data)
         
         return employee
+    
+# --- NEW: TAG & DESIGNATION SERIALIZERS ---
+class DesignationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Designation
+        fields = ['id', 'name']
+        
+class TagSerializer(serializers.ModelSerializer):
+    # This ensures that when we READ a tag, we get the full designation objects
+    designations = DesignationSerializer(many=True, read_only=True)
+    
+    # This allows us to WRITE (create/update) a tag by sending an array of designation IDs from React
+    designation_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Designation.objects.all(),
+        many=True,
+        write_only=True,
+        source='designations'
+    )
+
+    class Meta:
+        model = Tag
+        fields = ['id', 'display_name', 'system_name', 'description', 'color', 'status', 'designations', 'designation_ids']

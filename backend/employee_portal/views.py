@@ -1,23 +1,24 @@
+from datetime import date, timedelta
 from django.db.models import Q, Prefetch
-from rest_framework import generics
+from django.utils import timezone
+from django.utils.dateparse import parse_date
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import authenticate
+
+from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import MultiPartParser, FormParser
-from django.contrib.auth import authenticate
-from django.utils.dateparse import parse_date
-from django.utils import timezone
-from datetime import timedelta, date
-from django.shortcuts import get_object_or_404
-from rest_framework import status
-from .serializers import DepartmentSerializer
 from rest_framework.pagination import PageNumberPagination
-from .serializers import ManagerDropdownSerializer, EmployeeCreateSerializer
 
-# Use local imports since we are in the same app
-from .models import DailyTask, Employee, Project, Department, DailySubmission
+# Local Imports
+from .models import (
+    DailyTask, Employee, Project, Department, DailySubmission,
+    Designation, Tag  # <-- NEW: Added Designation and Tag
+)
 from .serializers import (
     DailyTaskSerializer, 
     ProjectSerializer, 
@@ -28,11 +29,15 @@ from .serializers import (
     EmployeeSerializer,
     ManagerDailySubmissionSerializer,
     EmployeeOverviewSerializer,
-    EmployeeDetailSerializer
+    EmployeeDetailSerializer,
+    ManagerDropdownSerializer, 
+    EmployeeCreateSerializer,
+    DesignationSerializer,  # <-- NEW
+    TagSerializer           # <-- NEW
 )
 
 
-# --- NEW: EMPLOYEE DAILY SUBMISSION ENDPOINT ---
+# --- EMPLOYEE DAILY SUBMISSION ENDPOINT ---
 class SubmitDailyTasksView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -76,26 +81,23 @@ class SubmitDailyTasksView(APIView):
             "submitted_at": submission.submitted_at
         }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
-# --- NEW: DEPARTMENT LIST VIEW ---
+
+# --- DEPARTMENT LIST VIEW ---
 class DepartmentListView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         departments = Department.objects.all().order_by('name')
         return Response(DepartmentSerializer(departments, many=True).data)
 
-# --- NEW: EMPLOYEE LIST VIEW (Fixes your 404!) ---
+
+# --- EMPLOYEE LIST VIEW ---
 class EmployeeListView(generics.ListAPIView):
     queryset = Employee.objects.select_related('user', 'department').all()
     serializer_class = EmployeeSerializer
     permission_classes = [IsAuthenticated]
 
-# --- 1. PROJECT VIEWS ---
-class ProjectList(generics.ListAPIView):
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated]
 
-# --- 2. DAILY TASK VIEWS ---
+# --- DAILY TASK VIEWS ---
 class DailyTaskListCreate(generics.ListCreateAPIView):
     serializer_class = DailyTaskSerializer
     permission_classes = [IsAuthenticated]
@@ -114,16 +116,7 @@ class DailyTaskDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
 
-from datetime import date, timedelta
-from django.utils import timezone
-from django.utils.dateparse import parse_date
-from django.db.models import Q
-from rest_framework.decorators import api_view
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-
-# --- 3. TEAM UPDATES VIEW (STANDARD EMPLOYEES) ---
+# --- TEAM UPDATES VIEW (STANDARD EMPLOYEES) ---
 @api_view(['GET'])
 def team_updates(request):
     date_param = request.GET.get('date')
@@ -185,6 +178,7 @@ def team_updates(request):
     return Response(response_data)
 
 
+# --- MANAGER TEAM UPDATES VIEW ---
 class ManagerTeamUpdatesView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -222,22 +216,15 @@ class ManagerTeamUpdatesView(APIView):
         search_query = request.query_params.get('search', '')
         project_filter = request.query_params.get('project', 'All Projects')
 
-        # =====================================================================
         # PREFETCHING: Fetch all required related data upfront (Kills N+1)
-        # =====================================================================
-        
-        # Prefetch tasks and their linked projects
         tasks_qs = DailyTask.objects.select_related('project').order_by('-date', '-created_at')
         if project_filter != 'All Projects':
             tasks_qs = tasks_qs.filter(project__name__iexact=project_filter)
 
-        # Prefetch submissions for the target date
         submissions_qs = DailySubmission.objects.filter(date=target_date)
 
-        # Base employee query with select_related for the user
         employees = Employee.objects.select_related('user').filter(role='Employee')
 
-        # Apply prefetches
         employees = employees.prefetch_related(
             Prefetch('dailytask_set', queryset=tasks_qs, to_attr='prefetched_tasks'),
             Prefetch('daily_submissions', queryset=submissions_qs, to_attr='prefetched_target_submissions')
@@ -258,11 +245,9 @@ class ManagerTeamUpdatesView(APIView):
         formatted_employees = []
 
         for emp in employees:
-            # Retrieve from our prefetched cache instead of querying the DB!
             submission = emp.prefetched_target_submissions[0] if emp.prefetched_target_submissions else None
             emp_tasks = emp.prefetched_tasks
             
-            # Find the latest task for the target date from our cached list
             latest_task = next((t for t in emp_tasks if t.date == target_date), None)
             
             if time_filter == 'not_submitted' and (submission is not None or latest_task is not None):
@@ -281,10 +266,8 @@ class ManagerTeamUpdatesView(APIView):
             elif time_filter in ['before_10', 'after_10']:
                 continue 
 
-            # Create buckets in fast Python memory
             today_tasks, yesterday_tasks, previous_tasks, blockers = [], [], [], []
 
-            # Dynamic Bucketing based on what the user requested
             for t in emp_tasks:
                 if date_str in ['all', '']:
                     if t.is_blocker: blockers.append(t)
@@ -304,12 +287,10 @@ class ManagerTeamUpdatesView(APIView):
             submitted_time_iso = actual_submit_time.isoformat() if actual_submit_time else None
 
             emp_data = TeamUpdateEmployeeSerializer(emp).data
-            
             emp_data['submittedTime'] = submitted_time_iso
             emp_data['meetings'] = submission.meeting_count if submission else 0
-            emp_data['blockers'] = len(blockers)  # Used len() since it's now a Python list
+            emp_data['blockers'] = len(blockers)
             
-            # Fill the buckets for React (Serializers accept lists just like querysets)
             emp_data['tasks'] = {
                 'today': DailyTaskSerializer(today_tasks, many=True).data,
                 'yesterday': DailyTaskSerializer(yesterday_tasks, many=True).data,
@@ -317,34 +298,27 @@ class ManagerTeamUpdatesView(APIView):
                 'blockers': DailyTaskSerializer(blockers, many=True).data,
             }
             
-            # Append the wrapper for sorting
             formatted_employees.append({
                 "sort_time": actual_submit_time,
                 "data": emp_data
             })
             
-        # ==========================================
-        # OUTSIDE THE FOR LOOP - SORTING LOGIC
-        # ==========================================
         def sort_by_latest(item):
             t = item['sort_time']
             if t is None:
-                return (0, 0) # 0 priority, pushes them to the bottom
-            return (1, t.timestamp()) # 1 priority, then sort by the numeric timestamp
+                return (0, 0)
+            return (1, t.timestamp())
 
-        # Sort the list in place, descending order (reverse=True)
         formatted_employees.sort(key=sort_by_latest, reverse=True)
-
-        # Extract just the clean data back out for the frontend
         final_employees_list = [item['data'] for item in formatted_employees]
 
-        # Ensure we return final_employees_list here!
         return Response({
             "total_in_department": total_in_department,
             "employees": final_employees_list
         })
 
-# --- 4. AUTHENTICATION VIEWS (UPDATED) ---
+
+# --- AUTHENTICATION VIEWS ---
 class CustomLoginView(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
@@ -397,7 +371,7 @@ class CustomLoginView(APIView):
             return Response({"error": "Invalid Credentials"}, status=400)
 
 
-# --- 5. SETTINGS VIEWS ---
+# --- SETTINGS VIEWS ---
 class EmployeeProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = EmployeeProfileSerializer
@@ -405,6 +379,7 @@ class EmployeeProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return get_object_or_404(Employee, user=self.request.user)
+
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
@@ -423,16 +398,16 @@ class ChangePasswordView(APIView):
     
 # --- Custom Pagination Class ---
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10 # Number of employees per page
+    page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
     
+
 # --- EMPLOYEE OVERVIEW LIST API ---
 class ManagerEmployeeOverview(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # 1. Security Check: Ensure user is a manager or superuser
         is_superuser = request.user.is_superuser
         is_manager = False
         if hasattr(request.user, 'employee'):
@@ -443,10 +418,8 @@ class ManagerEmployeeOverview(APIView):
         if not (is_superuser or is_manager):
             return Response({"error": "Forbidden. Managers only."}, status=403)
 
-        # 2. Base Queryset (Optimized with select_related/prefetch_related to prevent N+1 queries)
         queryset = Employee.objects.select_related('user', 'reports_to__user').prefetch_related('projects').all()
 
-        # 3. Apply Filters
         search_query = request.query_params.get('search', '')
         if search_query:
             queryset = queryset.filter(
@@ -461,29 +434,23 @@ class ManagerEmployeeOverview(APIView):
 
         project_filter = request.query_params.get('project', 'All Projects')
         if project_filter and project_filter.lower() != 'all projects':
-            # Assuming frontend sends the project name in the dropdown
             queryset = queryset.filter(projects__name__iexact=project_filter)
 
-        # Order by newest first, or alphabetically
         queryset = queryset.order_by('-date_joined')
         
-        # Get total count for the header ("Total Count of all employees")
         total_count = queryset.count()
 
-        # 4. Apply Pagination
         paginator = StandardResultsSetPagination()
         paginated_queryset = paginator.paginate_queryset(queryset, request, view=self)
         
         serializer = EmployeeOverviewSerializer(paginated_queryset, many=True)
 
-        # Return paginated response along with our custom total_count
         return paginator.get_paginated_response({
             'total_count': total_count,
             'employees': serializer.data
         })
         
     def post(self, request):
-        # 1. Security Check: Ensure user is a manager or superuser
         is_superuser = request.user.is_superuser
         is_manager = False
         if hasattr(request.user, 'employee'):
@@ -494,32 +461,23 @@ class ManagerEmployeeOverview(APIView):
         if not (is_superuser or is_manager):
             return Response({"error": "Forbidden. Managers only."}, status=403)
 
-        # 2. Pass the incoming React data to a Serializer
-        # Note: You will need a Serializer designed for creation (e.g., EmployeeCreateSerializer)
         serializer = EmployeeCreateSerializer(data=request.data)
         
-        # 3. Validate and Save
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "Employee created successfully!", "data": serializer.data}, status=201)
         
-        # If the data from React is invalid, send back the exact errors
         return Response(serializer.errors, status=400)
     
-# --- EMPLOYEE DETAIL API (For Manager to View/Edit/Delete a specific employee) ---
 
+# --- EMPLOYEE DETAIL API ---
 class ManagerEmployeeDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Handles GET (view details), PUT/PATCH (edit), and DELETE for a single employee.
-    """
-    # Use select_related to grab user and department data in one query (efficiency!)
     queryset = Employee.objects.select_related('user', 'department', 'reports_to__user').all()
-    serializer_class = EmployeeProfileSerializer # Assuming this serializes all needed fields
+    serializer_class = EmployeeProfileSerializer
     permission_classes = [IsAuthenticated]
-    lookup_field = 'id' # Expects /<id>/ in the URL
+    lookup_field = 'id'
 
     def check_permissions(self, request):
-        """Re-using your exact security check from ManagerEmployeeOverview"""
         super().check_permissions(request)
         is_superuser = request.user.is_superuser
         is_manager = False
@@ -532,11 +490,11 @@ class ManagerEmployeeDetailView(generics.RetrieveUpdateDestroyAPIView):
         if not (is_superuser or is_manager):
             self.permission_denied(request, message="Forbidden. Managers only.")
 
-# --- 6. PROJECT OVERVIEW VIEWS ---
-    
+
+# --- PROJECT OVERVIEW VIEWS ---
 class ProjectList(generics.ListCreateAPIView):
     """Handles GET (list all) and POST (create new) for Projects"""
-    queryset = Project.objects.all().order_by('-id') # Newest first
+    queryset = Project.objects.all().order_by('-id')
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated]
 
@@ -546,29 +504,57 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated]
 
-# --- MANAGER list view for DROPDOWN ---
+
+# --- MANAGER DROPDOWN VIEW ---
 class ManagerListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ManagerDropdownSerializer
     pagination_class = None 
 
     def get_queryset(self):
-        # Added select_related('user') to prevent N+1 query crashes!
-        # Also ensuring we only pull Active managers.
         return Employee.objects.select_related('user').filter(is_manager=True, status='Active')
     
-# --- Employee Detail / Delete View (by the manager) ---
+
+# --- EMPLOYEE DETAIL / DELETE VIEW ---
 class EmployeeDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Handles fetching detail data for the Modal (GET), 
-    deleting an employee (DELETE), and can be used for editing (PUT/PATCH).
-    """
     queryset = Employee.objects.select_related('user', 'department', 'reports_to').all()
     serializer_class = EmployeeDetailSerializer
-    permission_classes = [IsAuthenticated] # Ensure only logged-in users can access
+    permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
-        # Overriding this to ensure that deleting the Employee ALSO deletes the linked Django User
         user = instance.user
         instance.delete()
         user.delete()
+
+
+# ==========================================
+# --- NEW: DESIGNATION & TAG VIEWS ---
+# ==========================================
+
+class DesignationListView(generics.ListAPIView):
+    """
+    Returns a list of all designations.
+    Pagination is disabled so the frontend dropdown gets ALL options at once.
+    """
+    queryset = Designation.objects.all().order_by('name')
+    serializer_class = DesignationSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = None 
+
+class TagListCreateView(generics.ListCreateAPIView):
+    """
+    Handles GET (list all tags) and POST (create a new tag).
+    Uses prefetch_related to grab the M2M designations efficiently.
+    """
+    queryset = Tag.objects.prefetch_related('designations').all().order_by('-id')
+    serializer_class = TagSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = None 
+
+class TagDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Handles GET (single tag detail), PUT/PATCH (update tag), and DELETE (remove tag).
+    """
+    queryset = Tag.objects.prefetch_related('designations').all()
+    serializer_class = TagSerializer
+    permission_classes = [IsAuthenticated]

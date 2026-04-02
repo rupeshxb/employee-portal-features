@@ -15,7 +15,10 @@ from .views import (
     ManagerEmployeeOverview,
     ManagerListView,
     ManagerEmployeeDetailView,
-    EmployeeDetailView
+    EmployeeDetailView,
+    DesignationListView,    # <-- NEW
+    TagListCreateView,      # <-- NEW
+    TagDetailView           # <-- NEW
 )
 
 urlpatterns = [
@@ -51,4 +54,9 @@ urlpatterns = [
     
     # --- EMPLOYEE DETAIL ENDPOINT for the modal in the frontend ---
     path('manager/employees/<int:pk>/', EmployeeDetailView.as_view(), name='employee-detail'),
+
+    # --- DESIGNATIONS & TAGS ENDPOINTS ---
+    path('designations/', DesignationListView.as_view(), name='designation-list'),
+    path('tags/', TagListCreateView.as_view(), name='tag-list-create'),
+    path('tags/<int:pk>/', TagDetailView.as_view(), name='tag-detail'),
 ]

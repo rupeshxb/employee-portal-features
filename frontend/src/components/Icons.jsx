@@ -164,3 +164,34 @@ export const CalendarIcon = ({ className }) => (
         <path d="M6.91209 13.9167H6.91957" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
+
+export const TagIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.6428 5.4325L11.4903 1.28C10.6194 0.40917 9.4186 -0.05833 8.19027 0.0058367L3.60694 0.225837C1.7736 0.308337 0.316102 1.76584 0.224435 3.59L0.00443527 8.17334C-0.0505647 9.40167 0.407768 10.6025 1.2786 11.4733L5.4311 15.6258C7.1361 17.3308 9.90444 17.3308 11.6186 15.6258L15.6428 11.6017C17.3569 9.90584 17.3569 7.1375 15.6428 5.4325ZM6.1736 8.80584C4.7161 8.80584 3.5336 7.62334 3.5336 6.16584C3.5336 4.70834 4.7161 3.52584 6.1736 3.52584C7.6311 3.52584 8.8136 4.70834 8.8136 6.16584C8.8136 7.62334 7.6311 8.80584 6.1736 8.80584Z" fill="currentColor"/>
+    </svg>
+);
+
+export const CheckmarkRound = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.99996 18.3327C14.5833 18.3327 18.3333 14.5827 18.3333 9.99935C18.3333 5.41602 14.5833 1.66602 9.99996 1.66602C5.41663 1.66602 1.66663 5.41602 1.66663 9.99935C1.66663 14.5827 5.41663 18.3327 9.99996 18.3327Z" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M6.45837 10.0009L8.81671 12.3592L13.5417 7.64258" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+export const ArrowDown = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.96004 4.47461L6.70004 7.73461C6.31504 8.11961 5.68504 8.11961 5.30004 7.73461L2.04004 4.47461" stroke="#17181A" strokeOpacity="0.8" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+export const ActiveIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="5" cy="5" r="5" fill="#3FC43A"/>
+  </svg>
+);
+
+export const InactiveIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="5" cy="5" r="5" fill="#FF493F"/>
+  </svg>
+);

@@ -14,13 +14,13 @@ import {
   CheckCircle2,
   ClipboardList
 } from 'lucide-react';
-import { BrandIcon } from './Icons';
+import { BrandIcon, TagIcon } from './Icons';
 import { UserContext } from '../context/UserContext';
 import '../style/Sidebar.css';
 
 const Sidebar = () => {
   const { user, loading } = useContext(UserContext);
-  const location = useLocation(); // <-- Added useLocation to check exact path
+  const location = useLocation();
 
   const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
   const isManager = user?.is_manager ?? storedUser?.is_manager ?? false;
@@ -94,8 +94,6 @@ const Sidebar = () => {
             </NavLink>
 
             <div className="nav-section-title">WORK MANAGEMENT</div>
-
-            {/* <-- UPDATED DAILY TASKS ACTIVE STATE --> */}
             <NavLink
               to="/manager/daily-tasks"
               className={() => `nav-item ${['/manager/dashboard', '/manager/daily-tasks'].includes(location.pathname) ? 'active' : ''}`}
@@ -108,9 +106,15 @@ const Sidebar = () => {
               <ClipboardList size={20} />
               <span>Projects Overview</span>
             </NavLink>
+            <NavLink
+              to="/manager/tags"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <TagIcon />
+              <span>Tags Management</span>
+            </NavLink>
 
             <div className="nav-section-title">EMPLOYEE MANAGEMENT</div>
-
             <NavLink
               to="/manager/employee-overview"
               className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
