@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CheckmarkRound, ArrowDown, ActiveIcon, InactiveIcon } from './Icons';
+import '../style/TagStatusDropdown.css';
 
 const TagStatusDropdown = ({ statusFilter, setStatusFilter }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);

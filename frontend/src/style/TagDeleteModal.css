@@ -1,0 +1,46 @@
+/* Base Modal Setup (Shared logic) */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 450px; /* Usually delete modals are a bit smaller */
+    padding: 32px;
+    position: relative;
+    text-align: center; /* Centered content is common for delete/warning states */
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #9CA3AF;
+    cursor: pointer;
+}
+
+/* Delete Specific Actions */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    border-top: 1px solid #E5E7EB;
+    padding-top: 24px;
+}
+
+.modal-actions.center {
+    justify-content: center;
+    border-top: none; /* Often removed in centered warning modals */
+}

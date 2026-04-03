@@ -1,4 +1,5 @@
 import React from 'react';
+import '../style/TagDeleteModal.css';
 
 const TagDeleteModal = ({ isOpen, onClose, onConfirm, tag }) => {
     if (!isOpen || !tag) return null;

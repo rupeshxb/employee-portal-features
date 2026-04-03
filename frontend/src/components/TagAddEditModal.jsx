@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import '../style/TagAddEditModal.css';
 
 const PREDEFINED_COLORS = [
     '#00C897', '#FF33A1', '#5D5DFF', '#FF4B4B', '#7B3BFF',
@@ -10,9 +11,26 @@ const defaultFormState = {
     color: '#00C897', status: 'Active', designation_ids: []
 };
 
+// Checkmark icon for selected colors
+const CheckIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+);
+
+// Chevron down icon for dropdown
+const ChevronDown = ({ isOpen }) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+        <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+);
+
 const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
     const [formData, setFormData] = useState(defaultFormState);
     const [isCustomColor, setIsCustomColor] = useState(false);
+    const [isDesignationOpen, setIsDesignationOpen] = useState(false);
+    
+    const dropdownRef = useRef(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -30,8 +48,19 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                 setFormData(defaultFormState);
                 setIsCustomColor(false);
             }
+            setIsDesignationOpen(false); 
         }
     }, [isOpen, tag]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDesignationOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     const handleDesignationToggle = (desigId) => {
         setFormData(prev => ({
@@ -40,6 +69,10 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                 ? prev.designation_ids.filter(id => id !== desigId)
                 : [...prev.designation_ids, desigId]
         }));
+    };
+
+    const handleStatusToggle = (newStatus) => {
+        setFormData({ ...formData, status: newStatus });
     };
 
     const handleSubmit = (e) => {
@@ -89,62 +122,96 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                     <div className="form-group tag-color-group">
                         <label>Tag Color</label>
                         <div className="color-picker-box">
-                            <div className="predefined-colors">
+                            <div className="color-row">
                                 <span className="color-label">Predefined Color</span>
                                 <div className="color-options">
-                                    {PREDEFINED_COLORS.map(c => (
-                                        <div
-                                            key={c}
-                                            className={`color-circle ${!isCustomColor && formData.color === c ? 'selected' : ''}`}
-                                            style={{ backgroundColor: c }}
-                                            onClick={() => { setIsCustomColor(false); setFormData({ ...formData, color: c }); }}
-                                        />
-                                    ))}
+                                    {PREDEFINED_COLORS.map(c => {
+                                        const isSelected = !isCustomColor && formData.color === c;
+                                        return (
+                                            <div
+                                                key={c}
+                                                className={`color-circle ${isSelected ? 'selected' : ''}`}
+                                                style={{ backgroundColor: c }}
+                                                onClick={() => { setIsCustomColor(false); setFormData({ ...formData, color: c }); }}
+                                            >
+                                                {isSelected && <CheckIcon />}
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
-                            <div className="custom-color">
-                                <label className="checkbox-label">
-                                    <input type="checkbox" checked={isCustomColor} onChange={(e) => setIsCustomColor(e.target.checked)} />
-                                    <span className="checkmark"></span> Pick Custom Color
-                                </label>
-                                <input type="color" value={formData.color} disabled={!isCustomColor}
-                                    onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                                    className="html-color-picker"
-                                />
-                                <input type="text" value={formData.color.toUpperCase()} disabled={!isCustomColor}
-                                    onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                                    className="hex-input"
-                                />
+                            
+                            <div className="color-row">
+                                <span className="color-label">Custom Color</span>
+                                <div className="custom-color-controls">
+                                    <div 
+                                        className="color-square custom-color-preview"
+                                        style={{ backgroundColor: isCustomColor ? formData.color : '#F3F4F6' }}
+                                        onClick={() => setIsCustomColor(true)}
+                                    >
+                                        {isCustomColor && <CheckIcon />}
+                                        <input 
+                                            type="color" 
+                                            value={formData.color} 
+                                            onChange={(e) => {
+                                                setIsCustomColor(true);
+                                                setFormData({ ...formData, color: e.target.value });
+                                            }}
+                                            className="hidden-color-picker"
+                                        />
+                                    </div>
+                                    <input 
+                                        type="text" 
+                                        value={isCustomColor ? formData.color.toUpperCase() : ''} 
+                                        placeholder="#HEXCODE"
+                                        disabled={!isCustomColor}
+                                        onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                                        className="hex-input"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="form-group designations-select">
                         <label>Designations <span className="req">*</span></label>
-                        <div className="multi-select-container">
-                            <div className="selected-badges">
-                                {formData.designation_ids.length === 0 && <span className="placeholder">Select designations</span>}
-                                {formData.designation_ids.map(id => {
-                                    const d = designations.find(des => des.id === id);
-                                    return d ? (
-                                        <span key={id} className="sel-badge">
-                                            {d.name} <button type="button" onClick={() => handleDesignationToggle(id)}>×</button>
-                                        </span>
-                                    ) : null;
-                                })}
+                        
+                        <div className="designation-dropdown-wrapper" ref={dropdownRef}>
+                            <div 
+                                className="dropdown-trigger-btn" 
+                                onClick={() => setIsDesignationOpen(!isDesignationOpen)}
+                            >
+                                <span>Select designations</span>
+                                <ChevronDown isOpen={isDesignationOpen} />
                             </div>
-                            <div className="dropdown-options">
-                                {designations.map(desig => (
-                                    <label key={desig.id} className="dropdown-option">
-                                        <input
-                                            type="checkbox"
-                                            checked={formData.designation_ids.includes(desig.id)}
-                                            onChange={() => handleDesignationToggle(desig.id)}
-                                        />
-                                        {desig.name}
-                                    </label>
-                                ))}
-                            </div>
+
+                            {isDesignationOpen && (
+                                <div className="dropdown-menu-floating">
+                                    {designations.map(desig => (
+                                        <label key={desig.id} className="dropdown-option">
+                                            <input
+                                                type="checkbox"
+                                                className="blue-checkbox"
+                                                checked={formData.designation_ids.includes(desig.id)}
+                                                onChange={() => handleDesignationToggle(desig.id)}
+                                            />
+                                            {desig.name}
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="selected-badges-area">
+                            {formData.designation_ids.map(id => {
+                                const d = designations.find(des => des.id === id);
+                                return d ? (
+                                    <span key={id} className="sel-badge">
+                                        {d.name} 
+                                        <button type="button" onClick={() => handleDesignationToggle(id)}>×</button>
+                                    </span>
+                                ) : null;
+                            })}
                         </div>
                     </div>
 
@@ -152,14 +219,20 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                         <label>Status</label>
                         <div className="status-radios">
                             <label className="radio-label">
-                                <input type="radio" name="status" value="Active" checked={formData.status === 'Active'}
-                                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                                <input 
+                                    type="checkbox" 
+                                    className="blue-checkbox"
+                                    checked={formData.status === 'Active'}
+                                    onChange={() => handleStatusToggle('Active')}
                                 />
                                 <span>Active</span>
                             </label>
                             <label className="radio-label">
-                                <input type="radio" name="status" value="Inactive" checked={formData.status === 'Inactive'}
-                                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                                <input 
+                                    type="checkbox" 
+                                    className="blue-checkbox"
+                                    checked={formData.status === 'Inactive'}
+                                    onChange={() => handleStatusToggle('Inactive')}
                                 />
                                 <span>Inactive</span>
                             </label>

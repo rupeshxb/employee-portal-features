@@ -1,4 +1,5 @@
 import React from 'react';
+import '../style/TagsTable.css';
 
 const TagsTable = ({ tags, totalTagsCount, loading, onEdit, onDelete, onAddTag }) => {
     if (loading) {

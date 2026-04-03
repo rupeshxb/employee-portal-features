@@ -1,0 +1,93 @@
+/* Custom Dropdown Container */
+.status-filter-container.custom-dropdown {
+    position: relative;
+    min-width: 160px;
+}
+
+.custom-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    background: #ffffff;
+    border: 1px solid #E5E7EB; 
+    border-radius: 8px; 
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+    color: #374151;
+}
+
+.trigger-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.custom-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: #ffffff;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    z-index: 50;
+    overflow: hidden;
+}
+
+.custom-dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    cursor: pointer;
+    background: #ffffff;
+    transition: background 0.15s ease;
+    font-size: 14px;
+    color: #374151;
+}
+
+.custom-dropdown-item:hover {
+    background-color: #F9FAFB;
+}
+
+.item-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Force the checkmark SVG to appear BEFORE the text */
+.trigger-content svg,
+.item-label svg {
+    order: -1;          
+    flex-shrink: 0;     
+}
+
+/* Ensure the main dropdown arrow stays on the right */
+.custom-dropdown-trigger > svg,
+.arrow-icon {
+    order: 2 !important; 
+    transition: transform 0.2s ease-in-out;
+}
+
+.arrow-icon.rotated {
+    transform: rotate(180deg);
+}
+
+/* Fallback/Native dropdown */
+.status-dropdown {
+    padding: 10px 32px 10px 16px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #374151;
+    background-color: white;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+}
