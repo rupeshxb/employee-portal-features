@@ -44,19 +44,24 @@
     background: white;
     border-radius: 12px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    overflow: visible;
+    /* 1. Change overflow to allow horizontal scrolling on small screens */
+    overflow-x: auto; 
     margin-top: 16px;
+    /* 2. Optional but recommended: Add a bit of bottom padding or min-height 
+       so your absolute-positioned action menus don't get clipped by the new scrollbar */
+    min-height: 400px; 
 }
+
 .overview-table {
     width: 100%;
-    /* 1. Change to separate, but remove the spacing so borders touch */
+    /* 3. Add a min-width so the table forces a scrollbar instead of squishing columns */
+    min-width: 1000px; 
     border-collapse: separate;
     border-spacing: 0;
     text-align: left;
 }
 
 .overview-table thead {
-    /* 2. Remove border-radius from here, it doesn't work on thead */
     background-color: #ebebeb;
 }
 
@@ -67,14 +72,14 @@
     font-weight: 600;
     padding: 16px 24px;
     border-bottom: 1px solid #e2e8f0;
+    /* 4. Keep headers on one line */
+    white-space: nowrap; 
 }
 
-/* 3. Apply the radius to the top-left of the FIRST th */
 .overview-table th:first-child {
-    border-top-left-radius: 12px; /* Use px instead of 50% */
+    border-top-left-radius: 12px; 
 }
 
-/* 4. Apply the radius to the top-right of the LAST th */
 .overview-table th:last-child {
     border-top-right-radius: 12px;
 }
@@ -86,6 +91,8 @@
     color: #1e293b;
     vertical-align: middle;
 }
+
+/* --------------------------- */
 
 /* Employee Details in Table */
 .overview-emp-cell {
