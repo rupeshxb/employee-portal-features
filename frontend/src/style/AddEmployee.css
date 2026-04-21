@@ -1,11 +1,17 @@
 .add-employee-page {
     padding: 24px;
-    background-color: #F8FAFC;
+    background-color: #FFFFFF;
     min-height: 100vh;
+    border-radius: 30px;
 }
 
-.page-header-row {
-    margin-bottom: 24px;
+.add-employee-info{
+    padding-left: 0px;
+}
+
+.add-employee-info h2{
+    font-size: 34px;
+    font-weight: 600;
 }
 
 .back-btn {
@@ -17,6 +23,7 @@
     margin-bottom: 12px;
     display: inline-flex;
     align-items: center;
+    padding: 0.6em 0em;
 }
 
 .back-btn:hover {
@@ -42,10 +49,14 @@
 }
 
 .form-section {
-    background: white;
+    background: none;
     padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 0px;
+    box-shadow: none;
+}
+
+.login-details .form-grid{
+    display: block;
 }
 
 .form-section h3 {
@@ -66,12 +77,14 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding-bottom: 12px;
 }
 
 .input-group label {
     font-size: 13px;
     font-weight: 500;
     color: #475569;
+    margin-bottom: 0px;
 }
 
 .input-group input[type="text"],
@@ -98,6 +111,7 @@
 .password-input-wrapper {
     display: flex;
     gap: 10px;
+    height: auto;
 }
 
 .password-input-wrapper input {
@@ -108,12 +122,13 @@
     background-color: #F1F5F9;
     border: 1px solid #CBD5E1;
     border-radius: 6px;
-    padding: 0 16px;
+    padding: 10px 14px;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     color: #334155;
     transition: all 0.2s;
+    height: 100%;
 }
 
 .btn-generate:hover {
