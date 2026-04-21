@@ -188,7 +188,7 @@ const EmployeeCard = ({ emp, variant = 'employee' }) => {
 
                 <div className="emp-info">
                     <h4>{emp.full_name}</h4>
-                    <span>{emp.designation}</span>
+                    <span>{emp.designation_name || ''}</span>
                 </div>
             </div>
 

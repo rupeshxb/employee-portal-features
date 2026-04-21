@@ -140,6 +140,7 @@ const DesignationManagement = () => {
                                 <tr>
                                     <th>#</th>
                                     <th>NAME</th>
+                                    <th>STATUS</th>
                                     <th>CREATED</th>
                                     <th className="text-center">ACTIONS</th>
                                 </tr>
@@ -150,6 +151,12 @@ const DesignationManagement = () => {
                                         <tr key={desig.id}>
                                             <td className="text-muted row-index">{(currentPage - 1) * entriesPerPage + idx + 1}</td>
                                             <td className="desig-name-cell">{desig.name}</td>
+                                            <td>
+                                                <span className={`desig-status-badge ${(desig.status || 'Active').toLowerCase()}`}>
+                                                    <span className="desig-status-dot"></span>
+                                                    {desig.status || 'Active'}
+                                                </span>
+                                            </td>
                                             <td className="text-muted">{formatDate(desig.created_at)}</td>
                                             <td className="action-cells">
                                                 <button className="btn-icon" onClick={() => handleOpenModal(desig)} title="Edit">

@@ -63,7 +63,7 @@ const EmployeeDetailsModal = ({ isOpen, onClose, employeeId, onEditClick }) => {
                                     )}
                                 </div>
                                 <h2>{emp.first_name} {emp.last_name}</h2>
-                                <p>{emp.designation || 'Unassigned'} • {emp.email || emp.user?.email}</p>
+                                <p>{emp.designation_name || 'Unassigned'} • {emp.email || emp.user?.email}</p>
                             </div>
                         </div>
 
@@ -130,7 +130,7 @@ const EmployeeDetailsModal = ({ isOpen, onClose, employeeId, onEditClick }) => {
                                         </div>
                                     </div>
                                     <div className="grid-item"><span>Department</span><p>{emp.department?.name || emp.department || '-'}</p></div>
-                                    <div className="grid-item"><span>Designation</span><p>{emp.designation || '-'}</p></div>
+                                    <div className="grid-item"><span>Designation</span><p>{emp.designation_name || '-'}</p></div>
                                     <div className="grid-item"><span>Reporting Manager</span><p>{emp.reports_to_name || '-'}</p></div>
                                 </div>
                             </div>

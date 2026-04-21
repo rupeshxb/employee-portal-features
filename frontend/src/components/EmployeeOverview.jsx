@@ -226,7 +226,7 @@ const EmployeeOverview = () => {
                                     </div>
                                 </td>
                                 <td>{emp.phone_number || '-'}</td>
-                                <td>{emp.designation || 'Unassigned'}</td>
+                                <td>{emp.designation_name || 'Unassigned'}</td>
                                 <td>{renderProjectPills(emp.projects)}</td>
                                 <td>
                                     <div className={`overview-status-badge ${emp.status ? emp.status.toLowerCase() : 'inactive'}`}>

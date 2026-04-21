@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../style/DesignationAddEditModal.css';
 
-const defaultForm = { name: '' };
+const defaultForm = { name: '', status: 'Active' };
 
 const DesignationAddEditModal = ({ isOpen, onClose, onSubmit, designation }) => {
     const [formData, setFormData] = useState(defaultForm);
@@ -9,7 +9,10 @@ const DesignationAddEditModal = ({ isOpen, onClose, onSubmit, designation }) => 
 
     useEffect(() => {
         if (isOpen) {
-            setFormData(designation ? { name: designation.name } : defaultForm);
+            setFormData(designation
+                ? { name: designation.name, status: designation.status || 'Active' }
+                : defaultForm
+            );
             setError('');
         }
     }, [isOpen, designation]);
@@ -20,7 +23,7 @@ const DesignationAddEditModal = ({ isOpen, onClose, onSubmit, designation }) => 
             setError('Designation name is required.');
             return;
         }
-        onSubmit({ name: formData.name.trim() });
+        onSubmit({ name: formData.name.trim(), status: formData.status });
     };
 
     if (!isOpen) return null;
@@ -34,7 +37,7 @@ const DesignationAddEditModal = ({ isOpen, onClose, onSubmit, designation }) => 
                     <h2>{designation ? 'Edit Designation' : 'Add New Designation'}</h2>
                     <p className="desig-modal-subtitle">
                         {designation
-                            ? 'Update the designation name used across the system.'
+                            ? 'Update the designation used across the system.'
                             : 'Add a new designation to categorise employees in your organisation.'}
                     </p>
                 </div>
@@ -50,10 +53,28 @@ const DesignationAddEditModal = ({ isOpen, onClose, onSubmit, designation }) => 
                             required
                             placeholder="e.g. Software Engineer, Project Manager"
                             value={formData.name}
-                            onChange={(e) => { setFormData({ name: e.target.value }); setError(''); }}
+                            onChange={(e) => { setFormData(f => ({ ...f, name: e.target.value })); setError(''); }}
                             autoFocus
                         />
                         {error && <span className="field-error">{error}</span>}
+                    </div>
+
+                    <div className="desig-form-group">
+                        <label>Status</label>
+                        <div className="status-radios">
+                            {['Active', 'Inactive'].map(s => (
+                                <label key={s} className="radio-label">
+                                    <input
+                                        type="radio"
+                                        name="desig-status"
+                                        value={s}
+                                        checked={formData.status === s}
+                                        onChange={() => setFormData(f => ({ ...f, status: s }))}
+                                    />
+                                    {s}
+                                </label>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="desig-modal-actions">

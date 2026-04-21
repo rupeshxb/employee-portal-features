@@ -46,7 +46,7 @@ const TeamUpdates = () => {
         fetch(`${API_BASE_URL}/api/employees/`, { headers })
             .then(res => res.json())
             .then(data => {
-                const uniqueDesignations = [...new Set(data.map(emp => emp.designation).filter(Boolean))];
+                const uniqueDesignations = [...new Set(data.map(emp => emp.designation_name).filter(Boolean))];
                 setRoleList(['All Roles', ...uniqueDesignations]);
             })
             .catch(err => console.error("Error fetching roles:", err));

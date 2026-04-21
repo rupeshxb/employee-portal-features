@@ -124,6 +124,21 @@
     margin-top: 2px;
 }
 
+/* Status Radios */
+.status-radios {
+    display: flex;
+    gap: 24px;
+}
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 400;
+    cursor: pointer;
+    font-size: 14px;
+    color: #374151;
+}
+
 /* Actions */
 .desig-modal-actions {
     display: flex;

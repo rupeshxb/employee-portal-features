@@ -66,7 +66,7 @@ class ProjectSerializer(serializers.ModelSerializer):
                 'id': emp.id,
                 'full_name': emp.user.get_full_name() or emp.user.username,
                 'avatar': emp.avatar.url if emp.avatar else None,
-                'designation': emp.designation
+                'designation': emp.designation.name if emp.designation else None
             })
         return grouped
 
@@ -76,25 +76,15 @@ class EmployeeSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source='user.last_name', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
     full_name = serializers.SerializerMethodField()
-    
-    # NEW: Fetch department name directly for the UI
     department_name = serializers.CharField(source='department.name', read_only=True)
+    designation_name = serializers.CharField(source='designation.name', read_only=True)
 
     class Meta:
         model = Employee
         fields = [
-            'id', 
-            'username', 
-            'first_name', 
-            'last_name', 
-            'full_name',
-            'email',
-            'designation', 
-            'department', 
-            'department_name', # Added
-            'role',            # Added
-            'avatar',
-            'is_manager',      # Added for frontend logic
+            'id', 'username', 'first_name', 'last_name', 'full_name', 'email',
+            'designation', 'designation_name', 'department', 'department_name',
+            'role', 'avatar', 'is_manager',
         ]
 
     def get_full_name(self, obj):
@@ -142,10 +132,11 @@ class ManagerDailySubmissionSerializer(serializers.ModelSerializer):
 class TeamUpdateEmployeeSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField()
-    
+    designation_name = serializers.CharField(source='designation.name', read_only=True)
+
     class Meta:
         model = Employee
-        fields = ['id', 'full_name', 'designation', 'avatar']
+        fields = ['id', 'full_name', 'designation', 'designation_name', 'avatar']
 
     def get_full_name(self, obj):
         if obj.user.first_name and obj.user.last_name:
@@ -169,13 +160,12 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source='user.last_name')
     email = serializers.EmailField(source='user.email')
     username = serializers.CharField(source='user.username', read_only=True)
-    
-    # Expose department_name for profile view safely
     department_name = serializers.CharField(source='department.name', read_only=True)
+    designation_name = serializers.CharField(source='designation.name', read_only=True)
 
     class Meta:
         model = Employee
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'designation', 'department', 'department_name', 'avatar','is_manager', 'role']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'designation', 'designation_name', 'department', 'department_name', 'avatar', 'is_manager', 'role']
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', {})
@@ -201,24 +191,18 @@ class ProjectPillSerializer(serializers.ModelSerializer):
 
 # --- 6. Employee Overview Serializer ---
 class EmployeeOverviewSerializer(serializers.ModelSerializer):
-    # Flattening user data so frontend doesn't have to dig for it
     full_name = serializers.SerializerMethodField()
     email = serializers.EmailField(source='user.email', read_only=True)
-    
-    # NEW: Grab the string name of the department
     department_name = serializers.CharField(source='department.name', read_only=True)
-    
-    # Nested projects for the colored pills
+    designation_name = serializers.CharField(source='designation.name', read_only=True)
     projects = ProjectPillSerializer(many=True, read_only=True)
-    
-    # Getting the actual string name of the manager
     reports_to_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Employee
         fields = [
-            'id', 'full_name', 'email', 'avatar', 'phone_number', 
-            'designation', 'department_name', 'status', 'projects', 
+            'id', 'full_name', 'email', 'avatar', 'phone_number',
+            'designation', 'designation_name', 'department_name', 'status', 'projects',
             'reports_to', 'reports_to_name', 'date_joined'
         ]
 
@@ -249,21 +233,19 @@ class ManagerDropdownSerializer(serializers.ModelSerializer):
 
 # --- Employee Detail Serializer (For the Modal) ---
 class EmployeeDetailSerializer(serializers.ModelSerializer):
-    # Notice we removed read_only=True for these three fields so we can accept incoming data
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
     email = serializers.EmailField(source='user.email')
-    
     username = serializers.CharField(source='user.username', read_only=True)
     department_name = serializers.CharField(source='department.name', read_only=True)
+    designation_name = serializers.CharField(source='designation.name', read_only=True)
     reports_to_name = serializers.SerializerMethodField()
     date_joined = serializers.SerializerMethodField()
-    
-    # Map frontend 'reporting_manager' to 'reports_to'
+
     reporting_manager = serializers.PrimaryKeyRelatedField(
-        queryset=Employee.objects.filter(role='Manager'), 
-        source='reports_to', 
-        required=False, 
+        queryset=Employee.objects.filter(role='Manager'),
+        source='reports_to',
+        required=False,
         allow_null=True
     )
 
@@ -271,10 +253,10 @@ class EmployeeDetailSerializer(serializers.ModelSerializer):
         model = Employee
         fields = [
             'id', 'first_name', 'last_name', 'email', 'username', 'avatar',
-            'employee_id', 'pan_number', 'personal_email', 'phone_number', 
-            'emergency_contact', 'employment_type', 'status', 'designation', 
-            'department', 'department_name', 'reports_to_name', 'date_joined',
-            'reporting_manager'
+            'employee_id', 'pan_number', 'personal_email', 'phone_number',
+            'emergency_contact', 'employment_type', 'status', 'designation',
+            'designation_name', 'department', 'department_name', 'reports_to_name',
+            'date_joined', 'reporting_manager'
         ]
 
     def get_reports_to_name(self, obj):

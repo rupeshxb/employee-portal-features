@@ -143,7 +143,7 @@ def team_updates(request):
         )
 
     if role_filter != 'All Roles':
-        employees = employees.filter(designation__iexact=role_filter)
+        employees = employees.filter(designation__name__iexact=role_filter)
 
     response_data = []
 
@@ -338,7 +338,7 @@ class CustomLoginView(APIView):
 
             if employee:
                 employee_id = employee.pk
-                designation = employee.designation
+                designation = employee.designation.name if employee.designation else None
                 portal_role = employee.role 
                 is_manager_status = employee.is_manager
                 avatar = employee.avatar.url if employee.avatar else None
