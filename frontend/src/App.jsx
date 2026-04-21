@@ -16,6 +16,7 @@ import ProjectsOverview from './components/ProjectsOverview';
 import AddEmployee from './components/AddEmployee';
 import EditEmployee from './components/EditEmployee';
 import TagsManagement from "./components/TagsManagement";
+import DesignationManagement from "./components/DesignationManagement";
 
 // Import Context
 import { UserProvider, UserContext } from '../src/context/UserContext';
@@ -66,8 +67,8 @@ const AppContent = () => {
                   <Route path="/manager/employee-overview/add-employee" element={<AddEmployee />} />
                   <Route path="/manager/employee-overview/edit/:id" element={<EditEmployee />} />
                   
-                  {/* <-- NEW TAGS MANAGEMENT ROUTE --> */}
                   <Route path="/manager/tags" element={<TagsManagement />} />
+                  <Route path="/manager/designations" element={<DesignationManagement />} />
                 </Route>
 
                 {/* SHARED ZONE */}

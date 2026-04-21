@@ -12,7 +12,8 @@ import {
   Calculator,
   History,
   CheckCircle2,
-  ClipboardList
+  ClipboardList,
+  Briefcase
 } from 'lucide-react';
 import { BrandIcon, TagIcon } from './Icons';
 import { UserContext } from '../context/UserContext';
@@ -121,6 +122,13 @@ const Sidebar = () => {
             >
               <Users size={20} />
               <span>Employee Overview</span>
+            </NavLink>
+            <NavLink
+              to="/manager/designations"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <Briefcase size={20} />
+              <span>Designations</span>
             </NavLink>
           </>
         )}

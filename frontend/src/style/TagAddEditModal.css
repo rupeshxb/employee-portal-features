@@ -39,16 +39,18 @@
 
 /* Modal Typography */
 .tag-modal h2 {
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 700;
     color: #111827;
+    font-family: 'Figtree', sans-serif;
 }
 
 .modal-subtitle {
     margin: 0 0 24px 0;
     font-size: 14px;
     color: #6B7280;
+    line-height: 1.5;
 }
 
 /* Thin Custom Scrollbars */
@@ -101,15 +103,16 @@
 .form-group input[type="text"],
 .form-group textarea {
     width: 100%;
-    padding: 10px 12px;
+    padding: 11px 14px;
     border: 1px solid #E5E7EB;
     border-radius: 8px;
-    background-color: #ffffff; 
-    font-family: inherit;
+    background-color: #F9FAFB;
+    font-family: 'Figtree', 'Inter', sans-serif;
     font-size: 14px;
     color: #111827;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
 }
 .form-group input[type="text"]::placeholder,
 .form-group textarea::placeholder {
@@ -117,7 +120,9 @@
 }
 .form-group input[type="text"]:focus,
 .form-group textarea:focus {
-    border-color: #3B82F6;
+    border-color: #2563EB;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 
 /* --- COLOR PICKER --- */

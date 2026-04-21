@@ -366,7 +366,8 @@ class EmployeeCreateSerializer(serializers.ModelSerializer):
 class DesignationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Designation
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'created_at']
+        read_only_fields = ['id', 'created_at']
         
 class TagSerializer(serializers.ModelSerializer):
     # This ensures that when we READ a tag, we get the full designation objects

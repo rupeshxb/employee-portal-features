@@ -1,0 +1,321 @@
+/* =============================================
+   DESIGNATION MANAGEMENT PAGE
+   ============================================= */
+
+.designation-management-page {
+    background-color: #f5f6fa;
+    min-height: 100vh;
+    font-family: 'Figtree', 'Inter', sans-serif;
+}
+
+/* ---- Shared Page Header (self-contained) ---- */
+.designation-management-page .page-header {
+    position: relative;
+    background: linear-gradient(90.82deg, #e0eafc 6.42%, #cfdef3 92.16%);
+    border-radius: 16px;
+    padding: 32px 40px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.designation-management-page .page-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 6px;
+    position: relative;
+    z-index: 10;
+}
+.designation-management-page .page-header p {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+    position: relative;
+    z-index: 10;
+}
+.designation-management-page .header-decor {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(80.05deg, rgba(191, 90, 224, 0.4) 19.27%, rgba(168, 17, 218, 0.4) 70.01%);
+    z-index: 1;
+    pointer-events: none;
+}
+.designation-management-page .hero-circle-1 {
+    width: 154px; height: 154px;
+    right: -40px; bottom: -80px; top: auto;
+}
+.designation-management-page .hero-circle-2 {
+    width: 77px; height: 77px;
+    left: 50%; top: -20px;
+}
+.designation-management-page .hero-circle-3 {
+    width: 32px; height: 32px;
+    left: 48%; top: 60px;
+}
+.designation-management-page .projects-header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+.designation-management-page .add-project-btn {
+    background-color: #1e293b;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+    font-family: inherit;
+}
+.designation-management-page .add-project-btn:hover {
+    background-color: #0f172a;
+}
+
+/* Sub-header */
+.desig-subheader h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #111827;
+}
+.desig-subheader .text-muted {
+    font-weight: 400;
+    font-size: 16px;
+    color: #6B7280;
+}
+
+/* Top bar */
+.desig-top-bar {
+    display: flex;
+    margin-bottom: 16px;
+    gap: 16px;
+}
+.desig-top-bar .search-container {
+    position: relative;
+    max-width: 380px;
+    width: 100%;
+}
+.desig-top-bar .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9CA3AF;
+}
+.desig-top-bar .search-input {
+    width: 100%;
+    padding: 10px 10px 10px 38px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+    color: #111827;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+.desig-top-bar .search-input:focus {
+    border-color: #3B82F6;
+}
+
+/* Table container */
+.desig-table-container {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    overflow: hidden;
+}
+
+/* Table */
+.desig-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+.desig-table th {
+    background-color: #F9FAFB;
+    color: #6B7280;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 14px 24px;
+    border-bottom: 1px solid #E5E7EB;
+    white-space: nowrap;
+}
+.desig-table td {
+    padding: 15px 24px;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 14px;
+    vertical-align: middle;
+    color: #374151;
+}
+.desig-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.desig-table tbody tr:hover {
+    background-color: #F9FAFB;
+}
+.desig-name-cell {
+    font-weight: 500;
+    color: #111827;
+}
+.row-index {
+    font-size: 13px;
+    width: 40px;
+}
+
+/* Actions */
+.action-cells {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+}
+.btn-icon:hover {
+    background-color: #F3F4F6;
+}
+.btn-icon:hover svg {
+    stroke: #374151;
+}
+.btn-icon-danger:hover {
+    background-color: #FEF2F2;
+}
+.btn-icon-danger:hover svg {
+    stroke: #EF4444;
+}
+
+/* Empty state */
+.desig-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 24px;
+    text-align: center;
+}
+.desig-empty-state .empty-icon {
+    margin-bottom: 16px;
+}
+.desig-empty-state h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+}
+.desig-empty-state p {
+    color: #6B7280;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+/* Loading */
+.loading-state {
+    padding: 48px 24px;
+    text-align: center;
+    color: #6B7280;
+    font-size: 14px;
+}
+
+/* Error banner */
+.error-banner {
+    background: #FEF2F2;
+    color: #DC2626;
+    border: 1px solid #FECACA;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+/* Shared buttons */
+.btn-primary {
+    background-color: #2563EB;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: inherit;
+}
+.btn-primary:hover {
+    background-color: #1D4ED8;
+}
+.btn-outline {
+    background: #fff;
+    color: #374151;
+    border: 1px solid #D1D5DB;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+}
+.btn-outline:hover {
+    background-color: #F9FAFB;
+}
+
+/* Text utilities */
+.text-muted { color: #6B7280; }
+.text-center { text-align: center; }
+.empty-cell { color: #6B7280; font-size: 14px; }
+
+/* Pagination */
+.pagination-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px;
+    background: #fff;
+    font-size: 14px;
+    color: #6B7280;
+    border-top: 1px solid #F3F4F6;
+}
+.pagination-controls {
+    display: flex;
+    gap: 6px;
+}
+.pagination-controls button {
+    padding: 6px 12px;
+    border: 1px solid #E5E7EB;
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #374151;
+    transition: background 0.15s;
+}
+.pagination-controls button:hover:not(:disabled) {
+    background: #F9FAFB;
+}
+.pagination-controls button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+.pagination-controls button.active {
+    background: #1e293b;
+    color: #fff;
+    border-color: #1e293b;
+}

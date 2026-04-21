@@ -9,6 +9,7 @@
     width: 100%;
     border-collapse: collapse;
     text-align: left;
+    font-family: 'Figtree', 'Inter', sans-serif;
 }
 .tags-table th {
     background-color: #F9FAFB;
@@ -16,14 +17,20 @@
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
-    padding: 16px 24px;
+    letter-spacing: 0.04em;
+    padding: 14px 24px;
     border-bottom: 1px solid #E5E7EB;
+    white-space: nowrap;
 }
 .tags-table td {
-    padding: 16px 24px;
-    border-bottom: 1px solid #E5E7EB;
+    padding: 15px 24px;
+    border-bottom: 1px solid #F3F4F6;
     font-size: 14px;
     vertical-align: middle;
+    color: #374151;
+}
+.tags-table tbody tr:last-child td {
+    border-bottom: none;
 }
 .tags-table tbody tr:hover {
     background-color: #F9FAFB;
@@ -82,19 +89,30 @@
 /* Table Actions */
 .action-cells {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     justify-content: center;
 }
 .btn-icon {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
+    padding: 6px;
+    border-radius: 6px;
     transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
 }
 .btn-icon:hover {
     background-color: #F3F4F6;
+}
+.btn-icon:hover svg {
+    stroke: #374151;
+}
+.btn-icon-danger:hover {
+    background-color: #FEF2F2;
+}
+.btn-icon-danger:hover svg {
+    stroke: #EF4444;
 }
 
 /* Empty State */
@@ -108,16 +126,18 @@
     border-radius: 12px;
     border: 1px solid #E5E7EB;
     text-align: center;
-    margin-top: 24px;
 }
 .empty-icon {
     margin-bottom: 16px;
 }
 .empty-state h3 {
-    margin: 0 0 8px 0;
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
     color: #111827;
 }
 .empty-state p {
     color: #6B7280;
+    font-size: 14px;
     margin-bottom: 24px;
 }

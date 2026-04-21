@@ -1,5 +1,8 @@
-/* Base Modal Setup */
-.modal-overlay {
+/* =============================================
+   DESIGNATION DELETE MODAL
+   ============================================= */
+
+.desig-del-overlay {
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.45);
@@ -9,13 +12,14 @@
     z-index: 1000;
     animation: fadeInOverlay 0.18s ease;
 }
+
 @keyframes fadeInOverlay {
     from { opacity: 0; }
     to   { opacity: 1; }
 }
 
-.modal-content {
-    background: white;
+.desig-del-content {
+    background: #fff;
     border-radius: 14px;
     width: 100%;
     max-width: 420px;
@@ -25,26 +29,13 @@
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.14);
     animation: slideUpModal 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 @keyframes slideUpModal {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-.delete-modal h2 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #111827;
-    margin: 0 0 10px;
-    font-family: 'Figtree', sans-serif;
-}
-.delete-modal p {
-    font-size: 14px;
-    color: #374151;
-    margin: 0 0 6px;
-    line-height: 1.5;
-}
-
-.modal-close {
+.desig-del-close {
     position: absolute;
     top: 16px;
     right: 20px;
@@ -58,13 +49,43 @@
     border-radius: 4px;
     transition: color 0.15s;
 }
-.modal-close:hover {
+.desig-del-close:hover {
     color: #374151;
     background: #F3F4F6;
 }
 
-/* Delete Modal Actions */
-.modal-actions {
+.desig-del-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+.desig-del-icon svg {
+    padding: 10px;
+    background: #FEF2F2;
+    border-radius: 50%;
+}
+
+.desig-del-content h2 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    font-family: 'Figtree', sans-serif;
+}
+
+.desig-del-content p {
+    margin: 0 0 6px;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.desig-del-warning {
+    font-size: 13px !important;
+    color: #9CA3AF !important;
+}
+
+.desig-del-actions {
     display: flex;
     justify-content: center;
     gap: 12px;
@@ -72,14 +93,9 @@
     padding-top: 20px;
     border-top: 1px solid #F3F4F6;
 }
-.modal-actions.center {
-    justify-content: center;
-    border-top: 1px solid #F3F4F6;
-}
 
-/* Buttons inside delete modal */
-.modal-actions .btn-outline {
-    background: white;
+.btn-outline {
+    background: #fff;
     color: #374151;
     border: 1px solid #D1D5DB;
     padding: 10px 24px;
@@ -87,24 +103,25 @@
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    font-family: 'Figtree', 'Inter', sans-serif;
+    font-family: inherit;
     transition: background 0.15s;
 }
-.modal-actions .btn-outline:hover {
+.btn-outline:hover {
     background: #F9FAFB;
 }
-.modal-actions .btn-danger {
+
+.btn-danger {
     background-color: #EF4444;
-    color: white;
+    color: #fff;
     border: none;
     padding: 10px 24px;
     border-radius: 7px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    font-family: 'Figtree', 'Inter', sans-serif;
+    font-family: inherit;
     transition: background-color 0.2s;
 }
-.modal-actions .btn-danger:hover {
+.btn-danger:hover {
     background-color: #DC2626;
 }

@@ -16,9 +16,10 @@ from .views import (
     ManagerListView,
     ManagerEmployeeDetailView,
     EmployeeDetailView,
-    DesignationListView,    # <-- NEW
-    TagListCreateView,      # <-- NEW
-    TagDetailView           # <-- NEW
+    DesignationListCreateView,  # <-- NEW
+    DesignationDetailView,      # <-- NEW
+    TagListCreateView,          # <-- NEW
+    TagDetailView               # <-- NEW
 )
 
 urlpatterns = [
@@ -56,7 +57,8 @@ urlpatterns = [
     path('manager/employees/<int:pk>/', EmployeeDetailView.as_view(), name='employee-detail'),
 
     # --- DESIGNATIONS & TAGS ENDPOINTS ---
-    path('designations/', DesignationListView.as_view(), name='designation-list'),
+    path('designations/', DesignationListCreateView.as_view(), name='designation-list-create'),
+    path('designations/<int:pk>/', DesignationDetailView.as_view(), name='designation-detail'),
     path('tags/', TagListCreateView.as_view(), name='tag-list-create'),
     path('tags/<int:pk>/', TagDetailView.as_view(), name='tag-detail'),
 ]

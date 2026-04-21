@@ -531,15 +531,24 @@ class EmployeeDetailView(generics.RetrieveUpdateDestroyAPIView):
 # --- NEW: DESIGNATION & TAG VIEWS ---
 # ==========================================
 
-class DesignationListView(generics.ListAPIView):
+class DesignationListCreateView(generics.ListCreateAPIView):
     """
-    Returns a list of all designations.
-    Pagination is disabled so the frontend dropdown gets ALL options at once.
+    GET: list all designations (pagination disabled for dropdown usage).
+    POST: create a new designation.
     """
     queryset = Designation.objects.all().order_by('name')
     serializer_class = DesignationSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = None 
+    pagination_class = None
+
+
+class DesignationDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET/PUT/PATCH/DELETE a single designation by pk.
+    """
+    queryset = Designation.objects.all()
+    serializer_class = DesignationSerializer
+    permission_classes = [IsAuthenticated]
 
 class TagListCreateView(generics.ListCreateAPIView):
     """
