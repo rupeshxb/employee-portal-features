@@ -42,10 +42,8 @@ svg {
 
 .content-area {
   padding: 32px;
-  max-width: 1000px;
-  margin: 0 auto;
   width: 100%;
-  padding-bottom: 80px; /* Space for scrolling */
+  padding-bottom: 80px;
 }
 
 
@@ -69,12 +67,12 @@ svg {
    3. SIDEBAR
    ========================================= */
 .sidebar {
-  width: 260px;
+  width: 250px;
   background: #ffffff;
   border-right: 1px solid #eaeaea;
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  padding: 20px 16px;
   flex-shrink: 0;
 }
 
@@ -140,15 +138,15 @@ svg {
 }
 
 .nav-item.active {
-  background-color: #eef2ff; /* Light Indigo */
-  color: #4f46e5; /* Indigo */
+  background-color: #2563EA;
+  color: #ffffff;
 }
 
 /* =========================================
    4. HEADER
    ========================================= */
 .header {
-  height: 70px;
+  height: 72px;
   background: #ffffff;
   border-bottom: 1px solid #eaeaea;
   display: flex;

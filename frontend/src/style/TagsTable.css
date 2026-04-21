@@ -1,7 +1,7 @@
 /* Table Layout */
 .tags-table-container {
     background: white;
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid #E5E7EB;
     overflow: hidden;
 }
@@ -22,18 +22,24 @@
     border-bottom: 1px solid #E5E7EB;
     white-space: nowrap;
 }
-.tags-table td {
-    padding: 15px 24px;
-    border-bottom: 1px solid #F3F4F6;
-    font-size: 14px;
-    vertical-align: middle;
-    color: #374151;
+.tags-table tbody tr {
+    height: 80px;
+}
+.tags-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+.tags-table tbody tr:nth-child(even) {
+    background-color: #FAFBFB;
 }
 .tags-table tbody tr:last-child td {
     border-bottom: none;
 }
-.tags-table tbody tr:hover {
-    background-color: #F9FAFB;
+.tags-table td {
+    padding: 0 24px;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 14px;
+    vertical-align: middle;
+    color: #374151;
 }
 
 /* Table Specific Elements */
@@ -42,6 +48,7 @@
     height: 16px;
     border-radius: 50%;
     display: inline-block;
+    flex-shrink: 0;
 }
 .designation-badges {
     display: flex;
@@ -65,26 +72,23 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 10px;
-    border-radius: 100px;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 12px;
     font-size: 12px;
     font-weight: 500;
-}
-.status-badge.active {
-    background-color: #ECFDF5;
-    color: #059669;
-}
-.status-badge.inactive {
-    background-color: #FEF2F2;
-    color: #DC2626;
+    background: white;
+    border: 1px solid #17181A;
+    color: #17181A;
 }
 .status-dot {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
+    flex-shrink: 0;
 }
-.status-badge.active .status-dot { background-color: #10B981; }
-.status-badge.inactive .status-dot { background-color: #EF4444; }
+.status-badge.active .status-dot { background-color: #3FC43A; }
+.status-badge.inactive .status-dot { background-color: #FF493F; }
 
 /* Table Actions */
 .action-cells {
@@ -112,7 +116,7 @@
     background-color: #FEF2F2;
 }
 .btn-icon-danger:hover svg {
-    stroke: #EF4444;
+    stroke: #FF493F;
 }
 
 /* Empty State */

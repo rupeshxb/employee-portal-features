@@ -1,6 +1,6 @@
 /* Base Layout & Text */
 .tags-management-page {
-    background-color: #f5f6fa;
+    background-color: #F5F6FA;
     min-height: 100vh;
     font-family: 'Figtree', 'Inter', sans-serif;
 }
@@ -11,6 +11,90 @@
 .font-medium {
     font-weight: 500;
     color: #111827;
+}
+
+/* Page Header (scoped) */
+.tags-management-page .page-header {
+    position: relative;
+    background: linear-gradient(90.82deg, #E0EAFC 6.42%, #CFDEF3 92.16%);
+    border-radius: 16px;
+    min-height: 146px;
+    padding: 32px 40px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+.tags-management-page .page-header h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #17181A;
+    margin: 0 0 6px;
+    position: relative;
+    z-index: 10;
+}
+.tags-management-page .page-header p {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+    position: relative;
+    z-index: 10;
+}
+.tags-management-page .header-decor {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(80.05deg, rgba(191, 90, 224, 0.4) 19.27%, rgba(168, 17, 218, 0.4) 70.01%);
+    z-index: 1;
+    pointer-events: none;
+}
+.tags-management-page .hero-circle-1 {
+    width: 154px; height: 154px;
+    right: -30px; bottom: -60px;
+}
+.tags-management-page .hero-circle-2 {
+    width: 77px; height: 77px;
+    right: 53%; top: -20px;
+}
+.tags-management-page .hero-circle-3 {
+    width: 32px; height: 32px;
+    right: 55%; top: 48px;
+}
+.tags-management-page .projects-header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+.tags-management-page .add-project-btn {
+    background-color: #17181A;
+    color: white;
+    border: none;
+    height: 50px;
+    padding: 0 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+    font-family: inherit;
+}
+.tags-management-page .add-project-btn:hover {
+    background-color: #2d2e30;
+}
+
+/* Error banner */
+.error-banner {
+    background: #FEF2F2;
+    color: #DC2626;
+    border: 1px solid #FECACA;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin-bottom: 16px;
 }
 
 /* Sub-header */
@@ -38,7 +122,7 @@
 .search-container {
     position: relative;
     flex-grow: 1;
-    max-width: 380px;
+    max-width: 914px;
 }
 .search-icon {
     position: absolute;
@@ -50,15 +134,16 @@
 }
 .search-input {
     width: 100%;
-    padding: 10px 10px 10px 38px;
-    border: 1px solid #E5E7EB;
+    height: 44px;
+    padding: 0 12px 0 38px;
+    border: 1px solid #17181A;
     border-radius: 8px;
     font-size: 14px;
     font-family: 'Figtree', 'Inter', sans-serif;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
     background-color: #ffffff;
-    color: #111827;
+    color: #17181A;
 }
 .search-input:focus {
     border-color: #2563EB;
@@ -70,49 +155,60 @@
 
 /* Shared Buttons */
 .btn-primary {
-    background-color: #2563EB;
+    background-color: #17181A;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 7px;
+    height: 50px;
+    padding: 0 20px;
+    border-radius: 8px;
     font-weight: 500;
     font-size: 14px;
     font-family: 'Figtree', 'Inter', sans-serif;
     cursor: pointer;
     transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
 }
 .btn-primary:hover {
-    background-color: #1D4ED8;
+    background-color: #2d2e30;
 }
 .btn-outline {
     background-color: white;
     color: #374151;
-    border: 1px solid #D1D5DB;
-    padding: 10px 20px;
-    border-radius: 7px;
+    border: 1px solid #17181A;
+    height: 44px;
+    padding: 0 20px;
+    border-radius: 8px;
     font-weight: 500;
     font-size: 14px;
     font-family: 'Figtree', 'Inter', sans-serif;
     cursor: pointer;
     transition: background-color 0.15s;
+    display: flex;
+    align-items: center;
 }
 .btn-outline:hover {
     background-color: #F9FAFB;
 }
 .btn-danger {
-    background-color: #EF4444;
+    background-color: #FF493F;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 7px;
+    height: 44px;
+    padding: 0 20px;
+    border-radius: 8px;
     font-weight: 500;
     font-size: 14px;
     font-family: 'Figtree', 'Inter', sans-serif;
     cursor: pointer;
     transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
 }
 .btn-danger:hover {
-    background-color: #DC2626;
+    background-color: #e03d34;
 }
 
 /* Pagination */
@@ -139,6 +235,7 @@
     font-size: 13px;
     color: #374151;
     transition: background 0.15s;
+    font-family: inherit;
 }
 .pagination-controls button:hover:not(:disabled) {
     background: #F9FAFB;
@@ -148,7 +245,7 @@
     cursor: not-allowed;
 }
 .pagination-controls button.active {
-    background: #1e293b;
+    background: #17181A;
     color: white;
-    border-color: #1e293b;
+    border-color: #17181A;
 }

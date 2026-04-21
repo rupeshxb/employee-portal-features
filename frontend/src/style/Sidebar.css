@@ -1,34 +1,36 @@
-/* Section Titles (the grey text) */
+/* Section Titles */
 .nav-section-title {
   font-size: 11px;
   font-weight: 700;
-  color: #94a3b8; /* Light grey */
+  color: #94a3b8;
   text-transform: uppercase;
-  margin: 24px 16px 12px 0px;
+  margin: 20px 0 8px 0;
   letter-spacing: 0.05em;
+  padding: 0 4px;
 }
 
-/* Make sure icons and text are spaced nicely */
+/* Nav Items */
 .nav-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 8px;
+  padding: 10px 12px;
   color: #475569;
   text-decoration: none;
+  font-size: 14px;
   font-weight: 500;
   border-radius: 8px;
-  margin: 2px 8px;
+  margin: 2px 0;
   transition: all 0.2s;
-  margin-left: 0px;
+  width: 100%;
 }
 
-/* The active blue button style from your screenshot */
 .nav-item.active {
-  background-color: #2563eb; /* Primary Blue */
+  background-color: #2563EA;
   color: white;
 }
 
 .nav-item:hover:not(.active) {
   background-color: #f1f5f9;
+  color: #0f172a;
 }

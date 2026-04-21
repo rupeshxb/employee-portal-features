@@ -3,28 +3,28 @@
    ============================================= */
 
 .designation-management-page {
-    background-color: #f5f6fa;
+    background-color: #F5F6FA;
     min-height: 100vh;
     font-family: 'Figtree', 'Inter', sans-serif;
 }
 
-/* ---- Shared Page Header (self-contained) ---- */
+/* ---- Page Header (scoped) ---- */
 .designation-management-page .page-header {
     position: relative;
-    background: linear-gradient(90.82deg, #e0eafc 6.42%, #cfdef3 92.16%);
+    background: linear-gradient(90.82deg, #E0EAFC 6.42%, #CFDEF3 92.16%);
     border-radius: 16px;
+    min-height: 146px;
     padding: 32px 40px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: center;
     margin-bottom: 24px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .designation-management-page .page-header h2 {
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 700;
-    color: #1e293b;
+    color: #17181A;
     margin: 0 0 6px;
     position: relative;
     z-index: 10;
@@ -45,15 +45,15 @@
 }
 .designation-management-page .hero-circle-1 {
     width: 154px; height: 154px;
-    right: -40px; bottom: -80px; top: auto;
+    right: -30px; bottom: -60px;
 }
 .designation-management-page .hero-circle-2 {
     width: 77px; height: 77px;
-    left: 50%; top: -20px;
+    right: 53%; top: -20px;
 }
 .designation-management-page .hero-circle-3 {
     width: 32px; height: 32px;
-    left: 48%; top: 60px;
+    right: 55%; top: 48px;
 }
 .designation-management-page .projects-header-inner {
     display: flex;
@@ -64,10 +64,11 @@
     width: 100%;
 }
 .designation-management-page .add-project-btn {
-    background-color: #1e293b;
+    background-color: #17181A;
     color: white;
     border: none;
-    padding: 12px 24px;
+    height: 50px;
+    padding: 0 24px;
     border-radius: 8px;
     font-size: 14px;
     font-weight: 500;
@@ -75,9 +76,12 @@
     transition: background-color 0.2s;
     white-space: nowrap;
     font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 .designation-management-page .add-project-btn:hover {
-    background-color: #0f172a;
+    background-color: #2d2e30;
 }
 
 /* Sub-header */
@@ -101,8 +105,9 @@
 }
 .desig-top-bar .search-container {
     position: relative;
-    max-width: 380px;
+    max-width: 914px;
     width: 100%;
+    flex: 1;
 }
 .desig-top-bar .search-icon {
     position: absolute;
@@ -110,27 +115,33 @@
     top: 50%;
     transform: translateY(-50%);
     color: #9CA3AF;
+    pointer-events: none;
 }
 .desig-top-bar .search-input {
     width: 100%;
-    padding: 10px 10px 10px 38px;
-    border: 1px solid #E5E7EB;
+    height: 44px;
+    padding: 0 12px 0 38px;
+    border: 1px solid #17181A;
     border-radius: 8px;
     font-size: 14px;
     outline: none;
     background: #fff;
-    color: #111827;
-    transition: border-color 0.2s;
+    color: #17181A;
+    transition: border-color 0.2s, box-shadow 0.2s;
     font-family: inherit;
 }
 .desig-top-bar .search-input:focus {
-    border-color: #3B82F6;
+    border-color: #2563EA;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+.desig-top-bar .search-input::placeholder {
+    color: #9CA3AF;
 }
 
 /* Table container */
 .desig-table-container {
     background: #fff;
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid #E5E7EB;
     overflow: hidden;
 }
@@ -147,31 +158,65 @@
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     padding: 14px 24px;
     border-bottom: 1px solid #E5E7EB;
     white-space: nowrap;
 }
+.desig-table tbody tr {
+    height: 80px;
+}
+.desig-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+.desig-table tbody tr:nth-child(even) {
+    background-color: #FAFBFB;
+}
+.desig-table tbody tr:last-child td {
+    border-bottom: none;
+}
 .desig-table td {
-    padding: 15px 24px;
+    padding: 0 24px;
     border-bottom: 1px solid #F3F4F6;
     font-size: 14px;
     vertical-align: middle;
     color: #374151;
 }
-.desig-table tbody tr:last-child td {
-    border-bottom: none;
-}
-.desig-table tbody tr:hover {
-    background-color: #F9FAFB;
-}
 .desig-name-cell {
-    font-weight: 500;
-    color: #111827;
+    font-weight: 600;
+    color: #17181A;
 }
 .row-index {
     font-size: 13px;
-    width: 40px;
+    color: #6B7280;
+    width: 50px;
+}
+
+/* Status badge */
+.desig-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    background: white;
+    border: 1px solid #17181A;
+    color: #17181A;
+}
+.desig-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.desig-status-badge.active .desig-status-dot {
+    background-color: #3FC43A;
+}
+.desig-status-badge.inactive .desig-status-dot {
+    background-color: #FF493F;
 }
 
 /* Actions */
@@ -252,7 +297,7 @@
     color: #fff;
     border: none;
     padding: 10px 20px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-weight: 500;
     font-size: 14px;
     cursor: pointer;
@@ -267,11 +312,12 @@
     color: #374151;
     border: 1px solid #D1D5DB;
     padding: 10px 20px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-weight: 500;
     font-size: 14px;
     cursor: pointer;
     font-family: inherit;
+    transition: background 0.15s;
 }
 .btn-outline:hover {
     background-color: #F9FAFB;
@@ -306,6 +352,7 @@
     font-size: 13px;
     color: #374151;
     transition: background 0.15s;
+    font-family: inherit;
 }
 .pagination-controls button:hover:not(:disabled) {
     background: #F9FAFB;
@@ -315,7 +362,7 @@
     cursor: not-allowed;
 }
 .pagination-controls button.active {
-    background: #1e293b;
+    background: #2563EA;
     color: #fff;
-    border-color: #1e293b;
+    border-color: #2563EA;
 }

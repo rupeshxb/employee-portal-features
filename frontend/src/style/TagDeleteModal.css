@@ -94,7 +94,7 @@
     background: #F9FAFB;
 }
 .modal-actions .btn-danger {
-    background-color: #EF4444;
+    background-color: #FF493F;
     color: white;
     border: none;
     padding: 10px 24px;
@@ -106,5 +106,5 @@
     transition: background-color 0.2s;
 }
 .modal-actions .btn-danger:hover {
-    background-color: #DC2626;
+    background-color: #e03d34;
 }

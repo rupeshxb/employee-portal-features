@@ -366,7 +366,7 @@ class EmployeeCreateSerializer(serializers.ModelSerializer):
 class DesignationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Designation
-        fields = ['id', 'name', 'created_at']
+        fields = ['id', 'name', 'status', 'created_at']
         read_only_fields = ['id', 'created_at']
         
 class TagSerializer(serializers.ModelSerializer):
