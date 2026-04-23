@@ -124,10 +124,42 @@
     100% { transform: rotate(360deg); }
 }
 
-.empty-state-message {
+.empty-state {
     grid-column: 1 / -1;
-    color: #64748b;
-    margin-top: 20px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
     width: 100%;
+    padding: 48px 0 32px;
+}
+
+.empty-state-illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-state-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.empty-state-title {
+    font-family: 'Figtree', sans-serif;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: -0.03em;
+    color: #17181A;
+}
+
+.empty-state-subtitle {
+    font-family: 'Figtree', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 17px;
+    color: rgba(23, 24, 26, 0.75);
 }
