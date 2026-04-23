@@ -7,12 +7,17 @@
     gap: 24px;
 }
 
+/* Prevent double-gap with the header's own margin-bottom */
+.daily-tasks-container .page-header {
+    margin-bottom: 0;
+}
+
 /* Department Navigation Bar */
 .department-nav {
     display: flex;
     align-items: center;
-    width: 100%; /* Occupy full width */
-    border-bottom: 1px solid #e2e8f0;
+    width: 100%;
+    border-bottom: 2px solid rgba(23, 24, 26, 0.05);
     margin-bottom: 0px;
 }
 
@@ -20,79 +25,74 @@
     outline: none;
 }
 
-.department-nav button:hover {
-    border-right: none;
-    border-left: none;
-}
-
 .dept-tab {
-    flex: 1; /* Makes all tabs equal size */
-    padding: 12px 10px;
-    font-size: 14px;
+    flex: 1;
+    padding: 16px;
+    font-size: 16px;
     font-weight: 500;
-    color: #64748b;
+    color: rgba(20, 20, 20, 0.6);
     background: transparent;
     border: none;
-
-    /* FIX: Force no rounded corners to override global button styles */
     border-radius: 0;
     border-bottom: 2px solid transparent;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, background-color 0.2s ease;
     white-space: nowrap;
     text-align: center;
 }
 
-/* Round ONLY the extreme top-left of the first item */
 .dept-tab:first-child {
-    border-top-left-radius: 8px;
+    border-top-left-radius: 16px;
 }
 
-/* Round ONLY the extreme top-right of the last item, and remove the right border */
 .dept-tab:last-child {
-    border-top-right-radius: 8px;
-    border-right: none; /* No separator line after the last button */
+    border-top-right-radius: 16px;
 }
 
 .dept-tab:hover {
-    color: #0f172a;
-    background-color: #f8fafc; /* Subtle hover state for non-active tabs */
+    color: #17181A;
+    background-color: rgba(235, 238, 249, 0.5);
 }
 
-/* Active State Styles */
+/* Active State */
 .dept-tab.active {
-    color: #2563ea;
-    background-color: #ebeef9;
-    border-bottom: 2px solid #2563ea;
+    font-weight: 600;
+    color: #2563EA;
+    background-color: #EBEEF9;
+    border-bottom: 2px solid #2563EA;
 }
 
 /* Department Title & Count */
 .department-header {
     display: flex;
     align-items: baseline;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 0px;
 }
 
 .department-header h3 {
-    font-size: 30px;
-    font-weight: 600;
-    color: #0f172a;
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: #141414;
     margin: 0px;
 }
 
 .department-header .employee-count {
-    font-size: 18px;
-    color: #64748b;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: #747575;
 }
 
-.filter-bar{
+/* Scoped filter-bar reset so it doesn't affect TeamUpdatesFilterBar */
+.daily-tasks-container .filter-bar {
     background: none;
     box-shadow: none;
 }
 
 .time-dropdown-pill {
-    min-width: 140px; 
+    min-width: 160px;
 }
 
 

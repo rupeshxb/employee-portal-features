@@ -38,7 +38,7 @@
     border: none;
     outline: none;
     width: 100%;
-    font-size: 14px;
+    font-size: 15px;
     background: transparent;
     color: #334155;
 }
@@ -52,11 +52,10 @@
     border: none;
     outline: none;
     background: transparent;
-    font-size: 14px;
-    color: #475569;
+    font-size: 15px;
+    color: #17181A;
     cursor: pointer;
     width: 100%;
-    /* Optional: Add a custom chevron in the future by setting appearance: none */
 }
 
 .date-input {
@@ -77,9 +76,9 @@
 .date-dropdown-pill {
     cursor: pointer;
     user-select: none;
-    min-width: 220px;
-    font-size: 14px;
-    color: #475569;
+    min-width: 200px;
+    font-size: 15px;
+    color: #17181A;
 }
 
 .date-dropdown-content {

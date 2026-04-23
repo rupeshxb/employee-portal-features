@@ -4,11 +4,10 @@
     background: white;
     border-radius: 16px;
     padding: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
+    box-shadow: 0px 4px 16px rgba(23, 24, 26, 0.08);
     display: flex;
     flex-direction: column;
-    height: 460px; /* Fixed height so the card size never changes */
+    height: 460px;
     box-sizing: border-box;
 }
 
@@ -102,7 +101,7 @@
     justify-content: space-between;
     align-items: center;
     margin-top: 0;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .card-section-title {
@@ -127,10 +126,12 @@
     gap: 0px; /* Adds space between each of the new task boxes */
 }
 
-/* --- Standalone Blocker Section (no grey wrapper) --- */
+/* --- Standalone Blocker Section — red-tinted container wraps all blocker items --- */
 .ec-blocker-section {
+    background: rgba(255, 73, 63, 0.1);
+    border-radius: 12px;
+    padding: 12px;
     margin-bottom: 12px;
-    margin-top: 4px;
 }
 
 .ec-blocker-title {
@@ -180,13 +181,13 @@
 
 /* --- Blocker Item Styling --- */
 .blocker-item {
-    background: #ffedec;
-    padding: 12px;
-    border-radius: 8px;
+    background: transparent;
+    padding: 4px 0;
+    border-radius: 0;
     display: flex;
-    gap: 10px;
-    margin-top: 4px;
-    margin-bottom: 8px;
+    gap: 8px;
+    margin-top: 2px;
+    margin-bottom: 4px;
 }
 
 .blocker-item:last-child {
@@ -195,47 +196,49 @@
 
 .blocker-icon-container {
     flex-shrink: 0;
-    margin-top: 2px;
+    margin-top: 3px;
     display: flex;
     align-items: flex-start;
 }
 
 .blocker-icon-container svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
+    stroke: #FF493F;
     stroke-width: 1.5px;
 }
 
 .blocker-content {
-    display: block !important; /* Removed flex & flex-direction column */
-    font-size: 14px;
-    color: #ff493f; 
-    line-height: 1.6;
+    display: block !important;
+    font-size: 13px;
+    color: rgba(23, 24, 26, 0.8);
+    line-height: 20px;
 }
 
 /* --- Manager Status Bar --- */
 .card-status-bar {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 0;
+    gap: 6px;
+    padding: 10px 0;
     margin-bottom: 16px;
-    border-top: 1px solid #e5e7eb; /* Top line */
-    border-bottom: 1px solid #e5e7eb; /* Bottom line */
+    border-top: 1px solid rgba(23, 24, 26, 0.1);
+    border-bottom: 1px solid rgba(23, 24, 26, 0.1);
     flex-shrink: 0;
+    flex-wrap: wrap;
 }
 
 .status-pill {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 6px;
-    border-radius: 8px !important;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 6px !important;
     font-size: 11px;
     font-weight: 500;
-    border: 1px solid #e5e7eb;
-    color: #4b5563;
-    background: #ffffff;
+    border: 1px solid rgba(23, 24, 26, 0.3);
+    color: rgba(23, 24, 26, 0.8);
+    background: rgba(255, 255, 255, 0.6);
     white-space: nowrap;
 }
 
@@ -246,20 +249,20 @@
 }
 
 .status-pill.disabled {
-    color: #9ca3af;
+    opacity: 0.6;
 }
 
 .status-pill.alert {
-    color: #ef4444;
-    background-color: #fef2f2;
-    border-color: #fecaca;
+    color: #FF493F;
+    background: rgba(255, 73, 63, 0.1);
+    border-color: rgba(255, 73, 63, 0.3);
 }
 
 /* Unified Grid for Employee Cards */
 .employee-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 24px;
+    gap: 32px 24px;
     align-items: start;
     width: 100%;
     margin-top: 20px;
