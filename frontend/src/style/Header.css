@@ -41,33 +41,40 @@
     pointer-events: none;
 }
 
-/* Common gradient for all circles */
+/* Base for manager-page hero circles */
+.header-decor {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(80.05deg, rgba(191, 90, 224, 0.4) 19.27%, rgba(168, 17, 218, 0.4) 70.01%);
+}
+
+/* Common gradient for AddTask-page hero circles */
 .hero-circle {
     position: absolute;
     border-radius: 50%;
     background: linear-gradient(80.05deg, rgba(191, 90, 224, 0.4) 19.27%, rgba(168, 17, 218, 0.4) 70.01%);
 }
 
-/* Circle 1: Large — right side, partially overflows bottom */
+/* Circle 1: Large — right edge, partially overflows */
 .hero-circle-1 {
     width: 154px;
     height: 154px;
-    right: -30px;
+    right: -40px;
     bottom: -60px;
 }
 
-/* Circle 2: Medium — upper center-right area */
+/* Circle 2: Medium — upper-right corner */
 .hero-circle-2 {
     width: 77px;
     height: 77px;
-    right: 53%;
+    right: 45px;
     top: -20px;
 }
 
-/* Circle 3: Small dot — slightly right of center */
+/* Circle 3: Small dot — upper-right, slightly left of circle 2 */
 .hero-circle-3 {
     width: 32px;
     height: 32px;
-    right: 55%;
-    top: 48px;
+    right: 130px;
+    top: 32px;
 }

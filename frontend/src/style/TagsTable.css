@@ -78,8 +78,7 @@
     font-size: 12px;
     font-weight: 500;
     background: white;
-    border: 1px solid #17181A;
-    color: #17181A;
+    border: 1px solid;
 }
 .status-dot {
     width: 8px;
@@ -87,7 +86,9 @@
     border-radius: 50%;
     flex-shrink: 0;
 }
+.status-badge.active { border-color: #3FC43A; color: #3FC43A; }
 .status-badge.active .status-dot { background-color: #3FC43A; }
+.status-badge.inactive { border-color: #FF493F; color: #FF493F; }
 .status-badge.inactive .status-dot { background-color: #FF493F; }
 
 /* Table Actions */

@@ -1,0 +1,145 @@
+.cc-select {
+    position: relative;
+    flex-shrink: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.cc-trigger {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    padding: 0 8px 0 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+    cursor: pointer;
+    height: 100%;
+    white-space: nowrap;
+    outline: none;
+}
+
+.cc-trigger:hover {
+    color: #0F172A;
+}
+
+.cc-chevron {
+    width: 10px;
+    height: 6px;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+}
+
+.cc-chevron-open {
+    transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.cc-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: -2px;
+    width: 272px;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    z-index: 300;
+    overflow: hidden;
+}
+
+.cc-search-wrapper {
+    padding: 8px;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.cc-search {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #0F172A;
+    background: #F6F7FB;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.cc-search:focus {
+    border-color: #2563EA;
+    background: #fff;
+}
+
+.cc-search::placeholder {
+    color: #94A3B8;
+}
+
+/* Scrollable list with thin scrollbar */
+.cc-list {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    max-height: 220px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #CBD5E1 transparent;
+}
+
+.cc-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.cc-list::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 4px 0;
+}
+
+.cc-list::-webkit-scrollbar-thumb {
+    background-color: #CBD5E1;
+    border-radius: 10px;
+}
+
+.cc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.cc-item:hover {
+    background: #F8FAFC;
+}
+
+.cc-item-active {
+    background: #EEF2FF;
+}
+
+.cc-item-code {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    min-width: 78px;
+    flex-shrink: 0;
+}
+
+.cc-item-name {
+    font-size: 13px;
+    color: #64748B;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cc-item-empty {
+    padding: 14px 12px;
+    font-size: 13px;
+    color: #94A3B8;
+    text-align: center;
+    list-style: none;
+}

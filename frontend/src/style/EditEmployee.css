@@ -1,0 +1,20 @@
+/* Read-only input fields */
+.input-readonly {
+    background-color: #F1F5F9 !important;
+    color: #94A3B8 !important;
+    cursor: not-allowed !important;
+    border-color: #E2E8F0 !important;
+    user-select: none;
+}
+
+.input-readonly:focus {
+    border-color: #E2E8F0 !important;
+    background-color: #F1F5F9 !important;
+}
+
+/* Hint text below read-only password field */
+.readonly-hint {
+    font-size: 12px;
+    color: #94A3B8;
+    margin-top: -2px;
+}

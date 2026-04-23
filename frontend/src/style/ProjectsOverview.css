@@ -181,6 +181,7 @@
 /* --- PROJECT FILTER BAR SPECIFICS --- */
 .project-filter-bar {
   justify-content: flex-start;
+  margin: 15px 0px;
 }
 
 /* --- Custom Date Range Picker Menu --- */

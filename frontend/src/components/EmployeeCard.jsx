@@ -28,6 +28,12 @@ const TaskItem = ({ task }) => (
     </div>
 );
 
+const stripReason = (content) => {
+    if (!content) return '';
+    const idx = content.indexOf('[Reason:');
+    return idx !== -1 ? content.substring(0, idx).trim() : content;
+};
+
 const BlockerItem = ({ task }) => (
     <div className="blocker-item">
         <div className="blocker-icon-container">
@@ -40,7 +46,7 @@ const BlockerItem = ({ task }) => (
             >
                 {task.project_details?.name || 'No Project'}
             </span>
-            <span>{task.content}</span>
+            <span>{stripReason(task.content)}</span>
         </div>
     </div>
 );
@@ -48,13 +54,28 @@ const BlockerItem = ({ task }) => (
 const DaySection = ({ title, icon, tasks }) => {
     if (!tasks || tasks.length === 0) return null;
 
+    if (title === 'BLOCKERS') {
+        return (
+            <div className="ec-blocker-section">
+                <div className="card-section-header">
+                    <div className="card-section-title ec-blocker-title">{title}</div>
+                    <div className="section-icon">{icon}</div>
+                </div>
+                <div className="task-list">
+                    {tasks.map(task => (
+                        <BlockerItem key={task.id} task={task} />
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="day-section">
             <div className="card-section-header">
                 <div className="card-section-title">{title}</div>
                 <div className="section-icon">{icon}</div>
             </div>
-
             <div className="task-list">
                 {tasks.map(task => (
                     task.is_blocker
@@ -139,7 +160,7 @@ const EmployeeCard = ({ emp, variant = 'employee' }) => {
             groups.push({
                 dateKey: 'blockers',
                 title: 'BLOCKERS',
-                icon: <HistoryIcon />, // Use a warning icon here if you have one!
+                icon: <BlockerAlertIcon />,
                 tasks: emp.tasks.blockers
             });
         }
@@ -158,29 +179,10 @@ const EmployeeCard = ({ emp, variant = 'employee' }) => {
                         <img
                             src={avatarUrl}
                             alt={emp.full_name}
-                            className="avatar"
-                            style={{
-                                width: '50px',
-                                height: '50px',
-                                borderRadius: '50%',
-                                objectFit: 'cover',
-                                border: '1px solid #E5E7EB'
-                            }}
+                            className="ec-avatar"
                         />
                     ) : (
-                        <div style={{
-                            width: '50px',
-                            height: '50px',
-                            borderRadius: '50%',
-                            backgroundColor: '#E0E7FF',
-                            color: '#4F46E5',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontWeight: 'bold',
-                            fontSize: '18px',
-                            border: '1px solid #E5E7EB'
-                        }}>
+                        <div className="ec-avatar-initials">
                             {getInitials(emp.full_name)}
                         </div>
                     )}

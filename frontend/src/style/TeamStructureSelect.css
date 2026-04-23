@@ -146,9 +146,9 @@
     border-color: #3B82F6;
 }
 
-.custom-multi-select .select-dropdown-menu .search-bar-wrapper .search-icon {
+.custom-multi-select .select-dropdown-menu .search-bar-wrapper .ts-search-icon {
     flex-shrink: 0;
-    display: flex; 
+    display: flex;
     align-items: center;
     justify-content: center;
 }

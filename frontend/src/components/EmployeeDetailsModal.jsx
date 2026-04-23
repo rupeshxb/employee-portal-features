@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../style/EmployeeDetailsModal.css';
 import { API_BASE_URL } from "../../config";
+import { EditIcon } from './Icons';
 
 const EmployeeDetailsModal = ({ isOpen, onClose, employeeId, onEditClick }) => {
     const [employeeData, setEmployeeData] = useState(null);
@@ -79,7 +80,7 @@ const EmployeeDetailsModal = ({ isOpen, onClose, employeeId, onEditClick }) => {
                                         </div>
                                         <h3>Personal Details</h3>
                                     </div>
-                                    <button className="edit-icon-btn" onClick={() => onEditClick(emp.id)}>✏️</button>
+                                    <button className="edit-icon-btn" onClick={() => onEditClick(emp.id)}><EditIcon /></button>
                                 </div>
                                 <div className="card-grid">
                                     <div className="grid-item"><span>First Name</span><p>{emp.first_name || '-'}</p></div>
@@ -100,7 +101,7 @@ const EmployeeDetailsModal = ({ isOpen, onClose, employeeId, onEditClick }) => {
                                         </div>
                                         <h3>Contact Details</h3>
                                     </div>
-                                    <button className="edit-icon-btn" onClick={() => onEditClick(emp.id)}>✏️</button>
+                                    <button className="edit-icon-btn" onClick={() => onEditClick(emp.id)}><EditIcon /></button>
                                 </div>
                                 <div className="card-grid">
                                     <div className="grid-item"><span>Official Email</span><p>{emp.email || '-'}</p></div>
@@ -119,7 +120,7 @@ const EmployeeDetailsModal = ({ isOpen, onClose, employeeId, onEditClick }) => {
                                         </div>
                                         <h3>Employment Details</h3>
                                     </div>
-                                    <button className="edit-icon-btn" onClick={() => onEditClick(emp.id)}>✏️</button>
+                                    <button className="edit-icon-btn" onClick={() => onEditClick(emp.id)}><EditIcon /></button>
                                 </div>
                                 <div className="card-grid">
                                     <div className="grid-item"><span>Employment Type</span><p>{emp.employment_type || '-'}</p></div>

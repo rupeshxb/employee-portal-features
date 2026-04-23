@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, Edit2, Trash2, AlertCircle } from 'lucide-react';
+import { Calendar, Clock, Edit2, Trash2 } from 'lucide-react';
 import { getSafeBackgroundColor } from '../utils/helpers';
 import '../style/TaskList.css';
 
@@ -65,7 +65,6 @@ const TaskList = ({ groupedTasks, onEdit, onDelete, onAddNewTask }) => {
           {group.blockers && group.blockers.length > 0 && (
             <div className="blocker-section">
               <div className="blocker-section-title">
-                <AlertCircle size={12} style={{ marginRight: '6px' }} />
                 BLOCKERS
               </div>
               {group.blockers.map((task, idx) => (
@@ -91,18 +90,19 @@ const TaskRow = ({ task, index, onEdit, onDelete, isBlocker }) => {
   const projectColor = task.project_details?.color_code || task.color_code;
   const projectName = task.project_details?.name || task.project_name || 'No Project';
   const taskDescription = task.task_description || task.content || "Untitled Task";
+  const displayText = (() => {
+    if (!isBlocker) return taskDescription;
+    if (task.blocker_reason) return task.blocker_reason;
+    const match = task.content?.match(/\[Reason:\s*(.*?)\]$/);
+    return match ? match[1] : taskDescription;
+  })();
 
   return (
     <div className={`task-row ${isBlocker ? 'blocker-row' : ''}`}>
       <div className="task-left">
         {!isBlocker && <span className="task-number">{index + 1}.</span>}
         <div className="task-content-wrapper">
-          <span className="task-text">{taskDescription}</span>
-          {isBlocker && task.blocker_reason && (
-            <span className="reason-tag">
-              Reason: {task.blocker_reason}
-            </span>
-          )}
+          <span className="task-text">{displayText}</span>
         </div>
       </div>
 

@@ -1,88 +1,106 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../style/AddEmployee.css";
 import { API_BASE_URL } from "../../config";
+import { CalendarInputIcon, BackArrowIcon, PasswordEyeIcon, PasswordEyeOffIcon, CopyIcon } from "./Icons";
+import CountryCodeSelect from "./CountryCodeSelect";
+import { getDialCode } from "../data/countryCodes";
 
 const AddEmployee = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const designationRef = useRef(null);
 
-  // --- Form State (Updated to snake_case for Django) ---
   const [formData, setFormData] = useState({
-    // Account Details
     employee_id: "",
     username: "",
     password: "",
-    // Personal Details
     first_name: "",
     last_name: "",
     joined_date: "",
     pan_number: "",
-    // Contact Details
     official_email: "",
     personal_email: "",
     phone_number: "",
     emergency_contact: "",
-    // Employment Details
     employment_type: "Full-Time",
     status: "Active",
-    department: "", // Will store the department ID
+    department: "",
     designation: "",
-    reporting_manager: "", // Will store the manager ID
+    reporting_manager: "",
   });
 
-  // --- Dropdown States ---
+  const [phoneCountry, setPhoneCountry] = useState("NP");
+  const [emergencyCountry, setEmergencyCountry] = useState("NP");
+  const [showPassword, setShowPassword] = useState(false);
+  const [copied, setCopied] = useState(false);
+
   const [managers, setManagers] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [designations, setDesignations] = useState([]);
+  const [designationSearch, setDesignationSearch] = useState("");
+  const [showDesignationDropdown, setShowDesignationDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // --- Fetch Managers & Departments on Mount ---
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (designationRef.current && !designationRef.current.contains(e.target)) {
+        setShowDesignationDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   useEffect(() => {
     const fetchDropdownData = async () => {
       try {
-        // Fetch Managers
-        const mgrRes = await fetch(
-          `${API_BASE_URL}/api/manager/managers-list/`,
-          {
-            headers: { Authorization: `Token ${token}` },
-          },
-        );
+        const headers = { Authorization: `Token ${token}` };
+        const [mgrRes, deptRes, desigRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/manager/managers-list/`, { headers }),
+          fetch(`${API_BASE_URL}/api/departments/`, { headers }),
+          fetch(`${API_BASE_URL}/api/designations/`, { headers }),
+        ]);
         if (mgrRes.ok) {
-          const mgrData = await mgrRes.json();
-          setManagers(mgrData.results || mgrData);
+          const d = await mgrRes.json();
+          setManagers(d.results || d);
         }
-
-        // Fetch Departments
-        const deptRes = await fetch(`${API_BASE_URL}/api/departments/`, {
-          headers: { Authorization: `Token ${token}` },
-        });
         if (deptRes.ok) {
-          const deptData = await deptRes.json();
-          console.log("Departments from Django:", deptData);
-          setDepartments(deptData.results || deptData);
+          const d = await deptRes.json();
+          setDepartments(d.results || d);
         }
-      } catch (err) {
-        console.error("Failed to fetch dropdown data:", err);
+        if (desigRes.ok) {
+          const d = await desigRes.json();
+          const all = d.results || d;
+          setDesignations(all.filter((x) => x.status === "Active"));
+        }
+      } catch {
+        // silently fail — dropdowns will be empty
       }
     };
     fetchDropdownData();
   }, [token]);
 
-  // --- Handlers ---
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const generatePassword = () => {
-    const chars =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
-    let tempPassword = "";
-    for (let i = 0; i < 12; i++) {
-      tempPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let pwd = "";
+    for (let i = 0; i < 12; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+    setFormData((prev) => ({ ...prev, password: pwd }));
+  };
+
+  const copyPassword = () => {
+    if (formData.password) {
+      navigator.clipboard.writeText(formData.password).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
     }
-    setFormData((prev) => ({ ...prev, password: tempPassword }));
   };
 
   const handleSubmit = async (e) => {
@@ -90,106 +108,104 @@ const AddEmployee = () => {
     setLoading(true);
     setError("");
 
+    if (!formData.designation) {
+      setError("Please select a designation from the list.");
+      setLoading(false);
+      return;
+    }
+
+    const payload = {
+      ...formData,
+      phone_number: formData.phone_number ? getDialCode(phoneCountry) + formData.phone_number : "",
+      emergency_contact: formData.emergency_contact ? getDialCode(emergencyCountry) + formData.emergency_contact : "",
+    };
+
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/manager/employee-overview/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        },
-      );
+      const res = await fetch(`${API_BASE_URL}/api/manager/employee-overview/`, {
+        method: "POST",
+        headers: { Authorization: `Token ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       if (res.ok) {
-        // SUCCESS: Updated to the correct manager route
         navigate("/manager/employee-overview");
       } else {
         const errData = await res.json();
-
-        // Better error formatting in case Django returns field-specific errors
         let errorMsg = "Failed to add employee. Please check the inputs.";
-        if (errData.detail) {
-          errorMsg = errData.detail;
-        } else if (typeof errData === "object") {
-          errorMsg = Object.entries(errData)
-            .map(([key, val]) => `${key}: ${val}`)
-            .join(" | ");
-        }
-
+        if (errData.detail) errorMsg = errData.detail;
+        else if (typeof errData === "object")
+          errorMsg = Object.entries(errData).map(([k, v]) => `${k}: ${v}`).join(" | ");
         setError(errorMsg);
       }
-    } catch (err) {
+    } catch {
       setError("Network error occurred while adding employee.");
     } finally {
       setLoading(false);
     }
   };
 
+  const filteredDesignations = designations.filter((d) =>
+    d.name.toLowerCase().includes(designationSearch.toLowerCase())
+  );
+
   return (
-    <div>
-      <div className="add-employee-info">
-        {/* BACK BUTTON: Updated to the correct manager route */}
-        <button
-          className="back-btn"
-          onClick={() => navigate("/manager/employee-overview")}
-        >
-          &larr; Back to Overview
+    <div className="add-employee-container">
+      {/* Back Navigation */}
+      <div className="back-nav">
+        <button type="button" className="back-circle-btn" onClick={() => navigate("/manager/employee-overview")}>
+          <BackArrowIcon />
         </button>
-        <h2>Add New Employee</h2>
-        <p>
-          Regiter a new team member with all relevant personal and job
-          information.
-        </p>
+        <span className="back-nav-static">Back to </span>
+        <button type="button" className="back-text-link" onClick={() => navigate("/manager/employee-overview")}>
+          Employee Overview
+        </button>
       </div>
+
+      {/* Page Heading */}
+      <div className="add-employee-info">
+        <h2>Add New Employee</h2>
+        <p>Register a new team member with all relevant personal and job information.</p>
+      </div>
+
+      {/* Form Card */}
       <div className="add-employee-page">
         {error && <div className="error-banner">{error}</div>}
 
         <form onSubmit={handleSubmit} className="add-employee-form">
+
           {/* 1. Account / Login Details */}
           <div className="form-section login-details">
             <h3>Account / Login Details</h3>
             <div className="form-grid">
               <div className="input-group">
                 <label>Employee ID *</label>
-                <input
-                  type="text"
-                  name="employee_id"
-                  required
-                  value={formData.employee_id}
-                  onChange={handleChange}
-                  placeholder="e.g. EMP-001"
-                />
+                <input type="text" name="employee_id" required value={formData.employee_id} onChange={handleChange} placeholder="e.g. EMP-001" />
               </div>
               <div className="input-group">
                 <label>Username *</label>
-                <input
-                  type="text"
-                  name="username"
-                  required
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="e.g. johndoe"
-                />
+                <input type="text" name="username" required value={formData.username} onChange={handleChange} placeholder="Choose a username" />
               </div>
-              <div className="input-group password-group">
-                <label>Password *</label>
-                <div className="password-input-wrapper">
-                  <input
-                    type="text"
-                    name="password"
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="Generated password"
-                  />
-                  <button
-                    type="button"
-                    onClick={generatePassword}
-                    className="btn-generate"
-                  >
+              <div className="input-group">
+                <label>Generate Password *</label>
+                <div className="pwd-row">
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      required
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="Generated password"
+                    />
+                    <button type="button" className="pwd-icon-btn" onClick={() => setShowPassword((v) => !v)} title={showPassword ? "Hide" : "Show"}>
+                      {showPassword ? <PasswordEyeOffIcon /> : <PasswordEyeIcon />}
+                    </button>
+                    <span className="pwd-divider" />
+                    <button type="button" className="pwd-icon-btn" onClick={copyPassword} title={copied ? "Copied!" : "Copy"}>
+                      <CopyIcon />
+                    </button>
+                  </div>
+                  <button type="button" onClick={generatePassword} className="btn-generate">
                     Generate
                   </button>
                 </div>
@@ -203,42 +219,22 @@ const AddEmployee = () => {
             <div className="form-grid">
               <div className="input-group">
                 <label>First Name *</label>
-                <input
-                  type="text"
-                  name="first_name"
-                  required
-                  value={formData.first_name}
-                  onChange={handleChange}
-                />
+                <input type="text" name="first_name" required value={formData.first_name} onChange={handleChange} placeholder="Employee first name" />
               </div>
               <div className="input-group">
                 <label>Last Name *</label>
-                <input
-                  type="text"
-                  name="last_name"
-                  required
-                  value={formData.last_name}
-                  onChange={handleChange}
-                />
+                <input type="text" name="last_name" required value={formData.last_name} onChange={handleChange} placeholder="Employee last name" />
               </div>
               <div className="input-group">
                 <label>Joined Date *</label>
-                <input
-                  type="date"
-                  name="joined_date"
-                  required
-                  value={formData.joined_date}
-                  onChange={handleChange}
-                />
+                <div className="date-input-wrapper">
+                  <input type="date" name="joined_date" required value={formData.joined_date} onChange={handleChange} />
+                  <CalendarInputIcon className="date-input-icon" />
+                </div>
               </div>
               <div className="input-group">
                 <label>PAN Number</label>
-                <input
-                  type="text"
-                  name="pan_number"
-                  value={formData.pan_number}
-                  onChange={handleChange}
-                />
+                <input type="text" name="pan_number" value={formData.pan_number} onChange={handleChange} placeholder="Enter PAN number" />
               </div>
             </div>
           </div>
@@ -249,41 +245,27 @@ const AddEmployee = () => {
             <div className="form-grid">
               <div className="input-group">
                 <label>Official Email *</label>
-                <input
-                  type="email"
-                  name="official_email"
-                  required
-                  value={formData.official_email}
-                  onChange={handleChange}
-                />
+                <input type="email" name="official_email" required value={formData.official_email} onChange={handleChange} placeholder="Employee official email" />
               </div>
               <div className="input-group">
                 <label>Personal Email</label>
-                <input
-                  type="email"
-                  name="personal_email"
-                  value={formData.personal_email}
-                  onChange={handleChange}
-                />
+                <input type="email" name="personal_email" value={formData.personal_email} onChange={handleChange} placeholder="Employee personal email" />
               </div>
               <div className="input-group">
                 <label>Phone Number *</label>
-                <input
-                  type="tel"
-                  name="phone_number"
-                  required
-                  value={formData.phone_number}
-                  onChange={handleChange}
-                />
+                <div className="phone-input-wrapper">
+                  <CountryCodeSelect value={phoneCountry} onChange={setPhoneCountry} />
+                  <span className="phone-divider" />
+                  <input type="tel" name="phone_number" required value={formData.phone_number} onChange={handleChange} placeholder="Phone number" className="phone-number-input" />
+                </div>
               </div>
               <div className="input-group">
                 <label>Emergency Contact Number</label>
-                <input
-                  type="tel"
-                  name="emergency_contact"
-                  value={formData.emergency_contact}
-                  onChange={handleChange}
-                />
+                <div className="phone-input-wrapper">
+                  <CountryCodeSelect value={emergencyCountry} onChange={setEmergencyCountry} />
+                  <span className="phone-divider" />
+                  <input type="tel" name="emergency_contact" value={formData.emergency_contact} onChange={handleChange} placeholder="Phone number" className="phone-number-input" />
+                </div>
               </div>
             </div>
           </div>
@@ -294,12 +276,7 @@ const AddEmployee = () => {
             <div className="form-grid">
               <div className="input-group">
                 <label>Employment Type *</label>
-                <select
-                  name="employment_type"
-                  required
-                  value={formData.employment_type}
-                  onChange={handleChange}
-                >
+                <select name="employment_type" required value={formData.employment_type} onChange={handleChange}>
                   <option value="Full-Time">Full-Time</option>
                   <option value="Part-Time">Part-Time</option>
                   <option value="Contract">Contract</option>
@@ -311,23 +288,13 @@ const AddEmployee = () => {
                 <label>Status *</label>
                 <div className="radio-group">
                   <label className="radio-label">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="Active"
-                      checked={formData.status === "Active"}
-                      onChange={handleChange}
-                    />
+                    <input type="radio" name="status" value="Active" checked={formData.status === "Active"} onChange={handleChange} />
+                    <span className="radio-custom" />
                     Active
                   </label>
                   <label className="radio-label">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="Inactive"
-                      checked={formData.status === "Inactive"}
-                      onChange={handleChange}
-                    />
+                    <input type="radio" name="status" value="Inactive" checked={formData.status === "Inactive"} onChange={handleChange} />
+                    <span className="radio-custom" />
                     Inactive
                   </label>
                 </div>
@@ -335,46 +302,55 @@ const AddEmployee = () => {
 
               <div className="input-group">
                 <label>Department *</label>
-                <select
-                  name="department"
-                  required
-                  value={formData.department}
-                  onChange={handleChange}
-                >
+                <select name="department" required value={formData.department} onChange={handleChange}>
                   <option value="">Select Department</option>
                   {departments.map((dept) => (
-                    <option key={dept.id} value={dept.id}>
-                      {dept.name}
-                    </option>
+                    <option key={dept.id} value={dept.id}>{dept.name}</option>
                   ))}
                 </select>
               </div>
 
-              <div className="input-group">
+              <div className="input-group" ref={designationRef}>
                 <label>Designation *</label>
-                <input
-                  type="text"
-                  name="designation"
-                  required
-                  value={formData.designation}
-                  onChange={handleChange}
-                  placeholder="e.g. Senior Developer"
-                />
+                <div className="designation-combobox">
+                  <input
+                    type="text"
+                    placeholder="Search designation..."
+                    value={designationSearch}
+                    onChange={(e) => {
+                      setDesignationSearch(e.target.value);
+                      setFormData((prev) => ({ ...prev, designation: "" }));
+                      setShowDesignationDropdown(true);
+                    }}
+                    onFocus={() => setShowDesignationDropdown(true)}
+                    autoComplete="off"
+                  />
+                  {showDesignationDropdown && (
+                    <ul className="designation-dropdown-list">
+                      {filteredDesignations.map((d) => (
+                        <li key={d.id} className="designation-dropdown-item"
+                          onMouseDown={() => {
+                            setFormData((prev) => ({ ...prev, designation: d.id }));
+                            setDesignationSearch(d.name);
+                            setShowDesignationDropdown(false);
+                          }}>
+                          {d.name}
+                        </li>
+                      ))}
+                      {filteredDesignations.length === 0 && (
+                        <li className="designation-no-results">No designations found</li>
+                      )}
+                    </ul>
+                  )}
+                </div>
               </div>
 
               <div className="input-group">
                 <label>Reporting Manager *</label>
-                <select
-                  name="reporting_manager"
-                  required
-                  value={formData.reporting_manager}
-                  onChange={handleChange}
-                >
+                <select name="reporting_manager" required value={formData.reporting_manager} onChange={handleChange}>
                   <option value="">Select Manager</option>
                   {managers.map((mgr) => (
-                    <option key={mgr.id} value={mgr.id}>
-                      {mgr.full_name || mgr.username}
-                    </option>
+                    <option key={mgr.id} value={mgr.id}>{mgr.full_name || mgr.username}</option>
                   ))}
                 </select>
               </div>
@@ -382,14 +358,7 @@ const AddEmployee = () => {
           </div>
 
           <div className="form-actions">
-            {/* CANCEL BUTTON: Updated to the correct manager route */}
-            <button
-              type="button"
-              className="btn-cancel"
-              onClick={() => navigate("/manager/employee-overview")}
-            >
-              Cancel
-            </button>
+            <button type="button" className="btn-cancel" onClick={() => navigate("/manager/employee-overview")}>Cancel</button>
             <button type="submit" className="btn-submit" disabled={loading}>
               {loading ? "Adding..." : "Add Employee"}
             </button>

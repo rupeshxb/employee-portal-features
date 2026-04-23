@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../style/DesignationAddEditModal.css';
 
-const defaultForm = { name: '', status: 'Active' };
+const defaultForm = { name: '', system_name: '', description: '', status: 'Active' };
 
 const DesignationAddEditModal = ({ isOpen, onClose, onSubmit, designation }) => {
     const [formData, setFormData] = useState(defaultForm);
@@ -10,7 +10,7 @@ const DesignationAddEditModal = ({ isOpen, onClose, onSubmit, designation }) => 
     useEffect(() => {
         if (isOpen) {
             setFormData(designation
-                ? { name: designation.name, status: designation.status || 'Active' }
+                ? { name: designation.name, system_name: designation.system_name || '', description: designation.description || '', status: designation.status || 'Active' }
                 : defaultForm
             );
             setError('');
@@ -23,7 +23,7 @@ const DesignationAddEditModal = ({ isOpen, onClose, onSubmit, designation }) => 
             setError('Designation name is required.');
             return;
         }
-        onSubmit({ name: formData.name.trim(), status: formData.status });
+        onSubmit({ name: formData.name.trim(), system_name: formData.system_name.trim(), description: formData.description.trim(), status: formData.status });
     };
 
     if (!isOpen) return null;
@@ -57,6 +57,29 @@ const DesignationAddEditModal = ({ isOpen, onClose, onSubmit, designation }) => 
                             autoFocus
                         />
                         {error && <span className="field-error">{error}</span>}
+                    </div>
+
+                    <div className="desig-form-group">
+                        <label htmlFor="desig-system-name">System Name</label>
+                        <input
+                            id="desig-system-name"
+                            type="text"
+                            placeholder="e.g. software_engineer, project_manager"
+                            value={formData.system_name}
+                            onChange={(e) => setFormData(f => ({ ...f, system_name: e.target.value }))}
+                        />
+                    </div>
+
+                    <div className="desig-form-group">
+                        <label htmlFor="desig-description">Description</label>
+                        <textarea
+                            id="desig-description"
+                            placeholder="Brief description of this designation's responsibilities"
+                            value={formData.description}
+                            onChange={(e) => setFormData(f => ({ ...f, description: e.target.value }))}
+                            rows={3}
+                            style={{ resize: 'vertical' }}
+                        />
                     </div>
 
                     <div className="desig-form-group">

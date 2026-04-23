@@ -10,6 +10,7 @@ const DesignationManagement = () => {
     const [error, setError] = useState('');
 
     const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('All Status');
     const [currentPage, setCurrentPage] = useState(1);
     const entriesPerPage = 8;
 
@@ -33,12 +34,27 @@ const DesignationManagement = () => {
         }
     };
 
-    const filtered = designations.filter(d =>
-        d.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filtered = designations.filter(d => {
+        const matchesSearch = d.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesStatus = statusFilter === 'All Status' || d.status === statusFilter;
+        return matchesSearch && matchesStatus;
+    });
     const totalEntries = filtered.length;
     const totalPages = Math.ceil(totalEntries / entriesPerPage) || 1;
     const currentItems = filtered.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
+
+    const getPageNumbers = () => {
+        if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+        const pages = [];
+        if (currentPage <= 4) {
+            pages.push(1, 2, 3, 4, 5, '...', totalPages - 1, totalPages);
+        } else if (currentPage >= totalPages - 3) {
+            pages.push(1, 2, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+        } else {
+            pages.push(1, 2, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages - 1, totalPages);
+        }
+        return pages;
+    };
 
     const handleOpenModal = (designation = null) => {
         setSelectedDesignation(designation);
@@ -115,6 +131,15 @@ const DesignationManagement = () => {
                         className="search-input"
                     />
                 </div>
+                <select
+                    className="desig-status-filter"
+                    value={statusFilter}
+                    onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+                >
+                    <option value="All Status">⊙ All Status</option>
+                    <option value="Active">● Active</option>
+                    <option value="Inactive">● Inactive</option>
+                </select>
             </div>
 
             {/* Table */}
@@ -138,26 +163,26 @@ const DesignationManagement = () => {
                         <table className="desig-table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>NAME</th>
+                                    <th>DESIGNATION NAME</th>
+                                    <th>DESCRIPTION</th>
+                                    <th>NO. OF EMPLOYEES</th>
                                     <th>STATUS</th>
-                                    <th>CREATED</th>
                                     <th className="text-center">ACTIONS</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {currentItems.length > 0 ? (
-                                    currentItems.map((desig, idx) => (
+                                    currentItems.map((desig) => (
                                         <tr key={desig.id}>
-                                            <td className="text-muted row-index">{(currentPage - 1) * entriesPerPage + idx + 1}</td>
                                             <td className="desig-name-cell">{desig.name}</td>
+                                            <td className="text-muted">{desig.description || '—'}</td>
+                                            <td className="text-muted">{desig.employee_count ?? 0}</td>
                                             <td>
                                                 <span className={`desig-status-badge ${(desig.status || 'Active').toLowerCase()}`}>
                                                     <span className="desig-status-dot"></span>
                                                     {desig.status || 'Active'}
                                                 </span>
                                             </td>
-                                            <td className="text-muted">{formatDate(desig.created_at)}</td>
                                             <td className="action-cells">
                                                 <button className="btn-icon" onClick={() => handleOpenModal(desig)} title="Edit">
                                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -176,7 +201,7 @@ const DesignationManagement = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="4" className="text-center empty-cell" style={{ padding: '32px' }}>
+                                        <td colSpan="5" className="text-center empty-cell" style={{ padding: '32px' }}>
                                             No designations match your search.
                                         </td>
                                     </tr>
@@ -192,7 +217,11 @@ const DesignationManagement = () => {
                                 <div className="pagination-controls">
                                     <button disabled={currentPage === 1} onClick={() => setCurrentPage(1)}>First</button>
                                     <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>&lt;</button>
-                                    <button className="page-num active">{currentPage}</button>
+                                    {getPageNumbers().map((p, i) =>
+                                        p === '...'
+                                            ? <span key={`dots-${i}`} className="page-dots">...</span>
+                                            : <button key={p} className={p === currentPage ? 'active' : ''} onClick={() => setCurrentPage(p)}>{p}</button>
+                                    )}
                                     <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}>&gt;</button>
                                     <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(totalPages)}>Last</button>
                                 </div>

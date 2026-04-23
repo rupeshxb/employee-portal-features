@@ -57,6 +57,19 @@ const TagsManagement = () => {
     const totalPages = Math.ceil(totalEntries / entriesPerPage) || 1;
     const currentTags = filteredTags.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
+    const getPageNumbers = () => {
+        if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+        const pages = [];
+        if (currentPage <= 4) {
+            pages.push(1, 2, 3, 4, 5, '...', totalPages - 1, totalPages);
+        } else if (currentPage >= totalPages - 3) {
+            pages.push(1, 2, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+        } else {
+            pages.push(1, 2, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages - 1, totalPages);
+        }
+        return pages;
+    };
+
     // Handlers
     const handleOpenModal = (tag = null) => {
         setSelectedTag(tag);
@@ -145,7 +158,11 @@ const TagsManagement = () => {
                         <div className="pagination-controls">
                             <button disabled={currentPage === 1} onClick={() => setCurrentPage(1)}>First</button>
                             <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>&lt;</button>
-                            <button className="page-num active">{currentPage}</button>
+                            {getPageNumbers().map((p, i) =>
+                                p === '...'
+                                    ? <span key={`dots-${i}`} className="page-dots">...</span>
+                                    : <button key={p} className={p === currentPage ? 'active' : ''} onClick={() => setCurrentPage(p)}>{p}</button>
+                            )}
                             <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => prev + 1)}>&gt;</button>
                             <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(totalPages)}>Last</button>
                         </div>

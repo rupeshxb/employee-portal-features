@@ -17,6 +17,8 @@ class Designation(models.Model):
         ('Inactive', 'Inactive'),
     )
     name = models.CharField(max_length=255, unique=True)
+    system_name = models.CharField(max_length=255, unique=True, null=True, blank=True, help_text="Internal identifier, e.g. software_engineer")
+    description = models.TextField(blank=True, default='')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
     created_at = models.DateTimeField(auto_now_add=True)
 

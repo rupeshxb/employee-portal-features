@@ -54,11 +54,11 @@
 }
 .tags-management-page .hero-circle-2 {
     width: 77px; height: 77px;
-    right: 53%; top: -20px;
+    right: 45px; top: -20px;
 }
 .tags-management-page .hero-circle-3 {
     width: 32px; height: 32px;
-    right: 55%; top: 48px;
+    right: 130px; top: 32px;
 }
 .tags-management-page .projects-header-inner {
     display: flex;
@@ -124,7 +124,7 @@
     flex-grow: 1;
     max-width: 914px;
 }
-.search-icon {
+.tags-management-page .search-icon {
     position: absolute;
     left: 12px;
     top: 50%;
@@ -136,7 +136,7 @@
     width: 100%;
     height: 44px;
     padding: 0 12px 0 38px;
-    border: 1px solid #17181A;
+    border: 1px solid rgba(23, 24, 26, 0.1);
     border-radius: 8px;
     font-size: 14px;
     font-family: 'Figtree', 'Inter', sans-serif;
@@ -177,7 +177,7 @@
 .btn-outline {
     background-color: white;
     color: #374151;
-    border: 1px solid #17181A;
+    border: 1px solid rgba(23, 24, 26, 0.1);
     height: 44px;
     padding: 0 20px;
     border-radius: 8px;
@@ -245,7 +245,15 @@
     cursor: not-allowed;
 }
 .pagination-controls button.active {
-    background: #17181A;
+    background: #2563EA;
     color: white;
-    border-color: #17181A;
+    border-color: #2563EA;
+}
+.page-dots {
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    color: #94a3b8;
+    font-size: 13px;
+    user-select: none;
 }

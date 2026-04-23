@@ -243,7 +243,7 @@ class EmployeeDetailSerializer(serializers.ModelSerializer):
     date_joined = serializers.SerializerMethodField()
 
     reporting_manager = serializers.PrimaryKeyRelatedField(
-        queryset=Employee.objects.filter(role='Manager'),
+        queryset=Employee.objects.filter(is_manager=True),
         source='reports_to',
         required=False,
         allow_null=True
@@ -302,9 +302,9 @@ class EmployeeCreateSerializer(serializers.ModelSerializer):
 
     # 2. Map frontend 'reporting_manager' to backend 'reports_to'
     reporting_manager = serializers.PrimaryKeyRelatedField(
-        queryset=Employee.objects.filter(role='Manager'), 
-        source='reports_to', 
-        required=False, 
+        queryset=Employee.objects.filter(is_manager=True),
+        source='reports_to',
+        required=False,
         allow_null=True
     )
 
@@ -346,10 +346,17 @@ class EmployeeCreateSerializer(serializers.ModelSerializer):
     
 # --- NEW: TAG & DESIGNATION SERIALIZERS ---
 class DesignationSerializer(serializers.ModelSerializer):
+    employee_count = serializers.SerializerMethodField()
+
+    def get_employee_count(self, obj):
+        if obj.pk is None:
+            return 0
+        return obj.employees.count()
+
     class Meta:
         model = Designation
-        fields = ['id', 'name', 'status', 'created_at']
-        read_only_fields = ['id', 'created_at']
+        fields = ['id', 'name', 'system_name', 'description', 'status', 'created_at', 'employee_count']
+        read_only_fields = ['id', 'created_at', 'employee_count']
         
 class TagSerializer(serializers.ModelSerializer):
     # This ensures that when we READ a tag, we get the full designation objects

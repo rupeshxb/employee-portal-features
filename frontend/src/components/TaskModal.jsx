@@ -64,7 +64,7 @@ const TaskModal = ({ show, onClose, onSubmit, isEditing, initialData, projects }
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className="modal-content task-add-modal">
         <button className="close-btn" onClick={onClose} aria-label="Close">
           <X size={24} />
         </button>

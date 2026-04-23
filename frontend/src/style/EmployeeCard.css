@@ -3,7 +3,7 @@
 .employee-card {
     background: white;
     border-radius: 16px;
-    padding: 24px;
+    padding: 16px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     border: 1px solid #e5e7eb;
     display: flex;
@@ -16,26 +16,55 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    margin-bottom: 8px;
-    flex-shrink: 0; /* Prevents the header from shrinking when content grows */
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(23, 24, 26, 0.1);
+    flex-shrink: 0;
 }
 
 .avatar-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+}
+
+.ec-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #E5E7EB;
+    display: block;
+}
+
+.ec-avatar-initials {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: #E0E7FF;
+    color: #4F46E5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    border: 1px solid #E5E7EB;
 }
 
 .emp-info h4 {
     margin: 0 0 4px 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #111827;
+    font-size: 20px;
+    font-weight: 500;
+    color: #17181A;
+    letter-spacing: -0.03em;
+    line-height: 24px;
 }
 
 .emp-info span {
-    font-size: 13px;
-    color: #6b7280;
+    font-size: 15px;
+    line-height: 18px;
+    color: #747575;
 }
 
 /* --- Scrollable Area & Scrollbar Styling --- */
@@ -62,26 +91,26 @@
 
 /* --- Section Formatting --- */
 .day-section {
-    background-color: #f9fafc; /* Light gray background for the whole day block */
+    background-color: #f9fafc;
     border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-    border: 1px solid #f1f5f9; /* Optional: adds a crisp edge to the box */
+    padding: 12px;
+    margin-bottom: 12px;
 }
 
 .card-section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 0; /* Removed top margin since it's now padded inside the box */
-    margin-bottom: 0px; /* Space between header and the first task */
+    margin-top: 0;
+    margin-bottom: 8px;
 }
 
 .card-section-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: #94a3b8;
-    letter-spacing: 0.05em;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(23, 24, 26, 0.7);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
     margin: 0;
 }
 
@@ -98,14 +127,24 @@
     gap: 0px; /* Adds space between each of the new task boxes */
 }
 
+/* --- Standalone Blocker Section (no grey wrapper) --- */
+.ec-blocker-section {
+    margin-bottom: 12px;
+    margin-top: 4px;
+}
+
+.ec-blocker-title {
+    color: #FF493F;
+}
+
 /* --- Normal Task Items (Now as Boxes) --- */
 .update-item {
-    display: block !important; /* Changed from flex */
-    padding: 10px 0;
-    font-size: 14px;
-    color: #4b5563;
-    line-height: 1.6; /* Slightly increased so wrapping text doesn't touch the pill */
-    margin-bottom: 0px;
+    display: block !important;
+    padding: 6px 0;
+    font-size: 13px;
+    color: rgba(23, 24, 26, 0.8);
+    line-height: 20px;
+    margin-bottom: 0;
 }
 
 .update-item:last-child {
@@ -128,14 +167,15 @@
 /* --- Custom Project Badges --- */
 .mini-tag {
     color: white;
-    padding: 3px 8px;
+    padding: 4px 6px;
     border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 14px;
     display: inline-block !important;
-    margin-right: 8px; /* Space between pill and text */
-    vertical-align: middle; /* Aligns pill nicely with the text */
-    margin-top: -3px; /* Micro-adjustment to visually center it with text */
+    margin-right: 6px;
+    vertical-align: middle;
+    margin-top: -2px;
 }
 
 /* --- Blocker Item Styling --- */
@@ -155,7 +195,15 @@
 
 .blocker-icon-container {
     flex-shrink: 0;
-    margin-top: 2px; /* Slight offset to align perfectly with top-left text */
+    margin-top: 2px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.blocker-icon-container svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 1.5px;
 }
 
 .blocker-content {
@@ -217,17 +265,10 @@
     margin-top: 20px;
 }
 
-.manager-daily-update-employee-card .card-header .avatar-wrapper{
-        width: auto;
-        margin: auto 0;
-        height: auto
-}
-
-.manager-daily-update-employee-card .card-header{
-    border-bottom: 0px;
-    margin-bottom: 0px;
-    padding-bottom: 0px;
-    padding: 0px;
+.manager-daily-update-employee-card .card-header {
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding: 0;
 }
 
 .manager-daily-update-employee-card .card-status-bar{

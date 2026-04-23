@@ -184,6 +184,51 @@ export const ArrowDown = () => (
   </svg>
 );
 
+export const CalendarInputIcon = ({ className }) => (
+    <svg className={className} width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.3335 1.83398V4.58398" stroke="#17181A" strokeOpacity="0.8" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M14.6665 1.83398V4.58398" stroke="#17181A" strokeOpacity="0.8" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M3.2085 8.33203H18.7918" stroke="#17181A" strokeOpacity="0.8" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M19.25 7.79232V15.584C19.25 18.334 17.875 20.1673 14.6667 20.1673H7.33333C4.125 20.1673 2.75 18.334 2.75 15.584V7.79232C2.75 5.04232 4.125 3.20898 7.33333 3.20898H14.6667C17.875 3.20898 19.25 5.04232 19.25 7.79232Z" stroke="#17181A" strokeOpacity="0.8" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M14.3869 12.5579H14.3951" stroke="#17181A" strokeOpacity="0.8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M14.3869 15.3079H14.3951" stroke="#17181A" strokeOpacity="0.8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M10.9958 12.5579H11.004" stroke="#17181A" strokeOpacity="0.8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M10.9958 15.3079H11.004" stroke="#17181A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M7.6032 12.5579H7.61143" stroke="#17181A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M7.6032 15.3079H7.61143" stroke="#17181A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const BackArrowIcon = () => (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="24" fill="#1D73C7" fillOpacity="0.1"/>
+        <path d="M26.9998 31.9201L20.4798 25.4001C19.7098 24.6301 19.7098 23.3701 20.4798 22.6001L26.9998 16.0801" stroke="#2563EA" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const PasswordEyeIcon = ({ className }) => (
+    <svg className={className} width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14.2816 11.0004C14.2816 12.8154 12.8149 14.2821 10.9999 14.2821C9.18493 14.2821 7.71826 12.8154 7.71826 11.0004C7.71826 9.18542 9.18493 7.71875 10.9999 7.71875C12.8149 7.71875 14.2816 9.18542 14.2816 11.0004Z" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M10.9999 18.581C14.2357 18.581 17.2515 16.6743 19.3507 13.3743C20.1757 12.0818 20.1757 9.90932 19.3507 8.61682C17.2515 5.31682 14.2357 3.41016 10.9999 3.41016C7.76402 3.41016 4.74819 5.31682 2.64902 8.61682C1.82402 9.90932 1.82402 12.0818 2.64902 13.3743C4.74819 16.6743 7.76402 18.581 10.9999 18.581Z" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const PasswordEyeOffIcon = ({ className }) => (
+    <svg className={className} width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.75 2.75L19.25 19.25" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M9.19 9.23C8.75 9.65 8.5 10.2 8.5 10.81C8.5 12.04 9.49 13.03 10.72 13.03C11.33 13.03 11.88 12.77 12.28 12.37" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M5.77 5.87C3.93 7.21 2.42 9.22 1.83 11C3.16 15.02 6.87 17.88 11 17.88C12.49 17.88 13.89 17.48 15.1 16.79" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M16.22 15.49C18.15 14.15 19.66 12.13 20.25 10.35C18.92 6.33 15.21 3.47 11.08 3.47C9.59 3.47 8.19 3.87 6.98 4.56" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const CopyIcon = ({ className }) => (
+    <svg className={className} width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14.6667 2.75H5.5C4.58333 2.75 3.66667 3.66667 3.66667 4.58333V15.5833" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <rect x="7.33333" y="6.41667" width="11" height="13.75" rx="1.83333" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
 export const ActiveIcon = () => (
   <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="5" cy="5" r="5" fill="#3FC43A"/>
@@ -193,5 +238,11 @@ export const ActiveIcon = () => (
 export const InactiveIcon = () => (
   <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="5" cy="5" r="5" fill="#FF493F"/>
+  </svg>
+);
+
+export const BlockerHexIcon = () => (
+  <svg width="13" height="14" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11.3492 4.58835V8.57833C11.3492 9.23167 10.9992 9.83836 10.4334 10.1709L6.96835 12.1717C6.40252 12.4984 5.70251 12.4984 5.13084 12.1717L1.66584 10.1709C1.1 9.84419 0.75 9.2375 0.75 8.57833V4.58835C0.75 3.93502 1.1 3.32833 1.66584 2.99583L5.13084 0.995C5.69667 0.668333 6.39669 0.668333 6.96835 0.995L10.4334 2.99583C10.9992 3.32833 11.3492 3.92919 11.3492 4.58835Z" stroke="#FF493F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );

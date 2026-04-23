@@ -52,7 +52,7 @@ const Sidebar = () => {
               end
             >
               <Calendar size={20} />
-              <span>Daily Tasks</span>
+              <span>Add Daily Tasks</span>
             </NavLink>
 
             <NavLink
@@ -114,6 +114,13 @@ const Sidebar = () => {
               <TagIcon />
               <span>Tags Management</span>
             </NavLink>
+            <NavLink
+              to="/manager/designations"
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <Briefcase size={20} />
+              <span>Designations</span>
+            </NavLink>
 
             <div className="nav-section-title">EMPLOYEE MANAGEMENT</div>
             <NavLink
@@ -122,13 +129,6 @@ const Sidebar = () => {
             >
               <Users size={20} />
               <span>Employee Overview</span>
-            </NavLink>
-            <NavLink
-              to="/manager/designations"
-              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-            >
-              <Briefcase size={20} />
-              <span>Designations</span>
             </NavLink>
           </>
         )}

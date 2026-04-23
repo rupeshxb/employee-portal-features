@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TeamStructureSelect from './TeamStructureSelect';
 import '../style/ProjectsOverview.css';
 import '../style/ProjectModal.css';
+import { CalendarInputIcon } from './Icons';
 
 import axiosInstance from '../utils/axiosInstance';
 
@@ -61,7 +62,7 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                             endDate: safeEndDate
                         });
 
-                        const existingTeam = initialData.teamStructure || initialData.team_structure || {};
+                        const existingTeam = initialData.assigned_employees_grouped || initialData.teamStructure || {};
                         const loadedTeam = { ...initialTeamState, ...existingTeam };
                         setTeamStructure(loadedTeam);
 
@@ -99,7 +100,8 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
         setTeamStructure(prev => ({ ...prev, [departmentId]: selectedUsers }));
     };
 
-    const totalTeamSize = Object.values(teamStructure).reduce((acc, curr) => acc + curr.length, 0);
+    const totalTeamSize = Object.values(teamStructure).reduce((acc, curr) =>
+        acc + (Array.isArray(curr) ? curr.length : 0), 0);
 
     const handleSubmit = () => {
         // --- 1. VALIDATION CHECK ---
@@ -229,19 +231,14 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                             <div className="form-group half-width">
                                 <label>Start Date <span className="required-asterisk">*</span></label>
                                 <div className="date-input-wrapper">
-                                    <input 
-                                        type="date" 
-                                        name="startDate" 
-                                        value={formData.startDate} 
-                                        onChange={handleInputChange} 
+                                    <input
+                                        type="date"
+                                        name="startDate"
+                                        value={formData.startDate}
+                                        onChange={handleInputChange}
                                         className={errors.startDate ? 'input-error' : ''}
                                     />
-                                    <svg className="calendar-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                                    </svg>
+                                    <CalendarInputIcon className="calendar-icon" />
                                 </div>
                                 {errors.startDate && <span className="error-text">{errors.startDate}</span>}
                             </div>
@@ -249,19 +246,14 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                             <div className="form-group half-width">
                                 <label>End Date <span className="required-asterisk">*</span></label>
                                 <div className="date-input-wrapper">
-                                    <input 
-                                        type="date" 
-                                        name="endDate" 
-                                        value={formData.endDate} 
-                                        onChange={handleInputChange} 
+                                    <input
+                                        type="date"
+                                        name="endDate"
+                                        value={formData.endDate}
+                                        onChange={handleInputChange}
                                         className={errors.endDate ? 'input-error' : ''}
                                     />
-                                    <svg className="calendar-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                                    </svg>
+                                    <CalendarInputIcon className="calendar-icon" />
                                 </div>
                                 {errors.endDate && <span className="error-text">{errors.endDate}</span>}
                             </div>

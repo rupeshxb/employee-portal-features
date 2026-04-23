@@ -223,7 +223,7 @@ class ManagerTeamUpdatesView(APIView):
 
         submissions_qs = DailySubmission.objects.filter(date=target_date)
 
-        employees = Employee.objects.select_related('user').filter(role='Employee')
+        employees = Employee.objects.select_related('user').filter(role='Employee', is_manager=False)
 
         employees = employees.prefetch_related(
             Prefetch('dailytask_set', queryset=tasks_qs, to_attr='prefetched_tasks'),

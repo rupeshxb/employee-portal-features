@@ -71,8 +71,8 @@ const Header = () => {
 
   return (
     <header className="header">
-      {/* Left: Date & Notifications */}
-      <div className="header-left-items">
+      {/* Right: Date, Notifications & User Profile */}
+      <div className="header-right" ref={dropdownRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '20px' }}>
         <div className="date-display">
           <Calendar size={18} className="icon-grey" />
           <span>{new Date().toDateString()}</span>
@@ -81,10 +81,6 @@ const Header = () => {
           <Bell size={20} />
           <span className="notification-dot"></span>
         </div>
-      </div>
-
-      {/* Right: User Profile */}
-      <div className="header-right" ref={dropdownRef} style={{ position: 'relative' }}>
         <div
           className="user-profile"
           onClick={() => setDropdownOpen(!dropdownOpen)}

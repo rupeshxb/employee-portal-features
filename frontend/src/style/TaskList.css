@@ -31,34 +31,41 @@
   display: flex;
   align-items: center;
   padding: 0 24px;
-  height: 52px;
+  height: 45px;
   border-bottom: 1px solid var(--border-light);
-  gap: 16px;
+  gap: 12px;
 }
 
 .date-text {
   display: flex;
   align-items: center;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 11px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: #9ca3af;
+  color: rgba(23, 24, 26, 0.7);
   gap: 6px;
 }
 
 .header-divider {
   width: 1px;
-  height: 14px;
-  background-color: #e5e7eb;
+  height: 16px;
+  background-color: rgba(23, 24, 26, 0.1);
+}
+
+.task-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 0;
 }
 
 .task-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 24px;
-  min-height: 48px;
+  padding: 0 24px;
+  min-height: 28px;
   transition: background 0.2s;
 }
 
@@ -88,8 +95,9 @@
 }
 
 .task-text {
-  font-size: 15px;
-  color: var(--text-dark);
+  font-size: 16px;
+  line-height: 19px;
+  color: rgba(23, 24, 26, 0.8);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -108,25 +116,25 @@
   display: inline-flex;
   align-items: center;
   padding: 0 12px;
-  height: 24px;
+  height: 28px;
   border-radius: 100px;
-  font-size: 10px;
-  font-weight: 800;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 18px;
   color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 .action-group {
   display: flex;
-  gap: 4px;
+  gap: 16px;
 }
 
 .action-btn {
   background: transparent;
   border: none;
-  color: #9ca3af;
-  padding: 6px;
+  color: rgba(23, 24, 26, 0.7);
+  padding: 4px;
   cursor: pointer;
   border-radius: 6px;
 }
@@ -152,6 +160,9 @@
 }
 
 .blocker-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 0 24px 8px 24px;
   font-size: 11px;
   font-weight: 800;
@@ -161,22 +172,12 @@
 
 .task-row.blocker-row {
   background: var(--bg-blocker);
-  /* ALIGNMENT MATH:
-     Standard row text starts at: 24px(pad) + 20px(num) + 12px(gap) = 56px.
-     Blocker row: 44px(margin) + 12px(padding) = 56px.
-  */
-  margin: 0 24px 4px 44px;
+  margin: 0 24px 0 24px;
   padding-left: 12px;
-
-  /* Standard row ends at: 24px padding.
-     Blocker row ends at: 24px margin + 0px padding.
-  */
-  padding-right: 0px;
-
+  padding-right: 0;
   width: auto;
   border-radius: 8px;
-  min-height: 48px;
-  margin-left: 24px;
+  min-height: 40px;
 }
 
 .reason-tag {

@@ -68,7 +68,7 @@ const ProjectsOverview = () => {
       startDate: project.start_date,
       endDate: project.end_date,
       acronym: project.acronym,
-      teamStructure: project.team_structure || project.teamStructure,
+      teamStructure: project.assigned_employees_grouped || {},
     });
     setIsModalOpen(true);
   };

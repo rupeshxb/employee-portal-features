@@ -207,6 +207,28 @@
     background: linear-gradient(80.05deg, rgba(191, 90, 224, 0.4) 19.27%, rgba(168, 17, 218, 0.4) 70.01%);
 }
 
+/* Circle sizes & positions (shared with Header.css global rules) */
+.hero-circle-1 {
+    width: 154px;
+    height: 154px;
+    right: -40px;
+    bottom: -60px;
+}
+
+.hero-circle-2 {
+    width: 77px;
+    height: 77px;
+    right: 45px;
+    top: -20px;
+}
+
+.hero-circle-3 {
+    width: 32px;
+    height: 32px;
+    right: 130px;
+    top: 32px;
+}
+
 /* =========================================
      4. EMPTY STATE & MOBILE
      ========================================= */
