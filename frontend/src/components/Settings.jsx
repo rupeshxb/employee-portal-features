@@ -277,11 +277,11 @@ const Settings = () => {
 
             {/* Profile Image Modal */}
             <ProfilePictureModal
-                isOpen={isProfileModalOpen}
+                isOpen={true /* TEMP: remove before commit */}
                 onClose={closeProfileModal}
                 image={selectedImage}
                 onSave={handleImageSave}
-                isLoading={isUploadingImage}
+                isLoading={true /* TEMP: remove before commit */}
             />
 
             {/* Password Modal */}
@@ -290,7 +290,7 @@ const Settings = () => {
                     <div className="modal-content password-modal">
                         <div className="modal-header">
                             <h2>Change Account Password</h2>
-                            <button onClick={() => { setIsPasswordModalOpen(false); setPasswordError(""); }} className="close-btn"><X size={24} /></button>
+                            <button onClick={() => { setIsPasswordModalOpen(false); setPasswordError(""); }} className="close-btn"><X size={28} /></button>
                         </div>
                         <div className="modal-body">
                             <div className="form-group">
@@ -298,13 +298,13 @@ const Settings = () => {
                                 <div className="password-input-wrapper">
                                     <input
                                         type={showPassword.old ? "text" : "password"}
-                                        className={`input-field ${passwordError.includes("Current") ? 'input-error' : ''}`}
+                                        className={`input-field ${passwordError.includes("Current") || passwordError.includes("Incorrect") ? 'input-error' : ''}`}
                                         placeholder="Enter current password"
                                         value={passwords.old}
                                         onBlur={handleCurrentPasswordBlur}
                                         onChange={e => {
                                             setPasswords({ ...passwords, old: e.target.value });
-                                            if (passwordError.includes("Current")) setPasswordError("");
+                                            if (passwordError.includes("Current") || passwordError.includes("Incorrect")) setPasswordError("");
                                         }}
                                     />
                                     <button type="button" className="eye-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleShowPassword('old')}>
@@ -318,7 +318,7 @@ const Settings = () => {
                                 <div className="password-input-wrapper">
                                     <input
                                         type={showPassword.new ? "text" : "password"}
-                                        className="input-field"
+                                        className={`input-field ${passwordError.includes("weak") || passwordError.includes("New") ? 'input-error' : ''}`}
                                         disabled={!passwords.old}
                                         value={passwords.new}
                                         onChange={e => {
@@ -365,8 +365,7 @@ const Settings = () => {
                                 </div>
                             </div>
 
-                            {/* Specific error for mismatch */}
-                            {passwordError.includes("match") && (
+                            {passwordError && (
                                 <div className="password-inline-error">{passwordError}</div>
                             )}
                         </div>

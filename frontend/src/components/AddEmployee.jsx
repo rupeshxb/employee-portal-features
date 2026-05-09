@@ -42,6 +42,7 @@ const AddEmployee = () => {
   const [showDesignationDropdown, setShowDesignationDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -85,6 +86,7 @@ const AddEmployee = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const generatePassword = () => {
@@ -105,14 +107,27 @@ const AddEmployee = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
-    if (!formData.designation) {
-      setError("Please select a designation from the list.");
-      setLoading(false);
+    const newFieldErrors = {};
+    if (!formData.employee_id.trim()) newFieldErrors.employee_id = 'Employee ID is required.';
+    if (!formData.username.trim()) newFieldErrors.username = 'Username is required.';
+    if (!formData.password.trim()) newFieldErrors.password = 'Password is required.';
+    if (!formData.first_name.trim()) newFieldErrors.first_name = 'First name is required.';
+    if (!formData.last_name.trim()) newFieldErrors.last_name = 'Last name is required.';
+    if (!formData.joined_date) newFieldErrors.joined_date = 'Joined date is required.';
+    if (!formData.official_email.trim()) newFieldErrors.official_email = 'Official email is required.';
+    if (!formData.phone_number.trim()) newFieldErrors.phone_number = 'Phone number is required.';
+    if (!formData.department) newFieldErrors.department = 'Department is required.';
+    if (!formData.designation) newFieldErrors.designation = 'Please select a designation from the list.';
+    if (!formData.reporting_manager) newFieldErrors.reporting_manager = 'Reporting manager is required.';
+
+    if (Object.keys(newFieldErrors).length > 0) {
+      setFieldErrors(newFieldErrors);
       return;
     }
+    setFieldErrors({});
+    setLoading(true);
 
     const payload = {
       ...formData,
@@ -179,11 +194,13 @@ const AddEmployee = () => {
             <div className="form-grid">
               <div className="input-group">
                 <label>Employee ID *</label>
-                <input type="text" name="employee_id" required value={formData.employee_id} onChange={handleChange} placeholder="e.g. EMP-001" />
+                <input type="text" name="employee_id" value={formData.employee_id} onChange={handleChange} placeholder="e.g. EMP-001" className={fieldErrors.employee_id ? 'input-error' : ''} />
+                {fieldErrors.employee_id && <span className="field-error">{fieldErrors.employee_id}</span>}
               </div>
               <div className="input-group">
                 <label>Username *</label>
-                <input type="text" name="username" required value={formData.username} onChange={handleChange} placeholder="Choose a username" />
+                <input type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Choose a username" className={fieldErrors.username ? 'input-error' : ''} />
+                {fieldErrors.username && <span className="field-error">{fieldErrors.username}</span>}
               </div>
               <div className="input-group">
                 <label>Generate Password *</label>
@@ -192,10 +209,10 @@ const AddEmployee = () => {
                     <input
                       type={showPassword ? "text" : "password"}
                       name="password"
-                      required
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="Generated password"
+                      className={fieldErrors.password ? 'input-error' : ''}
                     />
                     <button type="button" className="pwd-icon-btn" onClick={() => setShowPassword((v) => !v)} title={showPassword ? "Hide" : "Show"}>
                       {showPassword ? <PasswordEyeOffIcon /> : <PasswordEyeIcon />}
@@ -209,6 +226,7 @@ const AddEmployee = () => {
                     Generate
                   </button>
                 </div>
+                {fieldErrors.password && <span className="field-error">{fieldErrors.password}</span>}
               </div>
             </div>
           </div>
@@ -219,18 +237,21 @@ const AddEmployee = () => {
             <div className="form-grid">
               <div className="input-group">
                 <label>First Name *</label>
-                <input type="text" name="first_name" required value={formData.first_name} onChange={handleChange} placeholder="Employee first name" />
+                <input type="text" name="first_name" value={formData.first_name} onChange={handleChange} placeholder="Employee first name" className={fieldErrors.first_name ? 'input-error' : ''} />
+                {fieldErrors.first_name && <span className="field-error">{fieldErrors.first_name}</span>}
               </div>
               <div className="input-group">
                 <label>Last Name *</label>
-                <input type="text" name="last_name" required value={formData.last_name} onChange={handleChange} placeholder="Employee last name" />
+                <input type="text" name="last_name" value={formData.last_name} onChange={handleChange} placeholder="Employee last name" className={fieldErrors.last_name ? 'input-error' : ''} />
+                {fieldErrors.last_name && <span className="field-error">{fieldErrors.last_name}</span>}
               </div>
               <div className="input-group">
                 <label>Joined Date *</label>
-                <div className="date-input-wrapper">
-                  <input type="date" name="joined_date" required value={formData.joined_date} onChange={handleChange} />
+                <div className={`date-input-wrapper ${fieldErrors.joined_date ? 'input-error' : ''}`}>
+                  <input type="date" name="joined_date" value={formData.joined_date} onChange={(e) => { handleChange(e); if (fieldErrors.joined_date) setFieldErrors(p => ({ ...p, joined_date: '' })); }} />
                   <CalendarInputIcon className="date-input-icon" />
                 </div>
+                {fieldErrors.joined_date && <span className="field-error">{fieldErrors.joined_date}</span>}
               </div>
               <div className="input-group">
                 <label>PAN Number</label>
@@ -245,7 +266,8 @@ const AddEmployee = () => {
             <div className="form-grid">
               <div className="input-group">
                 <label>Official Email *</label>
-                <input type="email" name="official_email" required value={formData.official_email} onChange={handleChange} placeholder="Employee official email" />
+                <input type="email" name="official_email" value={formData.official_email} onChange={handleChange} placeholder="Employee official email" className={fieldErrors.official_email ? 'input-error' : ''} />
+                {fieldErrors.official_email && <span className="field-error">{fieldErrors.official_email}</span>}
               </div>
               <div className="input-group">
                 <label>Personal Email</label>
@@ -253,11 +275,12 @@ const AddEmployee = () => {
               </div>
               <div className="input-group">
                 <label>Phone Number *</label>
-                <div className="phone-input-wrapper">
+                <div className={`phone-input-wrapper ${fieldErrors.phone_number ? 'input-error' : ''}`}>
                   <CountryCodeSelect value={phoneCountry} onChange={setPhoneCountry} />
                   <span className="phone-divider" />
-                  <input type="tel" name="phone_number" required value={formData.phone_number} onChange={handleChange} placeholder="Phone number" className="phone-number-input" />
+                  <input type="tel" name="phone_number" value={formData.phone_number} onChange={handleChange} placeholder="Phone number" className="phone-number-input" />
                 </div>
+                {fieldErrors.phone_number && <span className="field-error">{fieldErrors.phone_number}</span>}
               </div>
               <div className="input-group">
                 <label>Emergency Contact Number</label>
@@ -302,12 +325,13 @@ const AddEmployee = () => {
 
               <div className="input-group">
                 <label>Department *</label>
-                <select name="department" required value={formData.department} onChange={handleChange}>
+                <select name="department" value={formData.department} onChange={handleChange} className={fieldErrors.department ? 'input-error' : ''}>
                   <option value="">Select Department</option>
                   {departments.map((dept) => (
                     <option key={dept.id} value={dept.id}>{dept.name}</option>
                   ))}
                 </select>
+                {fieldErrors.department && <span className="field-error">{fieldErrors.department}</span>}
               </div>
 
               <div className="input-group" ref={designationRef}>
@@ -317,10 +341,12 @@ const AddEmployee = () => {
                     type="text"
                     placeholder="Search designation..."
                     value={designationSearch}
+                    className={fieldErrors.designation ? 'input-error' : ''}
                     onChange={(e) => {
                       setDesignationSearch(e.target.value);
                       setFormData((prev) => ({ ...prev, designation: "" }));
                       setShowDesignationDropdown(true);
+                      if (fieldErrors.designation) setFieldErrors(p => ({ ...p, designation: '' }));
                     }}
                     onFocus={() => setShowDesignationDropdown(true)}
                     autoComplete="off"
@@ -333,6 +359,7 @@ const AddEmployee = () => {
                             setFormData((prev) => ({ ...prev, designation: d.id }));
                             setDesignationSearch(d.name);
                             setShowDesignationDropdown(false);
+                            setFieldErrors(p => ({ ...p, designation: '' }));
                           }}>
                           {d.name}
                         </li>
@@ -343,16 +370,18 @@ const AddEmployee = () => {
                     </ul>
                   )}
                 </div>
+                {fieldErrors.designation && <span className="field-error">{fieldErrors.designation}</span>}
               </div>
 
               <div className="input-group">
                 <label>Reporting Manager *</label>
-                <select name="reporting_manager" required value={formData.reporting_manager} onChange={handleChange}>
+                <select name="reporting_manager" value={formData.reporting_manager} onChange={handleChange} className={fieldErrors.reporting_manager ? 'input-error' : ''}>
                   <option value="">Select Manager</option>
                   {managers.map((mgr) => (
                     <option key={mgr.id} value={mgr.id}>{mgr.full_name || mgr.username}</option>
                   ))}
                 </select>
+                {fieldErrors.reporting_manager && <span className="field-error">{fieldErrors.reporting_manager}</span>}
               </div>
             </div>
           </div>

@@ -289,8 +289,20 @@ export const SettingsEmailIcon = () => (
   </svg>
 );
 
+export const ModalCloseIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M18 6L6 18M6 6l12 12" />
+    </svg>
+);
+
 export const BlockerHexIcon = () => (
   <svg width="13" height="14" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M11.3492 4.58835V8.57833C11.3492 9.23167 10.9992 9.83836 10.4334 10.1709L6.96835 12.1717C6.40252 12.4984 5.70251 12.4984 5.13084 12.1717L1.66584 10.1709C1.1 9.84419 0.75 9.2375 0.75 8.57833V4.58835C0.75 3.93502 1.1 3.32833 1.66584 2.99583L5.13084 0.995C5.69667 0.668333 6.39669 0.668333 6.96835 0.995L10.4334 2.99583C10.9992 3.32833 11.3492 3.92919 11.3492 4.58835Z" stroke="#FF493F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
+);
+export const SpinnerIcon = ({ size = 60, className }) => (
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+        <circle cx="40" cy="40" r="35" stroke="#D0D3D9" strokeWidth="10"/>
+        <path d="M40 5.02117C40 2.24805 42.2568 -0.0324671 45.008 0.314734C49.9689 0.94077 54.7837 2.49345 59.1965 4.90732C65.0825 8.1271 70.0641 12.7757 73.6827 18.4252C77.3014 24.0747 79.441 30.5437 79.9044 37.2368C80.2519 42.2546 79.649 47.2775 78.1432 52.0456C77.3081 54.69 74.2929 55.7863 71.7738 54.6267C69.2548 53.4671 68.1982 50.4889 68.9213 47.8117C69.7872 44.6058 70.1171 41.2666 69.8861 37.9305C69.539 32.9178 67.9366 28.0729 65.2264 23.8417C62.5162 19.6106 58.7853 16.1291 54.377 13.7176C51.4432 12.1128 48.272 11.0162 44.9978 10.4622C42.2635 9.99951 40 7.79428 40 5.02117Z" fill="#2563EA"/>
+    </svg>
 );

@@ -550,3 +550,23 @@
     margin-bottom: 20px;
     font-size: 14px;
 }
+
+/* =============================================
+   FIELD VALIDATION ERRORS
+   ============================================= */
+
+.field-error {
+    display: block;
+    color: #EF4444;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.add-employee-form input.input-error,
+.add-employee-form select.input-error,
+.add-employee-form .date-input-wrapper.input-error,
+.add-employee-form .phone-input-wrapper.input-error {
+    border-color: #EF4444 !important;
+    background-color: #FEF2F2 !important;
+}

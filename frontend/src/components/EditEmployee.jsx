@@ -48,6 +48,7 @@ const EditEmployee = () => {
   const [loading, setLoading] = useState(false);
   const [fetchingData, setFetchingData] = useState(true);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   // Close designation dropdown on outside click
   useEffect(() => {
@@ -138,18 +139,26 @@ const EditEmployee = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
-    if (!formData.designation) {
-      setError("Please select a designation from the list.");
-      setLoading(false);
+    const newFieldErrors = {};
+    if (!formData.email.trim()) newFieldErrors.email = 'Official email is required.';
+    if (!formData.phone_number.trim()) newFieldErrors.phone_number = 'Phone number is required.';
+    if (!formData.department) newFieldErrors.department = 'Department is required.';
+    if (!formData.designation) newFieldErrors.designation = 'Please select a designation from the list.';
+    if (!formData.reporting_manager) newFieldErrors.reporting_manager = 'Reporting manager is required.';
+
+    if (Object.keys(newFieldErrors).length > 0) {
+      setFieldErrors(newFieldErrors);
       return;
     }
+    setFieldErrors({});
+    setLoading(true);
 
     const payload = {
       ...formData,
@@ -276,7 +285,8 @@ const EditEmployee = () => {
             <div className="form-grid">
               <div className="input-group">
                 <label>Official Email *</label>
-                <input type="email" name="email" required value={formData.email} onChange={handleChange} placeholder="Official email" />
+                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Official email" className={fieldErrors.email ? 'input-error' : ''} />
+                {fieldErrors.email && <span className="field-error">{fieldErrors.email}</span>}
               </div>
               <div className="input-group">
                 <label>Personal Email</label>
@@ -284,11 +294,12 @@ const EditEmployee = () => {
               </div>
               <div className="input-group">
                 <label>Phone Number *</label>
-                <div className="phone-input-wrapper">
+                <div className={`phone-input-wrapper ${fieldErrors.phone_number ? 'input-error' : ''}`}>
                   <CountryCodeSelect value={phoneCountry} onChange={setPhoneCountry} />
                   <span className="phone-divider" />
-                  <input type="tel" name="phone_number" required value={formData.phone_number} onChange={handleChange} placeholder="Phone number" className="phone-number-input" />
+                  <input type="tel" name="phone_number" value={formData.phone_number} onChange={handleChange} placeholder="Phone number" className="phone-number-input" />
                 </div>
+                {fieldErrors.phone_number && <span className="field-error">{fieldErrors.phone_number}</span>}
               </div>
               <div className="input-group">
                 <label>Emergency Contact Number</label>
@@ -333,12 +344,13 @@ const EditEmployee = () => {
 
               <div className="input-group">
                 <label>Department *</label>
-                <select name="department" required value={formData.department} onChange={handleChange}>
+                <select name="department" value={formData.department} onChange={handleChange} className={fieldErrors.department ? 'input-error' : ''}>
                   <option value="">Select Department</option>
                   {departments.map((dept) => (
                     <option key={dept.id} value={dept.id}>{dept.name}</option>
                   ))}
                 </select>
+                {fieldErrors.department && <span className="field-error">{fieldErrors.department}</span>}
               </div>
 
               <div className="input-group" ref={designationRef}>
@@ -348,10 +360,12 @@ const EditEmployee = () => {
                     type="text"
                     placeholder="Search designation..."
                     value={designationSearch}
+                    className={fieldErrors.designation ? 'input-error' : ''}
                     onChange={(e) => {
                       setDesignationSearch(e.target.value);
                       setFormData((prev) => ({ ...prev, designation: "" }));
                       setShowDesignationDropdown(true);
+                      if (fieldErrors.designation) setFieldErrors(p => ({ ...p, designation: '' }));
                     }}
                     onFocus={() => setShowDesignationDropdown(true)}
                     autoComplete="off"
@@ -364,6 +378,7 @@ const EditEmployee = () => {
                             setFormData((prev) => ({ ...prev, designation: d.id }));
                             setDesignationSearch(d.name);
                             setShowDesignationDropdown(false);
+                            setFieldErrors(p => ({ ...p, designation: '' }));
                           }}>
                           {d.name}
                         </li>
@@ -374,16 +389,18 @@ const EditEmployee = () => {
                     </ul>
                   )}
                 </div>
+                {fieldErrors.designation && <span className="field-error">{fieldErrors.designation}</span>}
               </div>
 
               <div className="input-group">
                 <label>Reporting Manager *</label>
-                <select name="reporting_manager" required value={formData.reporting_manager} onChange={handleChange}>
+                <select name="reporting_manager" value={formData.reporting_manager} onChange={handleChange} className={fieldErrors.reporting_manager ? 'input-error' : ''}>
                   <option value="">Select Manager</option>
                   {managers.map((mgr) => (
                     <option key={mgr.id} value={mgr.id}>{mgr.full_name || mgr.username}</option>
                   ))}
                 </select>
+                {fieldErrors.reporting_manager && <span className="field-error">{fieldErrors.reporting_manager}</span>}
               </div>
             </div>
           </div>

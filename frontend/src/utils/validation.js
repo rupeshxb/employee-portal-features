@@ -29,6 +29,8 @@ export const validatePasswordForm = (passwords) => {
 
     if (!old) return { isValid: false, error: "Current password is required." };
 
+    if (!newPass) return { isValid: false, error: "New password is required." };
+
     const strength = getPasswordStrength(newPass);
     if (strength.score < 2) {
         return { isValid: false, error: "Password is too weak." };

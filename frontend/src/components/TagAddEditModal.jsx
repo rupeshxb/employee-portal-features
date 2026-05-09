@@ -29,7 +29,8 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
     const [formData, setFormData] = useState(defaultFormState);
     const [isCustomColor, setIsCustomColor] = useState(false);
     const [isDesignationOpen, setIsDesignationOpen] = useState(false);
-    
+    const [errors, setErrors] = useState({});
+
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -48,7 +49,8 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                 setFormData(defaultFormState);
                 setIsCustomColor(false);
             }
-            setIsDesignationOpen(false); 
+            setErrors({});
+            setIsDesignationOpen(false);
         }
     }, [isOpen, tag]);
 
@@ -77,6 +79,12 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const newErrors = {};
+        if (!formData.display_name.trim()) newErrors.display_name = 'Display name is required.';
+        if (!formData.system_name.trim()) newErrors.system_name = 'System name is required.';
+        if (formData.designation_ids.length === 0) newErrors.designations = 'Select at least one designation.';
+        if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
+        setErrors({});
         onSubmit(formData);
     };
 
@@ -95,19 +103,23 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                     <div className="form-group">
                         <label>Display Name <span className="req">*</span></label>
                         <input
-                            type="text" required placeholder="e.g. Developers, Marketing, QA"
+                            type="text" placeholder="e.g. Developers, Marketing, QA"
                             value={formData.display_name}
-                            onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
+                            className={errors.display_name ? 'input-error' : ''}
+                            onChange={(e) => { setFormData({ ...formData, display_name: e.target.value }); if (errors.display_name) setErrors(p => ({ ...p, display_name: '' })); }}
                         />
+                        {errors.display_name && <span className="field-error">{errors.display_name}</span>}
                     </div>
 
                     <div className="form-group">
                         <label>System Name <span className="req">*</span></label>
                         <input
-                            type="text" required placeholder="e.g. developers"
+                            type="text" placeholder="e.g. developers"
                             value={formData.system_name}
-                            onChange={(e) => setFormData({ ...formData, system_name: e.target.value })}
+                            className={errors.system_name ? 'input-error' : ''}
+                            onChange={(e) => { setFormData({ ...formData, system_name: e.target.value }); if (errors.system_name) setErrors(p => ({ ...p, system_name: '' })); }}
                         />
+                        {errors.system_name && <span className="field-error">{errors.system_name}</span>}
                     </div>
 
                     <div className="form-group">
@@ -175,7 +187,7 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
 
                     <div className="form-group designations-select">
                         <label>Designations <span className="req">*</span></label>
-                        
+
                         <div className="designation-dropdown-wrapper" ref={dropdownRef}>
                             <div 
                                 className="dropdown-trigger-btn" 
@@ -207,12 +219,13 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                                 const d = designations.find(des => des.id === id);
                                 return d ? (
                                     <span key={id} className="sel-badge">
-                                        {d.name} 
-                                        <button type="button" onClick={() => handleDesignationToggle(id)}>×</button>
+                                        {d.name}
+                                        <button type="button" onClick={() => { handleDesignationToggle(id); if (errors.designations) setErrors(p => ({ ...p, designations: '' })); }}>×</button>
                                     </span>
                                 ) : null;
                             })}
                         </div>
+                        {errors.designations && <span className="field-error">{errors.designations}</span>}
                     </div>
 
                     <div className="form-group status-group">

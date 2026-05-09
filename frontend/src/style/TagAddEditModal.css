@@ -332,3 +332,17 @@
     border-top: 1px solid #E5E7EB;
     padding-top: 24px;
 }
+/* Validation */
+.field-error {
+    display: block;
+    color: #EF4444;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.tag-form input.input-error,
+.tag-form textarea.input-error {
+    border-color: #EF4444 !important;
+    background-color: #FEF2F2 !important;
+}

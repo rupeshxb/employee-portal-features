@@ -3,6 +3,7 @@ import AvatarEditor from 'react-avatar-editor';
 import { X, Trash2 } from 'lucide-react';
 import '../style/ProfilePictureModal.css';
 import { createPortal } from 'react-dom';
+import { SpinnerIcon } from './Icons';
 
 const ProfilePictureModal = ({ isOpen, onClose, image, onSave, isLoading }) => {
   const [scale, setScale] = useState(1.2);
@@ -53,20 +54,17 @@ const ProfilePictureModal = ({ isOpen, onClose, image, onSave, isLoading }) => {
         {/* Loading Overlay */}
         {isLoading && (
           <div className="loading-overlay">
-            <div className="spinner"></div>
+            <SpinnerIcon className="profile-spinner" size={60} />
             <p className="loading-text">Uploading Profile Picture...</p>
           </div>
         )}
 
         {/* Header */}
         <div className="profile-modal-header">
-          <h3>Adjust Profile Picture</h3>
-          {/* Hide close button while loading */}
-          {!isLoading && (
-            <button className="profile-close-btn" onClick={onClose}>
-              <X size={20} />
-            </button>
-          )}
+          <h3>Change Profile Picture</h3>
+          <button className="profile-close-btn" onClick={!isLoading ? onClose : undefined} style={isLoading ? { opacity: 0.4, cursor: 'default' } : {}}>
+            <X size={28} />
+          </button>
         </div>
 
         {/* Cropper Body - Hide content while loading */}
@@ -133,7 +131,7 @@ const ProfilePictureModal = ({ isOpen, onClose, image, onSave, isLoading }) => {
               className="btn-modal-save" 
               disabled={!localImage}
             >
-              Save & Update
+              Save
             </button>
           </div>
         )}
