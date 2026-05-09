@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1126px;
+  max-width: 1200px;
   margin: 0 auto;
   gap: 24px;
 }
@@ -76,15 +76,15 @@
 .task-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0px;
   flex: 1;
   overflow: hidden;
 }
 
 .task-number {
-  font-size: 14px;
-  color: #d1d5db;
-  font-weight: 600;
+  font-size: 16px;
+  color: rgba(23, 24, 26, 0.8);
+  font-weight: 400;
   min-width: 20px;
 }
 
@@ -101,6 +101,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 400;
 }
 
 /* --- The Alignment Anchor --- */
@@ -170,9 +171,16 @@
   letter-spacing: 0.08em;
 }
 
+.blocker-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+
 .task-row.blocker-row {
   background: var(--bg-blocker);
-  margin: 0 24px 0 24px;
+  margin: 0 24px;
   padding-left: 12px;
   padding-right: 0;
   width: auto;
@@ -188,5 +196,5 @@
 }
 
 .task-list.daily-tasks-task-list {
-  gap: 10px;
+  gap: 32px;
 }

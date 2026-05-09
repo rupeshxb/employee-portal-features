@@ -53,24 +53,23 @@
     position: relative !important;
     top: 0 !important;
     right: 0 !important;
-    pointer-events: auto; /* Re-enable clicks for close button */
+    pointer-events: auto;
 
-    background: var(--success-green) !important;
+    background: #3FC43A !important;
     color: #ffffff !important;
 
-    /* Padding is removed here and moved to .toast-content */
     padding: 0;
+    width: 420px;
 
-    border-radius: 12px;
-    font-size: 14px;
+    border-radius: 8px;
+    font-size: 1rem;
     font-weight: 500;
 
     display: flex;
-    flex-direction: column; /* Stack content and progress bar */
-    overflow: hidden; /* Ensures progress bar stays inside rounded corners */
+    flex-direction: column;
+    overflow: hidden;
 
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
-    min-width: 260px;
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
 
     animation: toastEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -79,10 +78,29 @@
 .toast-content {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 8px 16px; /* Padding for text/icon */
-    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 16px;
+    height: 48px;
     box-sizing: border-box;
+    width: 100%;
+}
+
+.toast-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.toast-content span {
+    flex: 1;
+    font-family: 'Figtree', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* --- PROGRESS BAR (New) --- */
@@ -105,14 +123,8 @@
 
 /* --- THE CHECK ICON --- */
 .check-circle {
-    background: rgba(255, 255, 255, 0.25);
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 12px;
     flex-shrink: 0;
 }
 
@@ -294,8 +306,7 @@
     }
 
     .banner-notification-wrapper .notification-toast {
-        min-width: unset;
-        width: 100%;
+        width: 100% !important;
         box-sizing: border-box;
     }
 }
@@ -331,35 +342,27 @@
     transform: scale(1.1);
 }
 
-/* 1. The Compact Toast Container */
+/* 1. The Toast Container */
 .banner-notification-wrapper .notification-toast {
     position: relative !important;
     top: 0 !important;
     right: 0 !important;
     pointer-events: auto;
-    background: var(--success-green) !important;
+    background: #3FC43A !important;
     color: #ffffff !important;
 
-    /* Layout: Row with centered items */
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
 
-    /* Compact Padding */
-    padding: 0px;
+    padding: 0;
+    width: 420px;
+    border-radius: 8px;
+    overflow: hidden;
 
-    /* Size & Shape */
-    min-width: 240px;
-    border-radius: 12px;
-    overflow: hidden; /* Clips the progress bar at the corners */
-
-    /* Visuals */
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
-    font-size: 14px;
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
+    font-size: 1rem;
     font-weight: 500;
-    line-height: 1.2;
 
-    /* Entrance Animation */
     animation: toastEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 

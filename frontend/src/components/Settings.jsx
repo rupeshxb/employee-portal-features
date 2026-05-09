@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Mail, Edit2, X, Briefcase, Eye, EyeOff } from 'lucide-react';
+import { Edit2, X } from 'lucide-react';
 import '../style/Settings.css';
 import { API_BASE_URL } from '../../config';
 import { useUser } from '../context/UserContext';
 import { validatePasswordForm, getPasswordStrength, validateCurrentPassword } from '../../src/utils/validation';
 import ProfilePictureModal from '../components/ProfilePictureModal';
+import { ToastSuccessIcon, SettingsCameraIcon, SettingsDesignationIcon, SettingsEmailIcon, PasswordEyeIcon, PasswordEyeOffIcon } from './Icons';
 
 const Settings = () => {
-    const { user, updateUser } = useUser();
+    const { user, updateUser, fetchUser } = useUser();
     const [message, setMessage] = useState({ text: '', type: '' });
     const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', designation: '', avatar: null });
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -22,6 +23,7 @@ const Settings = () => {
     const [passwordError, setPasswordError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    useEffect(() => { fetchUser(); }, []);
     useEffect(() => { if (user) setProfile(prev => ({ ...prev, ...user })); }, [user]);
 
     const getImageUrl = (avatarPath) => {
@@ -165,10 +167,17 @@ const Settings = () => {
                 <div className="settings-notification-wrapper" style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 50 }}>
                     <div className={`notification-toast ${message.type}`}>
                         <div className="toast-content">
-                            <div className="check-circle">{message.type === 'error' ? '!' : '✓'}</div>
+                            <div className="check-circle">
+                                {message.type === 'error'
+                                    ? <span style={{ fontSize: '16px', fontWeight: 700 }}>!</span>
+                                    : <ToastSuccessIcon />
+                                }
+                            </div>
                             <span>{message.text}</span>
+                            <button className="toast-close" onClick={() => setMessage({ text: '', type: '' })} aria-label="Close">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M12 4L4 12M4 4l8 8" stroke="white" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                            </button>
                         </div>
-                        <button className="toast-close" onClick={() => setMessage({ text: '', type: '' })}>×</button>
                         <div className="toast-progress-bar"></div>
                     </div>
                 </div>
@@ -186,7 +195,7 @@ const Settings = () => {
                 {/* Content Layer */}
                 <div className="header-text" style={{ position: 'relative', zIndex: 1 }}>
                     <h2>Settings</h2>
-                    <p>Manage your personal details and account security.</p>
+                    <p>Manage your personal details, salary preferences, and notification settings.</p>
                 </div>
             </div>
 
@@ -202,8 +211,8 @@ const Settings = () => {
                                 ) : (
                                     <div className="avatar-placeholder">{getInitials(profile.first_name, profile.last_name)}</div>
                                 )}
-                                <label className="camera-btn" htmlFor="profile-image-upload" onClick={() => console.log("Camera label clicked!")}>
-                                    <Camera size={20} color="white" />
+                                <label className="camera-btn" htmlFor="profile-image-upload">
+                                    <SettingsCameraIcon />
                                     <input id="profile-image-upload" type="file" style={{ display: 'none' }} hidden onChange={handleFileChange} accept="image/*" />
                                 </label>
                             </div>
@@ -211,17 +220,17 @@ const Settings = () => {
                         </div>
                         <div className="info-list">
                             <div className="info-item-box">
-                                <div className="icon-box"><Briefcase size={18} /></div>
+                                <SettingsDesignationIcon />
                                 <div className="info-content">
                                     <span className="label">Designation</span>
-                                    <p className="value">{profile.designation || 'N/A'}</p>
+                                    <p className="value">{profile.designation_name || 'N/A'}</p>
                                 </div>
                             </div>
                             <div className="info-item-box">
-                                <div className="icon-box"><Mail size={18} /></div>
+                                <SettingsEmailIcon />
                                 <div className="info-content">
                                     <span className="label">Work Email</span>
-                                    <p className="value">{profile.email}</p>
+                                    <p className="value">{profile.email || 'N/A'}</p>
                                 </div>
                             </div>
                         </div>
@@ -245,14 +254,14 @@ const Settings = () => {
                             {/* Row 2 */}
                             <div className="input-group designation-wrapper">
                                 <label>Designation</label>
-                                <input type="text" className="text-input disabled" value={profile.designation || ''} disabled />
+                                <input type="text" className="text-input disabled" value={profile.designation_name || 'N/A'} disabled />
                             </div>
 
                             {/* Row 3 */}
                             <div className="input-group" style={{ gridColumn: 'span 2' }}>
                                 <label>Password</label>
                                 <div className="password-wrapper">
-                                    <div className="text-input password-dots">••••••••••••••••••••</div>
+                                    <div className="text-input password-dots">********************</div>
                                     <button className="edit-password-btn" onClick={() => setIsPasswordModalOpen(true)}><Edit2 size={16} /> Edit</button>
                                 </div>
                             </div>
@@ -299,7 +308,7 @@ const Settings = () => {
                                         }}
                                     />
                                     <button type="button" className="eye-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleShowPassword('old')}>
-                                        {showPassword.old ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        {showPassword.old ? <PasswordEyeOffIcon /> : <PasswordEyeIcon />}
                                     </button>
                                 </div>
                             </div>
@@ -318,7 +327,7 @@ const Settings = () => {
                                         }}
                                     />
                                     <button type="button" className="eye-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleShowPassword('new')}>
-                                        {showPassword.new ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        {showPassword.new ? <PasswordEyeOffIcon /> : <PasswordEyeIcon />}
                                     </button>
                                 </div>
 
@@ -351,7 +360,7 @@ const Settings = () => {
                                         }}
                                     />
                                     <button type="button" className="eye-btn" onMouseDown={(e) => e.preventDefault()} onClick={() => toggleShowPassword('confirm')}>
-                                        {showPassword.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        {showPassword.confirm ? <PasswordEyeOffIcon /> : <PasswordEyeIcon />}
                                     </button>
                                 </div>
                             </div>

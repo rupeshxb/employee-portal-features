@@ -107,7 +107,7 @@ const Header = () => {
               {displayName}
             </span>
             <span style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '2px' }}>
-              {user?.designation || user?.role || 'Employee'}
+              {user?.designation_name || user?.designation || user?.role || 'Employee'}
             </span>
           </div>
 

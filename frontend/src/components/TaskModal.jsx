@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
-import { Calendar, ChevronDown, X, Check, Search } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
+import { CalendarInputIcon, DropdownSearchIcon } from './Icons';
 import "react-datepicker/dist/react-datepicker.css";
 import '../style/TaskModal.css';
 
@@ -146,7 +147,7 @@ const TaskModal = ({ show, onClose, onSubmit, isEditing, initialData, projects }
                 {isDropdownOpen && (
                   <div className="custom-options-list">
                     <div className="dropdown-search-container">
-                      <Search className="search-icon" size={16} />
+                      <DropdownSearchIcon />
                       <input
                         type="text"
                         placeholder="Search project"
@@ -183,7 +184,6 @@ const TaskModal = ({ show, onClose, onSubmit, isEditing, initialData, projects }
                               {p.name}
                             </span>
 
-                            {isSelected && <Check size={16} style={{ color: '#2563EA' }} />}
                           </div>
                         );
                       })}
@@ -208,7 +208,7 @@ const TaskModal = ({ show, onClose, onSubmit, isEditing, initialData, projects }
                   className="date-picker-input"
                   dateFormat="MMM d, yyyy"
                 />
-                <Calendar className="input-icon-right" size={18} />
+                <CalendarInputIcon className="input-icon-right" />
               </div>
             </div>
 
@@ -220,13 +220,20 @@ const TaskModal = ({ show, onClose, onSubmit, isEditing, initialData, projects }
                   checked={isBlocker}
                   onChange={(e) => setIsBlocker(e.target.checked)}
                 />
+                <div className={`checkbox-visual${isBlocker ? ' checked' : ''}`}>
+                  {isBlocker && (
+                    <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+                      <path d="M1.5 5L4.5 8L10.5 2" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </div>
                 <span>I faced a Blocker</span>
               </label>
 
               {isBlocker && (
                 <div className="form-group blocker-fade">
                   {/* 1. Grey Text Label */}
-                  <label className="label-grey">Describe Blocker</label>
+                  <label>Describe Blocker</label>
 
                   {/* 2. No Placeholder */}
                   <input

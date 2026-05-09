@@ -1,5 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap");
 
+/* --- Settings Page Header Override --- */
+.settings-container .page-header h2 {
+    font-size: 36px;
+    font-weight: 600;
+}
+
 /* --- Base Layout --- */
 .settings-container {
     max-width: 1440px;
@@ -66,7 +72,6 @@
     background: #ffffff;
     border-radius: 16px;
     display: flex;
-    min-height: 600px;
     overflow: hidden;
     padding: 0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -95,9 +100,9 @@
 }
 
 .panel-header h3 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0f172a;
+    font-size: 16px;
+    font-weight: 600;
+    color: #17181A;
     margin: 0;
 }
 
@@ -137,24 +142,21 @@
 
 .camera-btn {
     position: absolute;
-    top: 4px;
-    right: 8px;
-    width: 42px;
-    height: 42px;
-    background-color: #2563ea;
-    border: 4px solid #ffffff;
-    border-radius: 50%;
+    top: 0px;
+    right: 4px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(37, 99, 234, 0.2);
-    transition: transform 0.2s;
     z-index: 10;
+    transition: transform 0.2s;
 }
 
 .camera-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 /* --- Info List --- */
@@ -189,10 +191,11 @@
     margin-bottom: 4px;
 }
 .info-content .value {
-    font-size: 13px;
-    font-weight: 500;
-    color: #0f172a;
+    font-size: 16px;
+    font-weight: 400;
+    color: #17181A;
     margin: 0;
+    line-height: 22px;
 }
 
 /* Apply this to the wrappers for Designation, Password, and the Button */
@@ -226,14 +229,15 @@
 }
 .text-input {
     width: 100%;
-    box-sizing: border-box; 
+    box-sizing: border-box;
     height: 52px;
     background: #F6F7FB !important;
-    border: 1px solid #e2e8f0;
+    border: none;
     border-radius: 10px;
     padding: 0 16px;
     font-size: 15px;
     color: #0f172a;
+    outline: none;
 }
 .text-input.disabled {
     background: #f1f5f9;
@@ -262,19 +266,41 @@
 }
 .password-dots {
     font-family: monospace;
-    letter-spacing: 2px;
-    font-size: 20px;
+    letter-spacing: 4px;
+    font-size: 9px;
     line-height: 52px;
+    color: #17181A;
+}
+
+/* Password Modal - Figma Layout */
+.modal-content.password-modal {
+    width: 640px !important;
+    max-width: 95vw !important;
+    padding: 24px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 32px !important;
+    box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.14) !important;
+    text-align: left !important;
 }
 
 .password-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0;
+    padding: 0;
     width: 100%;
-    text-align: left;
-    h2 {
-        width: inherit;
-        font-size: 24px;
-        text-align: left;
-    }
+}
+
+.password-modal .modal-header h2 {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: #141414;
+    margin: 0;
+    line-height: 29px;
 }
 
 .save-btn {
@@ -377,15 +403,48 @@
 .password-modal .modal-body {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-    /* Prevent the modal body from doing any size calculations during swaps */
+    gap: 32px;
     overflow: hidden;
+    padding: 0px;
+    height: auto;
 }
 
 .password-modal .form-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 8px;
+}
+
+.password-modal .form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(23, 24, 26, 0.65);
+    line-height: 17px;
+}
+
+/* Input field inside password modal */
+.password-modal .modal-body input[type="text"],
+.password-modal .modal-body input[type="password"] {
+    background: #F6F7FB !important;
+    border: none !important;
+    border-radius: 8px !important;
+    height: 48px !important;
+    padding: 12px 16px !important;
+    font-size: 16px !important;
+    color: rgba(23, 24, 26, 1) !important;
+}
+
+.password-modal .modal-body input[type="text"]:focus,
+.password-modal .modal-body input[type="password"]:focus {
+    outline: none !important;
+    background: #F6F7FB !important;
+    border: none !important;
+}
+
+.password-modal .password-input-wrapper {
+    height: 48px;
+    background: #F6F7FB;
+    border-radius: 8px;
 }
 
 /* =========================================
@@ -549,6 +608,47 @@
     gap: 12px;
     margin-top: 12px;
 }
+/* Password modal footer - no divider line, right-aligned buttons */
+.password-modal .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 13px;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none !important;
+    padding-left:0px;
+    padding-right:0px;
+}
+
+.password-modal .btn-cancel {
+    width: 140px;
+    height: 48px;
+    padding: 14px 10px;
+    border: 1px solid #747575;
+    border-radius: 8px;
+    background: transparent;
+    color: #747575;
+    font-size: 18px;
+    font-weight: 500;
+    font-family: 'Figtree', sans-serif;
+    cursor: pointer;
+}
+
+.password-modal .btn-save {
+    width: 160px;
+    height: 48px;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #2563EA;
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Figtree', sans-serif;
+    cursor: pointer;
+}
+
 .btn-cancel {
     height: 44px;
     padding: 0 24px;
@@ -653,20 +753,20 @@
 /* The Green Toast Container */
 .settings-notification-wrapper .notification-toast {
     position: relative;
-    pointer-events: auto; /* Re-enable clicks for the close button */
-    background: #22c55e;
+    pointer-events: auto;
+    background: #3FC43A;
     color: #ffffff;
 
     display: flex;
-    align-items: center;
-    min-width: 260px;
+    flex-direction: column;
+    width: 420px;
     padding: 0;
 
-    border-radius: 12px;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
-    font-size: 14px;
+    border-radius: 8px;
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
+    font-size: 1rem;
     font-weight: 500;
-    overflow: hidden; /* Keeps the progress bar strictly inside the rounded corners */
+    overflow: hidden;
 
     animation: toastEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -680,21 +780,27 @@
 .settings-notification-wrapper .toast-content {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 16px;
+    height: 48px;
+    box-sizing: border-box;
+}
+
+.settings-notification-wrapper .toast-content span {
     flex: 1;
+    font-family: 'Figtree', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* The Checkmark Circle */
 .settings-notification-wrapper .check-circle {
-    background: rgba(255, 255, 255, 0.25);
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 12px;
     flex-shrink: 0;
 }
 
@@ -704,15 +810,13 @@
     border: none;
     color: white;
     cursor: pointer;
-    font-size: 20px;
-    padding: 12px 16px;
+    padding: 4px;
     opacity: 0.8;
-    transition:
-        opacity 0.2s,
-        transform 0.2s;
+    transition: opacity 0.2s, transform 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .settings-notification-wrapper .toast-close:hover {

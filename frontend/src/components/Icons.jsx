@@ -208,8 +208,8 @@ export const BackArrowIcon = () => (
 
 export const PasswordEyeIcon = ({ className }) => (
     <svg className={className} width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M14.2816 11.0004C14.2816 12.8154 12.8149 14.2821 10.9999 14.2821C9.18493 14.2821 7.71826 12.8154 7.71826 11.0004C7.71826 9.18542 9.18493 7.71875 10.9999 7.71875C12.8149 7.71875 14.2816 9.18542 14.2816 11.0004Z" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M10.9999 18.581C14.2357 18.581 17.2515 16.6743 19.3507 13.3743C20.1757 12.0818 20.1757 9.90932 19.3507 8.61682C17.2515 5.31682 14.2357 3.41016 10.9999 3.41016C7.76402 3.41016 4.74819 5.31682 2.64902 8.61682C1.82402 9.90932 1.82402 12.0818 2.64902 13.3743C4.74819 16.6743 7.76402 18.581 10.9999 18.581Z" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M14.2816 11.0004C14.2816 12.8154 12.8149 14.2821 10.9999 14.2821C9.18493 14.2821 7.71826 12.8154 7.71826 11.0004C7.71826 9.18542 9.18493 7.71875 10.9999 7.71875C12.8149 7.71875 14.2816 9.18542 14.2816 11.0004Z" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M11.0001 18.581C14.2359 18.581 17.2518 16.6743 19.3509 13.3743C20.1759 12.0818 20.1759 9.90932 19.3509 8.61682C17.2518 5.31682 14.2359 3.41016 11.0001 3.41016C7.76427 3.41016 4.74843 5.31682 2.64927 8.61682C1.82427 9.90932 1.82427 12.0818 2.64927 13.3743C4.74843 16.6743 7.76427 18.581 11.0001 18.581Z" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );
 
@@ -238,6 +238,54 @@ export const ActiveIcon = () => (
 export const InactiveIcon = () => (
   <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="5" cy="5" r="5" fill="#FF493F"/>
+  </svg>
+);
+
+export const DropdownSearchIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.58366 17.5001C13.9559 17.5001 17.5003 13.9557 17.5003 9.58341C17.5003 5.21116 13.9559 1.66675 9.58366 1.66675C5.2114 1.66675 1.66699 5.21116 1.66699 9.58341C1.66699 13.9557 5.2114 17.5001 9.58366 17.5001Z" stroke="#757F9A" strokeOpacity="0.4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M18.3337 18.3334L16.667 16.6667" stroke="#757F9A" strokeOpacity="0.4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+export const ToastSuccessIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clipPath="url(#clip0_2168_19966)">
+      <path d="M18.3332 9.2333V9.99997C18.3321 11.797 17.7503 13.5455 16.6743 14.9848C15.5983 16.4241 14.0859 17.477 12.3626 17.9866C10.6394 18.4961 8.79755 18.4349 7.1119 17.8121C5.42624 17.1894 3.98705 16.0384 3.00897 14.5309C2.03089 13.0233 1.56633 11.24 1.68457 9.4469C1.80281 7.65377 2.49751 5.94691 3.66507 4.58086C4.83263 3.21482 6.41049 2.26279 8.16333 1.86676C9.91617 1.47073 11.7501 1.65192 13.3915 2.3833" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M18.3333 3.33325L10 11.6749L7.5 9.17492" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </g>
+    <defs>
+      <clipPath id="clip0_2168_19966">
+        <rect width="20" height="20" fill="white"/>
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+export const SettingsCameraIcon = () => (
+  <svg width="58" height="58" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="29" cy="29" r="26.5" fill="#2563EA" stroke="white" strokeWidth="5"/>
+    <path d="M40 36C40 36.5304 39.7893 37.0391 39.4142 37.4142C39.0391 37.7893 38.5304 38 38 38H20C19.4696 38 18.9609 37.7893 18.5858 37.4142C18.2107 37.0391 18 36.5304 18 36V25C18 24.4696 18.2107 23.9609 18.5858 23.5858C18.9609 23.2107 19.4696 23 20 23H24L26 20H32L34 23H38C38.5304 23 39.0391 23.2107 39.4142 23.5858C39.7893 23.9609 40 24.4696 40 25V36Z" fill="white"/>
+    <path d="M29 34C31.2091 34 33 32.2091 33 30C33 27.7909 31.2091 26 29 26C26.7909 26 25 27.7909 25 30C25 32.2091 26.7909 34 29 34Z" fill="#2563EA"/>
+    <path d="M37 26C37.5523 26 38 25.5523 38 25C38 24.4477 37.5523 24 37 24C36.4477 24 36 24.4477 36 25C36 25.5523 36.4477 26 37 26Z" fill="#2563EA"/>
+  </svg>
+);
+
+export const SettingsDesignationIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="48" height="48" rx="6" fill="#EDEEF0" fillOpacity="0.3"/>
+    <rect x="0.5" y="0.5" width="47" height="47" rx="5.5" stroke="#5C676A" strokeOpacity="0.2"/>
+    <path d="M24.16 22.87C24.06 22.86 23.94 22.86 23.83 22.87C21.45 22.79 19.56 20.84 19.56 18.44C19.56 15.99 21.54 14 24 14C26.45 14 28.44 15.99 28.44 18.44C28.43 20.84 26.54 22.79 24.16 22.87Z" stroke="#666769" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M19.16 26.56C16.74 28.18 16.74 30.82 19.16 32.43C21.91 34.27 26.42 34.27 29.17 32.43C31.59 30.81 31.59 28.17 29.17 26.56C26.43 24.73 21.92 24.73 19.16 26.56Z" stroke="#666769" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+export const SettingsEmailIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="48" height="48" rx="6" fill="#EDEEF0" fillOpacity="0.3"/>
+    <rect x="0.5" y="0.5" width="47" height="47" rx="5.5" stroke="#5C676A" strokeOpacity="0.2"/>
+    <path d="M33 16H15C13.9 16 13 16.9 13 18V30C13 31.1 13.9 32 15 32H33C34.1 32 35 31.1 35 30V18C35 16.9 34.1 16 33 16Z" stroke="rgba(23,24,26,0.65)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M13 18L24 25L35 18" stroke="rgba(23,24,26,0.65)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 

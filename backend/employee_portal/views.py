@@ -358,13 +358,14 @@ class CustomLoginView(APIView):
                 "user_id": user.pk,
                 "employee_id": employee_id,
                 "username": user.username,
-                "first_name": user.first_name, 
-                "last_name": user.last_name,  
+                "first_name": user.first_name,
+                "last_name": user.last_name,
                 "full_name": full_name,
                 "designation": designation,
-                "role": portal_role,             
+                "designation_name": designation,
+                "role": portal_role,
                 "is_manager": is_manager_status,
-                "department": department_name,   
+                "department": department_name,
                 "avatar": avatar
             })
         else:

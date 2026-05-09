@@ -16,7 +16,7 @@
   width: 100%;
   max-width: 560px;
   max-height: 90vh;
-  padding: 32px;
+  padding: 24px;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -43,8 +43,8 @@
 /* --- Close Button --- */
 .task-add-modal .close-btn {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 22px;
+  right: 20px;
   background: none;
   border: none;
   color: #9ca3af;
@@ -69,24 +69,26 @@
   gap: 4px;
   margin-bottom: 20px;
   padding-right: 32px;
+  padding-top: 0px;
   padding-left: 0px;
 }
 
 .task-add-modal .modal-header h2 {
   font-family: "Figtree", sans-serif;
-  font-weight: 700;
-  font-size: 1.375rem;
-  color: #111827;
+  font-weight: 500;
+  font-size: 1.5rem;
+  color: #141414;
   margin: 0;
   line-height: 1.2;
+  letter-spacing: -0.03em;
   text-align: left;
   width: 100%;
 }
 
 .task-add-modal .modal-header p {
   font-family: "Figtree", sans-serif;
-  font-size: 0.85rem;
-  color: #6b7280;
+  font-size: 0.9375rem;
+  color: rgba(23, 24, 26, 0.6);
   margin: 0;
   width: 100%;
   text-align: left;
@@ -116,8 +118,8 @@
 .task-add-modal .form-group label {
   font-family: "Figtree", sans-serif;
   font-weight: 600;
-  font-size: 0.8125rem;
-  color: #374151;
+  font-size: 0.875rem;
+  color: rgba(23, 24, 26, 0.65);
   margin-bottom: 0;
   text-align: left;
 }
@@ -133,15 +135,23 @@
 .task-add-modal .blocker-input {
   width: 100%;
   background: #f6f7fb;
-  border: 1px solid transparent;
+  border: none;
   border-radius: 8px;
   padding: 12px 16px;
   font-family: "Figtree", sans-serif;
-  font-size: 0.9375rem;
-  color: #1f2937;
+  font-size: 1rem;
+  color: #17181a;
   outline: none;
   box-sizing: border-box;
   transition: all 0.2s;
+}
+
+.task-add-modal .form-textarea::placeholder,
+.task-add-modal .date-picker-input::placeholder,
+.task-add-modal .blocker-input::placeholder {
+  color: rgba(23, 24, 26, 0.5);
+  font-family: "Figtree", sans-serif;
+  font-size: 1rem;
 }
 
 /* LIBRARY FIX: Forcing React-DatePicker to span full width */
@@ -152,6 +162,14 @@
 .task-add-modal .react-datepicker__input-container {
   width: 100%;
   display: block;
+}
+
+/* Override any react-datepicker library styles on the actual input element */
+.task-add-modal .react-datepicker__input-container input {
+  background: #f6f7fb !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .task-add-modal .form-textarea {
@@ -181,13 +199,13 @@
 .task-add-modal .custom-select-trigger {
   width: 100%;
   background: #f6f7fb;
-  border: 1px solid transparent;
+  border: none;
   border-radius: 8px;
   padding: 0px 16px;
   height: 48px;
   font-family: "Figtree", sans-serif;
-  font-size: 0.9375rem;
-  color: #1f2937;
+  font-size: 1rem;
+  color: #17181a;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -201,8 +219,7 @@
 }
 
 .task-add-modal .custom-select-trigger.active {
-  background: #ffffff;
-  border-color: #2563ea;
+  background: #f6f7fb;
 }
 
 .task-add-modal .dropdown-arrow {
@@ -221,50 +238,78 @@
   right: 0;
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.12);
+  box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
   z-index: 50;
-  border: 1px solid #e5e7eb;
-  padding: 12px;
+  border: none;
+  padding: 6px 0;
+  overflow: hidden;
 }
 
 .task-add-modal .dropdown-search-container {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  padding: 12px 14px;
-  border: 2px solid #17181a1a;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  padding: 12px 16px;
   gap: 10px;
-  transition: all 0.2s;
-}
-
-.task-add-modal .dropdown-search-container:focus-within {
+  height: 40px;
   background: #ffffff;
+  border: 1px solid rgba(23, 24, 26, 0.1);
+  border-radius: 8px;
+  margin: 8px 12px 8px 12px;
+  box-sizing: border-box;
 }
 
 .task-add-modal .dropdown-search-container input {
-  border: none;
-  background: transparent;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
   width: 100%;
-  outline: none;
   font-family: "Figtree", sans-serif;
   font-size: 0.9375rem;
-  color: #1f2937;
+  color: rgba(117, 127, 154, 0.8);
+}
+
+.task-add-modal .dropdown-search-container input::placeholder {
+  color: rgba(117, 127, 154, 0.4);
 }
 
 .task-add-modal .options-scroll-area {
   max-height: 220px;
   overflow-y: auto;
+  scrollbar-width: auto;
+  scrollbar-color: #bbbbbb transparent;
+}
+
+.task-add-modal .options-scroll-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.task-add-modal .options-scroll-area::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.task-add-modal .options-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 85px 0;
+}
+
+.task-add-modal .options-scroll-area::-webkit-scrollbar-thumb {
+  background: #bbbbbb;
+  border-radius: 100px;
+  min-height: 20px;
 }
 
 .task-add-modal .custom-option {
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: 0;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2px;
+  margin-bottom: 0;
 }
 
 .task-add-modal .custom-option:hover {
@@ -272,7 +317,7 @@
 }
 
 .task-add-modal .custom-option.selected {
-  background: #eff6ff;
+  background: #eef3fe;
 }
 
 /* --- Input Icon Wrapper --- */
@@ -305,21 +350,34 @@
   gap: 10px;
   cursor: pointer;
   font-family: "Figtree", sans-serif;
-  font-size: 0.9375rem;
-  color: #374151;
-  font-weight: 500;
+  font-size: 1rem;
+  color: #17181a;
+  font-weight: 400;
 }
 
 .task-add-modal .custom-checkbox {
-  width: 18px;
-  height: 18px;
-  accent-color: #dc2626;
-  border-radius: 4px;
-  cursor: pointer;
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
 }
 
-.task-add-modal .custom-checkbox:checked {
-  background-color: #2563ea;
+.task-add-modal .checkbox-visual {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1.5px solid #d1d5db;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.task-add-modal .checkbox-visual.checked {
+  background: #2563ea;
   border-color: #2563ea;
 }
 

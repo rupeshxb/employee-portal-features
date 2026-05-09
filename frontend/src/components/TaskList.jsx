@@ -67,16 +67,18 @@ const TaskList = ({ groupedTasks, onEdit, onDelete, onAddNewTask }) => {
               <div className="blocker-section-title">
                 BLOCKERS
               </div>
-              {group.blockers.map((task, idx) => (
-                <TaskRow
-                  key={task.id}
-                  task={task}
-                  index={idx}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  isBlocker={true}
-                />
-              ))}
+              <div className="blocker-rows">
+                {group.blockers.map((task, idx) => (
+                  <TaskRow
+                    key={task.id}
+                    task={task}
+                    index={idx}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    isBlocker={true}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -100,7 +102,7 @@ const TaskRow = ({ task, index, onEdit, onDelete, isBlocker }) => {
   return (
     <div className={`task-row ${isBlocker ? 'blocker-row' : ''}`}>
       <div className="task-left">
-        {!isBlocker && <span className="task-number">{index + 1}.</span>}
+        <span className="task-number">{index + 1}.</span>
         <div className="task-content-wrapper">
           <span className="task-text">{displayText}</span>
         </div>
