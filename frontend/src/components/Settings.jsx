@@ -277,11 +277,11 @@ const Settings = () => {
 
             {/* Profile Image Modal */}
             <ProfilePictureModal
-                isOpen={true /* TEMP: remove before commit */}
+                isOpen={isProfileModalOpen}
                 onClose={closeProfileModal}
                 image={selectedImage}
                 onSave={handleImageSave}
-                isLoading={true /* TEMP: remove before commit */}
+                isLoading={isUploadingImage}
             />
 
             {/* Password Modal */}
