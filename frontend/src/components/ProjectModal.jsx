@@ -86,13 +86,38 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
 
     if (!isOpen) return null;
 
+    const isColorTooLight = (hex) => {
+        if (!hex) return false;
+        const cleaned = hex.replace('#', '');
+        if (cleaned.length !== 6 && cleaned.length !== 3) return false;
+        let r, g, b;
+        if (cleaned.length === 3) {
+            r = parseInt(cleaned[0] + cleaned[0], 16);
+            g = parseInt(cleaned[1] + cleaned[1], 16);
+            b = parseInt(cleaned[2] + cleaned[2], 16);
+        } else {
+            r = parseInt(cleaned.substring(0, 2), 16);
+            g = parseInt(cleaned.substring(2, 4), 16);
+            b = parseInt(cleaned.substring(4, 6), 16);
+        }
+        if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return false;
+        // Perceived brightness — white text becomes invisible on very light backgrounds
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness > 220;
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-        
+
         // If user starts typing, remove the error for that specific field
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: null }));
+        }
+
+        // Real-time check: white / near-white pill colors hide the white text
+        if (name === 'accentColor' && isColorTooLight(value)) {
+            setErrors(prev => ({ ...prev, accentColor: 'White or near-white colors are not allowed.' }));
         }
     };
 
@@ -110,7 +135,11 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
         if (!formData.clientName.trim()) newErrors.clientName = "Client name is required.";
         if (!formData.startDate) newErrors.startDate = "Start date is required.";
         if (!formData.endDate) newErrors.endDate = "End date is required.";
-        
+
+        if (isColorTooLight(formData.accentColor)) {
+            newErrors.accentColor = "White or near-white colors are not allowed.";
+        }
+
         // Optional logic: Check if end date is before start date
         if (formData.startDate && formData.endDate && formData.startDate > formData.endDate) {
             newErrors.endDate = "End date cannot be before start date.";
@@ -215,12 +244,13 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
 
                             <div className="form-group full-width">
                                 <label>Accent Color <span className="required-asterisk">*</span></label>
-                                <div className="color-input-container">
+                                <div className={`color-input-container ${errors.accentColor ? 'input-error' : ''}`}>
                                     <div className="color-box" style={{ backgroundColor: formData.accentColor }}>
                                         <input type="color" name="accentColor" value={formData.accentColor} onChange={handleInputChange} />
                                     </div>
                                     <input type="text" name="accentColor" value={formData.accentColor.toUpperCase()} onChange={handleInputChange} />
                                 </div>
+                                {errors.accentColor && <span className="error-text">{errors.accentColor}</span>}
                             </div>
 
                             <div className="form-group full-width">

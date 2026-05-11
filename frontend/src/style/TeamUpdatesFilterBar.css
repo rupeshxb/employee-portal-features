@@ -1,7 +1,7 @@
 .filter-bar {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
     margin-bottom: 0px;
     align-items: center;
     padding: 0px;
@@ -19,19 +19,21 @@
     background: #ffffff;
     border: 1px solid rgba(23, 24, 26, 0.1);
     border-radius: 8px;
-    padding: 0 12px;
+    padding: 0 16px;
     height: 44px;
-    gap: 10px;
+    gap: 6px;
+    box-sizing: border-box;
 }
 
 .filter-item-wrapper svg {
-    flex-shrink: 0; /* Prevents icons from shrinking */
+    flex-shrink: 0;
 }
 
-/* Search Specifics */
+/* Search Specifics — flex-grows to fill remaining space */
 .search-wrapper {
-    flex: 1;
+    flex: 1 1 0;
     min-width: 250px;
+    gap: 10px;
 }
 
 .search-wrapper input {
@@ -58,6 +60,32 @@
     width: 100%;
 }
 
+/* Select overlay pattern — makes the entire pill clickable */
+.select-wrapper {
+    position: relative;
+    cursor: pointer;
+    min-width: 160px;
+}
+
+.select-display {
+    flex: 1;
+    font-size: 15px;
+    color: #17181A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+}
+
+.select-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
 .date-input {
     border: none;
     outline: none;
@@ -71,12 +99,16 @@
 .date-dropdown-container {
     position: relative;
     display: flex;
+    flex: 0 0 auto;
+    min-width: 200px;
 }
 
 .date-dropdown-pill {
     cursor: pointer;
     user-select: none;
-    min-width: 200px;
+    width: 100%;
+    border-color: rgba(23, 24, 26, 0.2);
+    padding: 0 12px 0 16px;
     font-size: 15px;
     color: #17181A;
 }
@@ -97,25 +129,35 @@
 .date-dropdown-menu {
     position: absolute;
     top: calc(100% + 8px);
-    left: 0;
+    right: 0;
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     z-index: 50;
     font-size: 14px;
     color: #475569;
-    overflow: hidden; /* Keeps hover effects inside the rounded corners */
+    overflow: hidden;
 }
 
 .date-dropdown-item {
-    padding: 10px 12px;
+    padding: 12px 16px;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: #17181A;
+    white-space: nowrap;
 }
 
-/* Added a nice hover effect! */
+.date-dropdown-item span {
+    white-space: nowrap;
+}
+
 .date-dropdown-item:hover {
     background-color: #f8fafc;
 }
@@ -127,15 +169,19 @@
 .date-invisible-input {
     position: absolute;
     top: 100%;
-    left: 0;
+    right: 0;
+    left: auto;
     opacity: 0;
-    width: 0px;
-    height: 0px;
+    width: 1px;
+    height: 1px;
     pointer-events: none;
-    color-scheme: light;
+    color-scheme: only light;
+    background-color: #ffffff;
+    color: #111827;
+    border: none;
 }
 
-/* --- CUSTOM PROJECT DROPDOWN --- */
+/* --- LEGACY PROJECT DROPDOWN (used by EmployeeOverviewFilterBar) --- */
 .custom-project-container {
     position: relative;
     display: flex;
@@ -147,7 +193,7 @@
     user-select: none;
     min-width: 170px;
     justify-content: space-between;
-    padding: 8px 12px; /* Adjust to match your existing wrappers */
+    padding: 8px 12px;
 }
 
 .project-trigger-content {
@@ -168,12 +214,11 @@
     transform: rotate(180deg);
 }
 
-/* Dropdown Menu Box */
 .custom-project-menu {
     position: absolute;
     top: calc(100% + 8px);
     left: 0;
-    width: 260px; /* Match Figma width */
+    width: 260px;
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
@@ -183,8 +228,7 @@
     padding: 12px 0 8px 0;
 }
 
-/* Internal Search Bar */
-.project-menu-search {
+.custom-project-menu .project-menu-search {
     display: flex;
     align-items: center;
     margin: 0 12px 12px 12px;
@@ -194,7 +238,7 @@
     gap: 8px;
 }
 
-.project-menu-search input {
+.custom-project-menu .project-menu-search input {
     border: none;
     width: 100%;
     outline: none;
@@ -203,32 +247,34 @@
     background-color: transparent;
 }
 
-.project-menu-search input::placeholder {
+.custom-project-menu .project-menu-search input::placeholder {
     color: #94a3b8;
 }
 
-.project-menu-search svg {
+.custom-project-menu .project-menu-search svg {
     width: 16px;
     height: 16px;
     color: #94a3b8;
 }
 
-/* Menu List & Scrollbar */
 .project-menu-list {
     max-height: 175px;
     overflow-y: auto;
 }
 
-/* Customizing the scrollbar for the menu list to match Figma */
+.project-menu-list {
+    scrollbar-width: thin;
+    scrollbar-color: #BBBBBB transparent;
+}
 .project-menu-list::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
 }
 .project-menu-list::-webkit-scrollbar-track {
     background: transparent;
 }
 .project-menu-list::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
+    background: #BBBBBB;
+    border-radius: 2.5px;
 }
 
 .project-menu-item {
@@ -241,16 +287,7 @@
     background-color: #f8fafc;
 }
 
-.project-no-results {
-    padding: 12px 16px;
-    color: #64748b;
-    font-size: 13px;
-    text-align: center;
-}
-
-/* --- PROJECT PILLS --- */
-/* For the pills inside the dropdown menu */
-.project-pill {
+.custom-project-container .project-pill {
     display: inline-block;
     padding: 6px 14px;
     border-radius: 20px;
@@ -259,8 +296,7 @@
     font-weight: 500;
 }
 
-/* For the pill inside the active trigger box */
-.selected-project-pill {
+.custom-project-container .selected-project-pill {
     display: inline-flex;
     align-items: center;
     padding: 4px 6px 4px 12px;
@@ -284,4 +320,291 @@
 
 .clear-project-btn:hover {
     background: rgba(255, 255, 255, 0.45);
+}
+
+/* --- TEAM UPDATES PROJECT DROPDOWN (Custom with Figma-styled colored pills) --- */
+.project-dropdown-container {
+    position: relative;
+    display: flex;
+    flex: 0 0 auto;
+    min-width: 200px;
+}
+
+.project-dropdown-trigger {
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+    border-color: rgba(23, 24, 26, 0.2);
+    padding: 0 12px 0 16px;
+}
+
+.project-dropdown-container .selected-project-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 6px 0 12px;
+    border-radius: 100px;
+    color: #FFFFFF;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
+    gap: 6px;
+    flex: 0 0 auto;
+    max-width: 100%;
+    overflow: hidden;
+    margin-right: auto;
+}
+
+.selected-project-pill-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pill-close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 50%;
+    transition: background 0.15s ease;
+}
+
+.pill-close-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Dropdown Menu */
+.project-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 300px;
+    max-height: 310px;
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
+    z-index: 100;
+    padding: 16px;
+    gap: 16px;
+}
+
+.project-dropdown-menu .project-menu-search {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid rgba(23, 24, 26, 0.1);
+    border-radius: 8px;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.project-dropdown-menu .project-menu-search input {
+    border: none;
+    outline: none;
+    width: 100%;
+    background: transparent;
+    font-family: 'Figtree', sans-serif;
+    font-size: 15px;
+    color: #17181A;
+}
+
+.project-dropdown-menu .project-menu-search input::placeholder {
+    color: #BBBBBB;
+}
+
+/* Pill List */
+.project-pill-list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    margin: 0 -16px;
+}
+
+.project-pill-list {
+    scrollbar-width: thin;
+    scrollbar-color: #BBBBBB transparent;
+}
+.project-pill-list::-webkit-scrollbar {
+    width: 5px;
+}
+.project-pill-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.project-pill-list::-webkit-scrollbar-thumb {
+    background: #BBBBBB;
+    border-radius: 2.5px;
+}
+
+.project-pill-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    min-height: 44px;
+}
+
+.project-pill-row:hover {
+    background-color: #f8fafc;
+}
+
+.project-pill-row.selected {
+    background: #EEF3FE;
+}
+
+.project-dropdown-container .project-pill,
+.project-pill-row .project-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 100px;
+    color: #FFFFFF;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
+    white-space: nowrap;
+}
+
+.project-pill.all-projects-pill {
+    background: #94a3b8;
+}
+
+.project-no-results {
+    padding: 12px 16px;
+    color: #64748b;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* --- ROLE DROPDOWN (Custom Figma-styled) --- */
+.role-dropdown-container {
+    position: relative;
+    display: flex;
+    flex: 0 0 auto;
+    min-width: 200px;
+}
+
+.role-dropdown-trigger {
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+    border-color: rgba(23, 24, 26, 0.2);
+    padding: 0 12px 0 16px;
+}
+
+.role-display {
+    flex: 1;
+    font-family: 'Figtree', sans-serif;
+    font-size: 15px;
+    color: #17181A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.role-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: max-content;
+    min-width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.role-dropdown-menu {
+    scrollbar-width: thin;
+    scrollbar-color: #BBBBBB transparent;
+}
+.role-dropdown-menu::-webkit-scrollbar {
+    width: 5px;
+}
+.role-dropdown-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+.role-dropdown-menu::-webkit-scrollbar-thumb {
+    background: #BBBBBB;
+    border-radius: 2.5px;
+}
+
+.role-dropdown-item {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 16px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 18px;
+    color: #17181A;
+    white-space: nowrap;
+}
+
+.role-dropdown-item:first-child {
+    border-radius: 12px 12px 0 0;
+}
+
+.role-dropdown-item:last-child {
+    border-radius: 0 0 12px 12px;
+}
+
+.role-dropdown-item:hover {
+    background-color: #f8fafc;
+}
+
+.role-dropdown-item.selected {
+    background: #EEF3FE;
+}
+
+/* --- TIME DROPDOWN (Manager Daily Task Updates) — opens leftward --- */
+.time-dropdown-container {
+    position: relative;
+    display: flex;
+    flex: 0 0 auto;
+    min-width: 160px;
+}
+
+.time-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    left: auto;
+    width: 268px;
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
+    z-index: 100;
+    overflow: hidden;
+}
+
+.time-dropdown-menu .date-dropdown-item {
+    height: 44px;
+    padding: 0 16px;
+}
+
+.time-dropdown-menu .date-dropdown-item.selected {
+    background: #EEF3FE;
 }

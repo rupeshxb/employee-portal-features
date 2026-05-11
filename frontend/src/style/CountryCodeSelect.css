@@ -86,11 +86,11 @@
     max-height: 220px;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: #CBD5E1 transparent;
+    scrollbar-color: #BBBBBB transparent;
 }
 
 .cc-list::-webkit-scrollbar {
-    width: 4px;
+    width: 5px;
 }
 
 .cc-list::-webkit-scrollbar-track {
@@ -99,8 +99,8 @@
 }
 
 .cc-list::-webkit-scrollbar-thumb {
-    background-color: #CBD5E1;
-    border-radius: 10px;
+    background-color: #BBBBBB;
+    border-radius: 2.5px;
 }
 
 .cc-item {

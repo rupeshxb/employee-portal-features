@@ -1,0 +1,137 @@
+.custom-date-picker {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 320px;
+    box-sizing: border-box;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 200;
+    font-family: 'Figtree', sans-serif;
+}
+
+.cdp-header {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    padding-left: 8px;
+    gap: 16px;
+}
+
+.cdp-month-label {
+    flex: 1;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    color: #293050;
+    letter-spacing: -0.18px;
+}
+
+.cdp-nav {
+    display: flex;
+    gap: 0;
+}
+
+.cdp-nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    transition: background-color 0.15s ease;
+}
+
+.cdp-nav-btn:hover {
+    background: rgba(23, 24, 26, 0.06);
+}
+
+.cdp-weekdays {
+    display: flex;
+    height: 36px;
+}
+
+.cdp-weekday {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    color: #7B8199;
+    letter-spacing: -0.18px;
+}
+
+.cdp-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 36px;
+}
+
+.cdp-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    height: 36px;
+    box-sizing: border-box;
+}
+
+.cdp-day-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    color: #293050;
+    letter-spacing: -0.18px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.cdp-day.weekend .cdp-day-circle {
+    color: #7B8199;
+}
+
+.cdp-day.other-month .cdp-day-circle {
+    color: rgba(24, 30, 48, 0.32);
+}
+
+.cdp-day:hover .cdp-day-circle {
+    background: rgba(23, 24, 26, 0.06);
+}
+
+.cdp-day.today .cdp-day-circle {
+    background: rgba(37, 99, 234, 0.1);
+    color: #2563EA;
+    font-weight: 600;
+}
+
+.cdp-day.selected .cdp-day-circle {
+    background: #2563EA;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.cdp-day.selected:hover .cdp-day-circle {
+    background: #1d4fd0;
+}

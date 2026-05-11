@@ -9,6 +9,12 @@
     flex-direction: column;
     height: 460px;
     box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.employee-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
 }
 
 .card-header {
@@ -72,11 +78,12 @@
     overflow-y: auto;
     padding-right: 8px; /* Adds space so text doesn't touch the scrollbar */
     margin-right: -4px;
+    scrollbar-width: thin;
+    scrollbar-color: #BBBBBB transparent;
 }
 
-/* WebKit Custom Scrollbar matching your SVG requirements */
 .card-scroll-area::-webkit-scrollbar {
-    width: 4px;
+    width: 5px;
 }
 
 .card-scroll-area::-webkit-scrollbar-track {
@@ -84,8 +91,8 @@
 }
 
 .card-scroll-area::-webkit-scrollbar-thumb {
-    background-color: #bbbbbb;
-    border-radius: 3px;
+    background-color: #BBBBBB;
+    border-radius: 2.5px;
 }
 
 /* --- Section Formatting --- */
@@ -219,27 +226,32 @@
 .card-status-bar {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 10px 0;
+    gap: 4px;
+    padding: 8px 0;
     margin-bottom: 16px;
     border-top: 1px solid rgba(23, 24, 26, 0.1);
     border-bottom: 1px solid rgba(23, 24, 26, 0.1);
     flex-shrink: 0;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 .status-pill {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
     padding: 4px 8px;
     border-radius: 6px !important;
     font-size: 11px;
+    line-height: 13px;
     font-weight: 500;
     border: 1px solid rgba(23, 24, 26, 0.3);
     color: rgba(23, 24, 26, 0.8);
     background: rgba(255, 255, 255, 0.6);
     white-space: nowrap;
+    flex: 0 0 auto;
 }
 
 .status-pill svg {
@@ -271,43 +283,27 @@
 .manager-daily-update-employee-card .card-header {
     border-bottom: 0;
     margin-bottom: 0;
-    padding: 0;
+    padding: 0 0 8px 0;
 }
 
-.manager-daily-update-employee-card .card-status-bar{
-    margin-bottom: 0px;
-    overflow-y: auto;
-}
-
-
-/* --- Firefox Support --- */
 .manager-daily-update-employee-card .card-status-bar {
-    overflow-y: auto;
-    scrollbar-width: thin; /* Makes it compact */
-    scrollbar-color: #cbd5e1 transparent; /* Thumb color | Track color */
+    margin-bottom: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #BBBBBB transparent;
 }
 
-/* --- Chrome, Edge, and Safari Support --- */
 .manager-daily-update-employee-card .card-status-bar::-webkit-scrollbar {
-    width: 6px; /* Makes the vertical scrollbar thin */
-    height: 6px; /* Makes the horizontal scrollbar thin (if needed) */
+    height: 5px;
+    width: 0;
 }
 
-/* The track (background) of the scrollbar */
 .manager-daily-update-employee-card .card-status-bar::-webkit-scrollbar-track {
-    background: transparent; /* Keeps it matching your page background */
-    border-radius: 10px;
+    background: transparent;
 }
 
-/* The draggable part of the scrollbar */
 .manager-daily-update-employee-card .card-status-bar::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1; /* A subtle slate/gray color */
-    border-radius: 10px; /* Rounds the edges to make it look modern */
-    border: 2px solid transparent; /* Optional: adds a bit of padding around the thumb */
-    background-clip: padding-box;
-}
-
-/* Hover effect for the draggable part */
-.manager-daily-update-employee-card .card-status-bar::-webkit-scrollbar-thumb:hover {
-    background-color: #94a3b8; /* Slightly darker when hovered */
+    background-color: #BBBBBB;
+    border-radius: 2.5px;
 }

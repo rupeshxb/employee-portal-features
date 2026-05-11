@@ -9,6 +9,7 @@ import '../style/Header.css'; // Reusable header styles
 // Import Components
 import TeamUpdatesFilterBar from './TeamUpdatesFilterBar';
 import EmployeeCard from './EmployeeCard';
+import { NoResultsIllustration } from './Icons';
 
 const TeamUpdates = () => {
     // --- STATE ---
@@ -21,7 +22,7 @@ const TeamUpdates = () => {
     const [selectedRole, setSelectedRole] = useState('All Roles');
 
 
-    const [dateFilter, setDateFilter] = useState('Date');
+    const [dateFilter, setDateFilter] = useState('Today');
     const [customDate, setCustomDate] = useState(new Date().toISOString().split('T')[0]);
 
     // Dropdown Data States
@@ -162,9 +163,11 @@ const TeamUpdates = () => {
                         ))
                     ) : (
                         <div className="no-results">
-                            <div style={{ fontSize: '48px', marginBottom: '10px' }}>📄</div>
-                            <h3>No results found!</h3>
-                            <p>Try again with a different keyword or filter.</p>
+                            <NoResultsIllustration />
+                            <div className="no-results-text">
+                                <h3>No results found!</h3>
+                                <p>Try again with a different keywords.</p>
+                            </div>
                         </div>
                     )}
                 </div>

@@ -452,11 +452,11 @@
     padding: 4px 0;
     list-style: none;
     scrollbar-width: thin;
-    scrollbar-color: #CBD5E1 transparent;
+    scrollbar-color: #BBBBBB transparent;
 }
 
 .designation-dropdown-list::-webkit-scrollbar {
-    width: 4px;
+    width: 5px;
 }
 
 .designation-dropdown-list::-webkit-scrollbar-track {
@@ -465,8 +465,8 @@
 }
 
 .designation-dropdown-list::-webkit-scrollbar-thumb {
-    background-color: #CBD5E1;
-    border-radius: 10px;
+    background-color: #BBBBBB;
+    border-radius: 2.5px;
 }
 
 .designation-dropdown-item {

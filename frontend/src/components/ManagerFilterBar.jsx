@@ -1,20 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../style/TeamUpdatesFilterBar.css';
-import { SearchIcon, ProjectIcon, DateIcon } from './Icons';
-
-const ClockIcon = () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <polyline points="12 6 12 12 16 14"></polyline>
-    </svg>
-);
-
-const CloseIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
-);
+import {
+    SearchIcon,
+    ProjectIcon,
+    PillCloseIcon,
+    TodayIcon,
+    YesterdayIcon,
+    CustomDateIcon,
+    ClockIcon,
+    HourglassIcon,
+    BlockIcon,
+} from './Icons';
+import CustomDatePicker from './CustomDatePicker';
 
 const ManagerFilterBar = ({
     searchTerm, setSearchTerm,
@@ -24,20 +21,16 @@ const ManagerFilterBar = ({
     timeFilter, setTimeFilter,
     projectList
 }) => {
-    // --- States ---
     const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
-    const [projectSearch, setProjectSearch] = useState('');
+    const [projectSearchTerm, setProjectSearchTerm] = useState('');
     const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
-    // NEW: Time dropdown state
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [isTimeDropdownOpen, setIsTimeDropdownOpen] = useState(false);
 
-    // --- Refs ---
     const projectContainerRef = useRef(null);
     const dateContainerRef = useRef(null);
-    const dateInputRef = useRef(null);
     const timeContainerRef = useRef(null);
 
-    // --- Date Formatting Logic ---
     const formattedToday = new Date().toLocaleDateString('en-US', {
         month: 'short', day: 'numeric', year: 'numeric'
     });
@@ -52,18 +45,22 @@ const ManagerFilterBar = ({
         ? new Date(customDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         : '';
 
-    // --- Effects (Click Outside) ---
+    const selectedProjectObj = projectList.find(p => p.name === selectedProject);
+    const selectedProjectColor = selectedProjectObj?.color || selectedProjectObj?.color_code || '#475569';
+
+    const filteredProjects = projectList.filter(p =>
+        p.name.toLowerCase().includes(projectSearchTerm.toLowerCase())
+    );
+
     useEffect(() => {
         const handleClickOutside = (event) => {
-            // Close Project Dropdown
             if (projectContainerRef.current && !projectContainerRef.current.contains(event.target)) {
                 setIsProjectDropdownOpen(false);
+                setProjectSearchTerm('');
             }
-            // Close Date Dropdown
             if (dateContainerRef.current && !dateContainerRef.current.contains(event.target)) {
                 setIsDateDropdownOpen(false);
             }
-            // NEW: Close Time Dropdown
             if (timeContainerRef.current && !timeContainerRef.current.contains(event.target)) {
                 setIsTimeDropdownOpen(false);
             }
@@ -72,14 +69,13 @@ const ManagerFilterBar = ({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // --- Handlers ---
     const handleProjectSelect = (projectName) => {
         setSelectedProject(projectName);
         setIsProjectDropdownOpen(false);
-        setProjectSearch('');
+        setProjectSearchTerm('');
     };
 
-    const handleClearProject = (e) => {
+    const clearSelectedProject = (e) => {
         e.stopPropagation();
         setSelectedProject('All Projects');
     };
@@ -88,28 +84,24 @@ const ManagerFilterBar = ({
         setDateFilter(value);
         setIsDateDropdownOpen(false);
 
-        // Auto-open calendar for custom date
-        if (value === 'Custom' && dateInputRef.current && 'showPicker' in HTMLInputElement.prototype) {
-            try {
-                dateInputRef.current.showPicker();
-            } catch (err) {
-                console.error("Browser blocked auto-opening date picker", err);
-            }
+        if (value === 'Custom Date') {
+            setIsCalendarOpen(true);
+        } else {
+            setIsCalendarOpen(false);
         }
     };
 
-    // NEW: Time Selection Handler
     const handleTimeSelect = (value) => {
         setTimeFilter(value);
         setIsTimeDropdownOpen(false);
     };
 
-    // Filter projects for the menu
-    const filteredProjects = projectList.filter(p =>
-        p.name.toLowerCase().includes(projectSearch.toLowerCase())
-    );
-
-    const activeProjectData = projectList.find(p => p.name === selectedProject);
+    const renderTimeIcon = (value) => {
+        if (value === 'Before 10 AM') return <ClockIcon />;
+        if (value === 'After 10 AM') return <HourglassIcon />;
+        if (value === 'Not Submitted') return <BlockIcon />;
+        return <ClockIcon />;
+    };
 
     return (
         <div className="filter-bar">
@@ -124,137 +116,150 @@ const ManagerFilterBar = ({
                 />
             </div>
 
-            {/* 2. CUSTOM Project Dropdown */}
-            {/* ... (Keep your existing project dropdown code here) ... */}
-            <div ref={projectContainerRef} className="custom-project-container">
+            {/* 2. Project Dropdown */}
+            <div ref={projectContainerRef} className="project-dropdown-container">
                 <div
-                    className="filter-item-wrapper custom-project-trigger"
+                    className="filter-item-wrapper project-dropdown-trigger"
                     onClick={() => setIsProjectDropdownOpen(!isProjectDropdownOpen)}
                 >
-                    {selectedProject === 'All Projects' && <ProjectIcon />}
-
-                    <div className="project-trigger-content">
-                        {selectedProject === 'All Projects' ? (
-                            <span>All Projects</span>
-                        ) : (
-                            <div
-                                className="selected-project-pill"
-                                style={{ backgroundColor: activeProjectData?.color || '#cbd5e1' }}
+                    {selectedProject === 'All Projects' ? (
+                        <>
+                            <ProjectIcon />
+                            <span className="select-display">All Projects</span>
+                        </>
+                    ) : (
+                        <div className="selected-project-pill" style={{ backgroundColor: selectedProjectColor }}>
+                            <span className="selected-project-pill-text">{selectedProject}</span>
+                            <button
+                                className="pill-close-btn"
+                                onClick={clearSelectedProject}
+                                aria-label="Clear project filter"
+                                type="button"
                             >
-                                {selectedProject}
-                                <span className="clear-project-btn" onClick={handleClearProject}>
-                                    <CloseIcon />
-                                </span>
-                            </div>
-                        )}
-                    </div>
-
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`project-caret ${isProjectDropdownOpen ? 'open' : ''}`}>
+                                <PillCloseIcon />
+                            </button>
+                        </div>
+                    )}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isProjectDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
                         <path d="M6 9l6 6 6-6" />
                     </svg>
                 </div>
 
                 {isProjectDropdownOpen && (
-                    <div className="custom-project-menu">
+                    <div className="project-dropdown-menu">
                         <div className="project-menu-search">
                             <SearchIcon />
                             <input
                                 type="text"
                                 placeholder="Search project"
-                                value={projectSearch}
-                                onChange={(e) => setProjectSearch(e.target.value)}
+                                value={projectSearchTerm}
+                                onChange={(e) => setProjectSearchTerm(e.target.value)}
                                 autoFocus
                             />
                         </div>
-                        <div className="project-menu-list">
-                            {filteredProjects.length > 0 ? (
-                                filteredProjects.map(p => (
-                                    <div
-                                        key={p.id}
-                                        className="project-menu-item"
-                                        onClick={() => handleProjectSelect(p.name)}
-                                    >
-                                        <span className="project-pill" style={{ backgroundColor: p.color }}>
-                                            {p.name}
-                                        </span>
+                        <div className="project-pill-list">
+                            {filteredProjects.map(p => (
+                                <div
+                                    key={p.id}
+                                    className={`project-pill-row ${selectedProject === p.name ? 'selected' : ''}`}
+                                    onClick={() => handleProjectSelect(p.name)}
+                                >
+                                    <div className="project-pill" style={{ backgroundColor: p.color || p.color_code }}>
+                                        {p.name}
                                     </div>
-                                ))
-                            ) : (
-                                <div className="project-no-results">No projects found</div>
+                                </div>
+                            ))}
+                            {filteredProjects.length === 0 && (
+                                <div className="project-no-results">
+                                    {projectSearchTerm ? 'No projects found' : 'No projects available'}
+                                </div>
                             )}
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* 3. CUSTOM Date Dropdown */}
-            {/* ... (Keep your existing date dropdown code here) ... */}
+            {/* 3. Date Dropdown — TeamUpdates style */}
             <div ref={dateContainerRef} className="date-dropdown-container">
                 <div className="filter-item-wrapper date-dropdown-pill" onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}>
-                    <DateIcon />
+                    {dateFilter === 'Date' && <CustomDateIcon />}
+                    {dateFilter === 'Today' && <TodayIcon />}
+                    {dateFilter === 'Yesterday' && <YesterdayIcon />}
+                    {dateFilter === 'Custom Date' && <CustomDateIcon />}
                     <div className="date-dropdown-content">
                         {dateFilter === 'Date' && 'Date'}
                         {dateFilter === 'Today' && <>Today <span className="date-subtext">({formattedToday})</span></>}
                         {dateFilter === 'Yesterday' && <>Yesterday <span className="date-subtext">({formattedYesterday})</span></>}
-                        {dateFilter === 'Custom' && <>Custom Date <span className="date-subtext">{formattedCustomDate ? `(${formattedCustomDate})` : ''}</span></>}
+                        {dateFilter === 'Custom Date' && <>Custom Date <span className="date-subtext">{formattedCustomDate ? `(${formattedCustomDate})` : ''}</span></>}
                     </div>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isDateDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
                         <path d="M6 9l6 6 6-6" />
                     </svg>
                 </div>
 
                 {isDateDropdownOpen && (
                     <div className="date-dropdown-menu">
-                        <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleDateSelect('Date')}>
-                            Date
-                        </div>
                         <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleDateSelect('Today')}>
-                            Today <span className="date-subtext">({formattedToday})</span>
+                            <TodayIcon />
+                            <span>Today <span className="date-subtext">({formattedToday})</span></span>
                         </div>
                         <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleDateSelect('Yesterday')}>
-                            Yesterday <span className="date-subtext">({formattedYesterday})</span>
+                            <YesterdayIcon />
+                            <span>Yesterday <span className="date-subtext">({formattedYesterday})</span></span>
                         </div>
-                        <div className="date-dropdown-item" onClick={() => handleDateSelect('Custom')}>
-                            Custom Date
+                        <div className="date-dropdown-item" onClick={() => handleDateSelect('Custom Date')}>
+                            <CustomDateIcon />
+                            <span>Custom Date</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 'auto' }}>
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
                         </div>
                     </div>
                 )}
 
-                <input
-                    type="date"
-                    ref={dateInputRef}
+                <CustomDatePicker
+                    isOpen={isCalendarOpen}
+                    onClose={() => setIsCalendarOpen(false)}
                     value={customDate}
-                    onChange={(e) => setCustomDate(e.target.value)}
-                    className="date-invisible-input"
+                    onChange={(newDate) => setCustomDate(newDate)}
+                    ignoreRef={dateContainerRef}
                 />
             </div>
 
-            {/* 4. CUSTOM Time Submission Dropdown */}
-            <div ref={timeContainerRef} className="date-dropdown-container">
-                {/* Notice we added 'time-dropdown-pill' here */}
+            {/* 4. Time Dropdown — with icons, opens leftward */}
+            <div ref={timeContainerRef} className="time-dropdown-container">
                 <div className="filter-item-wrapper date-dropdown-pill time-dropdown-pill" onClick={() => setIsTimeDropdownOpen(!isTimeDropdownOpen)}>
-                    <ClockIcon />
+                    {timeFilter !== 'Time' ? renderTimeIcon(timeFilter) : <ClockIcon />}
                     <div className="date-dropdown-content">
                         {timeFilter}
                     </div>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isTimeDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
                         <path d="M6 9l6 6 6-6" />
                     </svg>
                 </div>
 
                 {isTimeDropdownOpen && (
-                    <div className="date-dropdown-menu">
-                        <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleTimeSelect('Time')}>
-                            Time
+                    <div className="time-dropdown-menu">
+                        <div
+                            className={`date-dropdown-item ${timeFilter === 'Before 10 AM' ? 'selected' : ''}`}
+                            onClick={() => handleTimeSelect('Before 10 AM')}
+                        >
+                            <ClockIcon />
+                            <span>Before 10 AM</span>
                         </div>
-                        <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleTimeSelect('Before 10 AM')}>
-                            Before 10 AM
+                        <div
+                            className={`date-dropdown-item ${timeFilter === 'After 10 AM' ? 'selected' : ''}`}
+                            onClick={() => handleTimeSelect('After 10 AM')}
+                        >
+                            <HourglassIcon />
+                            <span>After 10 AM</span>
                         </div>
-                        <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleTimeSelect('After 10 AM')}>
-                            After 10 AM
-                        </div>
-                        <div className="date-dropdown-item" onClick={() => handleTimeSelect('Not Submitted')}>
-                            Not Submitted
+                        <div
+                            className={`date-dropdown-item ${timeFilter === 'Not Submitted' ? 'selected' : ''}`}
+                            onClick={() => handleTimeSelect('Not Submitted')}
+                        >
+                            <BlockIcon />
+                            <span>Not Submitted</span>
                         </div>
                     </div>
                 )}

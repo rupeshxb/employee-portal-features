@@ -319,6 +319,7 @@ const Settings = () => {
                                     <input
                                         type={showPassword.new ? "text" : "password"}
                                         className={`input-field ${passwordError.includes("weak") || passwordError.includes("New") ? 'input-error' : ''}`}
+                                        placeholder="Enter new password"
                                         disabled={!passwords.old}
                                         value={passwords.new}
                                         onChange={e => {
@@ -353,6 +354,7 @@ const Settings = () => {
                                     <input
                                         type={showPassword.confirm ? "text" : "password"}
                                         className={`input-field ${passwordError.includes("match") ? 'input-error' : ''}`}
+                                        placeholder="Confirm new password"
                                         value={passwords.confirm}
                                         onChange={e => {
                                             setPasswords({ ...passwords, confirm: e.target.value });

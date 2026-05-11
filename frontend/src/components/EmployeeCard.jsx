@@ -36,9 +36,6 @@ const stripReason = (content) => {
 
 const BlockerItem = ({ task }) => (
     <div className="blocker-item">
-        <div className="blocker-icon-container">
-            <BlockerAlertIcon />
-        </div>
         <div className="blocker-content">
             <span
                 className="mini-tag"

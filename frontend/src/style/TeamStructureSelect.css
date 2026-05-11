@@ -114,18 +114,18 @@
 /* Custom Scrollbar for Dropdown */
 .select-dropdown-menu {
     scrollbar-width: thin;
-    scrollbar-color: #CBD5E1 transparent;
+    scrollbar-color: #BBBBBB transparent;
 }
 .select-dropdown-menu::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
 }
 .select-dropdown-menu::-webkit-scrollbar-track {
     background: transparent;
     margin: 8px 0;
 }
 .select-dropdown-menu::-webkit-scrollbar-thumb {
-    background-color: #CBD5E1;
-    border-radius: 10px;
+    background-color: #BBBBBB;
+    border-radius: 2.5px;
 }
 
 /* --- Search Bar --- */

@@ -128,22 +128,22 @@
 /* Scrollable area for team structure matching the image */
 .team-structure-list {
     max-height: 110px;
-    overflow-y: auto; /* This ensures the scrollbar ONLY appears if content exceeds 110px */
+    overflow-y: auto;
     padding-right: 4px;
     margin-bottom: 8px;
-    /* Removed extra margins that might force artificial scrolling */
+    scrollbar-width: thin;
+    scrollbar-color: #BBBBBB transparent;
 }
 
-/* Custom minimal scrollbar */
 .team-structure-list::-webkit-scrollbar {
-    width: 4px;
+    width: 5px;
 }
 .team-structure-list::-webkit-scrollbar-track {
     background: transparent;
 }
 .team-structure-list::-webkit-scrollbar-thumb {
-    background-color: #CBD5E1;
-    border-radius: 4px;
+    background-color: #BBBBBB;
+    border-radius: 2.5px;
 }
 
 .list-item {

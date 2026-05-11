@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../style/TeamUpdatesFilterBar.css';
-import { SearchIcon, ProjectIcon, RoleIcon, DateIcon } from './Icons';
+import { SearchIcon, ProjectIcon, RoleIcon, TodayIcon, YesterdayIcon, CustomDateIcon, PillCloseIcon } from './Icons';
+import CustomDatePicker from './CustomDatePicker';
 
 const TeamUpdatesFilterBar = ({
     searchTerm, setSearchTerm,
@@ -11,8 +12,13 @@ const TeamUpdatesFilterBar = ({
     projectList, roleList
 }) => {
     const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
+    const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
+    const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+    const [projectSearchTerm, setProjectSearchTerm] = useState('');
     const dateContainerRef = useRef(null);
-    const dateInputRef = useRef(null);
+    const projectContainerRef = useRef(null);
+    const roleContainerRef = useRef(null);
 
     // Format today's date
     const formattedToday = new Date().toLocaleDateString('en-US', {
@@ -31,11 +37,27 @@ const TeamUpdatesFilterBar = ({
         ? new Date(customDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         : '';
 
+    // Find color of currently selected project
+    const selectedProjectObj = projectList.find(p => p.name === selectedProject);
+    const selectedProjectColor = selectedProjectObj?.color_code || '#475569';
+
+    // Filter projects in dropdown by search
+    const filteredProjects = projectList.filter(p =>
+        p.name.toLowerCase().includes(projectSearchTerm.toLowerCase())
+    );
+
     // Close dropdowns if clicked outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dateContainerRef.current && !dateContainerRef.current.contains(event.target)) {
                 setIsDateDropdownOpen(false);
+            }
+            if (projectContainerRef.current && !projectContainerRef.current.contains(event.target)) {
+                setIsProjectDropdownOpen(false);
+                setProjectSearchTerm('');
+            }
+            if (roleContainerRef.current && !roleContainerRef.current.contains(event.target)) {
+                setIsRoleDropdownOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -46,14 +68,22 @@ const TeamUpdatesFilterBar = ({
         setDateFilter(value);
         setIsDateDropdownOpen(false);
 
-        // Auto-open calendar for custom date
-        if (value === 'Custom' && dateInputRef.current && 'showPicker' in HTMLInputElement.prototype) {
-            try {
-                dateInputRef.current.showPicker();
-            } catch (err) {
-                console.error("Browser blocked auto-opening date picker", err);
-            }
+        if (value === 'Custom') {
+            setIsCalendarOpen(true);
+        } else {
+            setIsCalendarOpen(false);
         }
+    };
+
+    const handleProjectSelect = (projectName) => {
+        setSelectedProject(projectName);
+        setIsProjectDropdownOpen(false);
+        setProjectSearchTerm('');
+    };
+
+    const clearSelectedProject = (e) => {
+        e.stopPropagation();
+        setSelectedProject('All Projects');
     };
 
     return (
@@ -69,31 +99,98 @@ const TeamUpdatesFilterBar = ({
                 />
             </div>
 
-            {/* Project Dropdown */}
-            <div className="filter-item-wrapper">
-                <ProjectIcon />
-                <select
-                    value={selectedProject}
-                    onChange={(e) => setSelectedProject(e.target.value)}
+            {/* Project Dropdown — Custom with colored pills */}
+            <div ref={projectContainerRef} className="project-dropdown-container">
+                <div
+                    className="filter-item-wrapper project-dropdown-trigger"
+                    onClick={() => setIsProjectDropdownOpen(!isProjectDropdownOpen)}
                 >
-                    <option value="All Projects">All Projects</option>
-                    {projectList.map(p => (
-                        <option key={p.id} value={p.name}>{p.name}</option>
-                    ))}
-                </select>
+                    {selectedProject === 'All Projects' ? (
+                        <>
+                            <ProjectIcon />
+                            <span className="select-display">All Projects</span>
+                        </>
+                    ) : (
+                        <div className="selected-project-pill" style={{ backgroundColor: selectedProjectColor }}>
+                            <span className="selected-project-pill-text">{selectedProject}</span>
+                            <button
+                                className="pill-close-btn"
+                                onClick={clearSelectedProject}
+                                aria-label="Clear project filter"
+                                type="button"
+                            >
+                                <PillCloseIcon />
+                            </button>
+                        </div>
+                    )}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isProjectDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                        <path d="M6 9l6 6 6-6" />
+                    </svg>
+                </div>
+
+                {isProjectDropdownOpen && (
+                    <div className="project-dropdown-menu">
+                        <div className="project-menu-search">
+                            <SearchIcon />
+                            <input
+                                type="text"
+                                placeholder="Search project"
+                                value={projectSearchTerm}
+                                onChange={(e) => setProjectSearchTerm(e.target.value)}
+                                autoFocus
+                            />
+                        </div>
+                        <div className="project-pill-list">
+                            {filteredProjects.map(p => (
+                                <div
+                                    key={p.id}
+                                    className={`project-pill-row ${selectedProject === p.name ? 'selected' : ''}`}
+                                    onClick={() => handleProjectSelect(p.name)}
+                                >
+                                    <div className="project-pill" style={{ backgroundColor: p.color_code }}>
+                                        {p.name}
+                                    </div>
+                                </div>
+                            ))}
+                            {filteredProjects.length === 0 && (
+                                <div className="project-no-results">
+                                    {projectSearchTerm ? 'No projects found' : 'No projects available'}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {/* Role Dropdown */}
-            <div className="filter-item-wrapper">
-                <RoleIcon />
-                <select
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
+            {/* Role Dropdown — Custom */}
+            <div ref={roleContainerRef} className="role-dropdown-container">
+                <div
+                    className="filter-item-wrapper role-dropdown-trigger"
+                    onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
                 >
-                    {roleList.map((role, index) => (
-                        <option key={index} value={role}>{role}</option>
-                    ))}
-                </select>
+                    <RoleIcon />
+                    <span className="role-display">{selectedRole}</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isRoleDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                        <path d="M6 9l6 6 6-6" />
+                    </svg>
+                </div>
+
+                {isRoleDropdownOpen && (
+                    <div className="role-dropdown-menu">
+                        {roleList.map((role, index) => (
+                            <div
+                                key={index}
+                                className={`role-dropdown-item ${selectedRole === role ? 'selected' : ''}`}
+                                onClick={() => {
+                                    setSelectedRole(role);
+                                    setIsRoleDropdownOpen(false);
+                                }}
+                            >
+                                {role}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Custom Date Dropdown Section */}
@@ -101,14 +198,15 @@ const TeamUpdatesFilterBar = ({
 
                 {/* The "Select" Pill */}
                 <div className="filter-item-wrapper date-dropdown-pill" onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}>
-                    <DateIcon />
+                    {dateFilter === 'Today' && <TodayIcon />}
+                    {dateFilter === 'Yesterday' && <YesterdayIcon />}
+                    {dateFilter === 'Custom' && <CustomDateIcon />}
                     <div className="date-dropdown-content">
-                        {dateFilter === 'Date' && 'Date'}
                         {dateFilter === 'Today' && <>Today <span className="date-subtext">({formattedToday})</span></>}
                         {dateFilter === 'Yesterday' && <>Yesterday <span className="date-subtext">({formattedYesterday})</span></>}
                         {dateFilter === 'Custom' && <>Custom Date <span className="date-subtext">{formattedCustomDate ? `(${formattedCustomDate})` : ''}</span></>}
                     </div>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isDateDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
                         <path d="M6 9l6 6 6-6" />
                     </svg>
                 </div>
@@ -116,28 +214,31 @@ const TeamUpdatesFilterBar = ({
                 {/* The Dropdown Menu List */}
                 {isDateDropdownOpen && (
                     <div className="date-dropdown-menu">
-                        <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleDateSelect('Date')}>
-                            Date
-                        </div>
                         <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleDateSelect('Today')}>
-                            Today <span className="date-subtext">({formattedToday})</span>
+                            <TodayIcon />
+                            <span>Today <span className="date-subtext">({formattedToday})</span></span>
                         </div>
                         <div className="date-dropdown-item date-dropdown-item-bordered" onClick={() => handleDateSelect('Yesterday')}>
-                            Yesterday <span className="date-subtext">({formattedYesterday})</span>
+                            <YesterdayIcon />
+                            <span>Yesterday <span className="date-subtext">({formattedYesterday})</span></span>
                         </div>
                         <div className="date-dropdown-item" onClick={() => handleDateSelect('Custom')}>
-                            Custom Date
+                            <CustomDateIcon />
+                            <span>Custom Date</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 'auto' }}>
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
                         </div>
                     </div>
                 )}
 
-                {/* Invisible Custom Date Input */}
-                <input
-                    type="date"
-                    ref={dateInputRef}
+                {/* Custom (Figma-styled) Date Picker */}
+                <CustomDatePicker
+                    isOpen={isCalendarOpen}
+                    onClose={() => setIsCalendarOpen(false)}
                     value={customDate}
-                    onChange={(e) => setCustomDate(e.target.value)}
-                    className="date-invisible-input"
+                    onChange={(newDate) => setCustomDate(newDate)}
+                    ignoreRef={dateContainerRef}
                 />
             </div>
 
