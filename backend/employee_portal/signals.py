@@ -1,4 +1,4 @@
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 
 
@@ -36,3 +36,13 @@ def assign_project_manager_designation(sender, instance, created, **kwargs):
     if instance.designation_id != designation.id:
         # Use queryset update to avoid re-triggering this signal
         sender.objects.filter(pk=instance.pk).update(designation=designation)
+
+
+@receiver(post_delete, sender='employee_portal.Employee')
+def delete_user_on_employee_delete(sender, instance, **kwargs):
+    """Delete the linked auth User when an Employee is deleted, so the
+    username is freed up for reuse. Employee.user uses on_delete=CASCADE,
+    which only cascades User -> Employee, not the other way around."""
+    user = getattr(instance, 'user', None)
+    if user and user.pk:
+        user.delete()
