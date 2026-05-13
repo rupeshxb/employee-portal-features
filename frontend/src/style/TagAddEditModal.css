@@ -118,12 +118,9 @@
 .form-group textarea::placeholder {
     color: #9CA3AF;
 }
-.form-group input[type="text"]:focus,
-.form-group textarea:focus {
-    border-color: #2563EB;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
-}
+/* No global :focus border. Components opt in via their own scoped class
+   (e.g., .tag-modal-input:focus). Generic .form-group :focus rules used to leak
+   to every modal in the app that has a .form-group child. */
 
 /* --- COLOR PICKER --- */
 .color-picker-box {

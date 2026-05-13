@@ -106,27 +106,61 @@
   background-color: #2563eb;
 }
 
-/* --- EMPTY STATE --- */
-.empty-state {
+/* --- EMPTY STATE ---
+   Scoped under .project-overview-container to sidestep the global .empty-state
+   (TagsTable.css gives that class a white card with a border — undesired here). */
+.project-overview-container .po-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 60px;
+  background: transparent;
+  border: 0;
+}
+
+.project-overview-container .no-results {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 80px;
+  gap: 24px;
+  width: 100%;
+  margin-top: 60px;
+  padding: 50px 20px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
   text-align: center;
 }
 
-.empty-state h3 {
-  color: #0f172a;
-  margin: 16px 0 8px 0;
-  font-size: 18px;
-  font-weight: 600;
+.project-overview-container .no-results svg {
+  display: block;
 }
 
-.empty-state p {
-  color: #64748b;
-  margin: 0 0 24px 0;
+.project-overview-container .no-results-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-overview-container .no-results h3 {
+  margin: 0;
+  font-family: 'Figtree', sans-serif;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 26px;
+  letter-spacing: -0.03em;
+  color: #17181A;
+}
+
+.project-overview-container .no-results p {
+  margin: 0;
+  font-family: 'Figtree', sans-serif;
+  font-weight: 300;
   font-size: 14px;
+  line-height: 17px;
+  color: rgba(23, 24, 26, 0.75);
 }
 
 /* --- MODAL OVERLAY BASICS --- */

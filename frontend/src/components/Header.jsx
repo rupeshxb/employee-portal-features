@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Bell, ChevronDown, LogOut, User, Settings as SettingsIcon, Calendar } from 'lucide-react';
+import { Bell, ChevronDown, LogOut, User, Settings as SettingsIcon } from 'lucide-react';
 import { API_BASE_URL } from '../../config';
 import { useUser } from '../context/UserContext';
+import { VerticalDividerIcon, HeaderCalendarIcon } from './Icons';
 
 const Header = () => {
   const { user, logout } = useUser();
@@ -72,19 +73,19 @@ const Header = () => {
   return (
     <header className="header">
       {/* Right: Date, Notifications & User Profile */}
-      <div className="header-right" ref={dropdownRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <div className="header-right" ref={dropdownRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '24px' }}>
         <div className="date-display">
-          <Calendar size={18} className="icon-grey" />
+          <HeaderCalendarIcon className="icon-grey" />
           <span>{new Date().toDateString()}</span>
         </div>
+        <VerticalDividerIcon className="header-divider" />
         <div className="notification-icon">
-          <Bell size={20} />
-          <span className="notification-dot"></span>
+          <Bell size={22} strokeWidth={1.5} />
         </div>
+        <VerticalDividerIcon className="header-divider" />
         <div
           className="user-profile"
           onClick={() => setDropdownOpen(!dropdownOpen)}
-          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', padding: '5px 10px', borderRadius: '8px' }}
         >
           {/* AVATAR */}
           <div style={{ flexShrink: 0 }}>
@@ -103,15 +104,13 @@ const Header = () => {
 
           {/* TEXT INFO */}
           <div className="user-info" style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
-            <span style={{ fontWeight: '600', fontSize: '0.95rem', color: '#1F2937', lineHeight: '1.2' }}>
-              {displayName}
-            </span>
-            <span style={{ fontSize: '0.75rem', color: '#6B7280', marginTop: '2px' }}>
+            <span className="user-name">{displayName}</span>
+            <span className="user-role">
               {user?.designation_name || user?.designation || user?.role || 'Employee'}
             </span>
           </div>
 
-          <ChevronDown size={16} className={`dropdown-arrow ${dropdownOpen ? 'rotate' : ''}`} style={{ color: '#9CA3AF' }} />
+          <ChevronDown size={20} strokeWidth={1.5} className={`dropdown-arrow ${dropdownOpen ? 'rotate' : ''}`} style={{ color: '#17181A' }} />
         </div>
 
         {/* DROPDOWN MENU */}

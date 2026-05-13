@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import TeamStructureSelect from './TeamStructureSelect';
+import CustomScrollbar from './CustomScrollbar';
+import CustomDatePicker from './CustomDatePicker';
 import '../style/ProjectsOverview.css';
 import '../style/ProjectModal.css';
 import { CalendarInputIcon } from './Icons';
@@ -27,6 +29,47 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
     const [errors, setErrors] = useState({}); // Tracks which fields are missing
 
     const [teamStructure, setTeamStructure] = useState({});
+
+    // Which custom date picker is open: 'start' | 'end' | null
+    const [openPicker, setOpenPicker] = useState(null);
+    const startWrapperRef = useRef(null);
+    const endWrapperRef = useRef(null);
+    const modalContentRef = useRef(null);
+
+    const buildInitialFormData = () => {
+        if (mode === 'edit' && initialData) {
+            const safeStartDate = (initialData.start_date || initialData.startDate || '').split('T')[0];
+            const safeEndDate = (initialData.end_date || initialData.endDate || '').split('T')[0];
+            return {
+                projectName: initialData.name || initialData.projectName || '',
+                clientName: initialData.client_name || initialData.clientName || '',
+                accentColor: initialData.color_code || initialData.accentColor || '#0FB7FE',
+                acronym: initialData.acronym || '',
+                startDate: safeStartDate,
+                endDate: safeEndDate,
+            };
+        }
+        return {
+            projectName: '', clientName: '', accentColor: '#0FB7FE',
+            acronym: '', startDate: '', endDate: '',
+        };
+    };
+
+    const buildInitialTeamStructure = (depts) => {
+        const base = {};
+        depts.forEach(dept => { base[dept.id] = []; });
+        if (mode === 'edit' && initialData) {
+            const existing = initialData.assigned_employees_grouped || initialData.teamStructure || {};
+            return { ...base, ...existing };
+        }
+        return base;
+    };
+
+    const handleReset = () => {
+        setFormData(buildInitialFormData());
+        setTeamStructure(buildInitialTeamStructure(departments));
+        setErrors({});
+    };
 
     useEffect(() => {
         if (isOpen) {
@@ -125,6 +168,21 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
         setTeamStructure(prev => ({ ...prev, [departmentId]: selectedUsers }));
     };
 
+    const handleDatePick = (field, isoDate) => {
+        setFormData(prev => ({ ...prev, [field]: isoDate }));
+        if (errors[field]) {
+            setErrors(prev => ({ ...prev, [field]: null }));
+        }
+    };
+
+    const formatDate = (iso) => {
+        if (!iso) return '';
+        const d = new Date(`${iso}T00:00:00`);
+        if (Number.isNaN(d.getTime())) return iso;
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    };
+
+
     const totalTeamSize = Object.values(teamStructure).reduce((acc, curr) =>
         acc + (Array.isArray(curr) ? curr.length : 0), 0);
 
@@ -176,7 +234,7 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
 
     return (
         <div className="modal-overlay">
-            <div className="custom-modal-content">
+            <div ref={modalContentRef} className="custom-modal-content">
 
                 {/* Header */}
                 <div className="modal-header">
@@ -213,11 +271,13 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                 </div>
 
                 {/* Tab Content */}
-                <div className="modal-body">
+                <div className="pmd-modal-body">
+                    <CustomScrollbar>
+                        <div className="pmd-modal-body-inner">
                     {activeTab === 'details' ? (
-                        <div className="form-grid">
+                        <div className="project-form-grid">
                             <div className="form-group full-width">
-                                <label>Project Name <span className="required-asterisk">*</span></label>
+                                <label>Project Name</label>
                                 <input 
                                     type="text" 
                                     name="projectName" 
@@ -230,7 +290,7 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                             </div>
 
                             <div className="form-group full-width">
-                                <label>Client/Company Name <span className="required-asterisk">*</span></label>
+                                <label>Client/Company Name</label>
                                 <input 
                                     type="text" 
                                     name="clientName" 
@@ -243,7 +303,7 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                             </div>
 
                             <div className="form-group full-width">
-                                <label>Accent Color <span className="required-asterisk">*</span></label>
+                                <label>Accent Color</label>
                                 <div className={`color-input-container ${errors.accentColor ? 'input-error' : ''}`}>
                                     <div className="color-box" style={{ backgroundColor: formData.accentColor }}>
                                         <input type="color" name="accentColor" value={formData.accentColor} onChange={handleInputChange} />
@@ -258,34 +318,70 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                                 <input type="text" name="acronym" placeholder="e.g., MUS" value={formData.acronym} onChange={handleInputChange} />
                             </div>
 
-                            <div className="form-group half-width">
-                                <label>Start Date <span className="required-asterisk">*</span></label>
-                                <div className="date-input-wrapper">
-                                    <input
-                                        type="date"
-                                        name="startDate"
-                                        value={formData.startDate}
-                                        onChange={handleInputChange}
-                                        className={errors.startDate ? 'input-error' : ''}
-                                    />
-                                    <CalendarInputIcon className="calendar-icon" />
+                            <div className="form-row">
+                                <div className="form-group half-width">
+                                    <label>Start Date</label>
+                                    <div
+                                        ref={startWrapperRef}
+                                        className={`pmd-date-wrapper ${errors.startDate ? 'input-error' : ''}`}
+                                        onClick={() => setOpenPicker(openPicker === 'start' ? null : 'start')}
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                setOpenPicker(openPicker === 'start' ? null : 'start');
+                                            }
+                                        }}
+                                    >
+                                        <span className={`pmd-date-text ${!formData.startDate ? 'pmd-empty' : ''}`}>
+                                            {formData.startDate ? formatDate(formData.startDate) : 'Project Start Date'}
+                                        </span>
+                                        <CalendarInputIcon className="pmd-calendar-icon" />
+                                        <CustomDatePicker
+                                            isOpen={openPicker === 'start'}
+                                            onClose={() => setOpenPicker(null)}
+                                            value={formData.startDate}
+                                            onChange={(iso) => handleDatePick('startDate', iso)}
+                                            ignoreRef={startWrapperRef}
+                                            portal
+                                            boundaryRef={modalContentRef}
+                                        />
+                                    </div>
+                                    {errors.startDate && <span className="error-text">{errors.startDate}</span>}
                                 </div>
-                                {errors.startDate && <span className="error-text">{errors.startDate}</span>}
-                            </div>
 
-                            <div className="form-group half-width">
-                                <label>End Date <span className="required-asterisk">*</span></label>
-                                <div className="date-input-wrapper">
-                                    <input
-                                        type="date"
-                                        name="endDate"
-                                        value={formData.endDate}
-                                        onChange={handleInputChange}
-                                        className={errors.endDate ? 'input-error' : ''}
-                                    />
-                                    <CalendarInputIcon className="calendar-icon" />
+                                <div className="form-group half-width">
+                                    <label>End Date</label>
+                                    <div
+                                        ref={endWrapperRef}
+                                        className={`pmd-date-wrapper ${errors.endDate ? 'input-error' : ''}`}
+                                        onClick={() => setOpenPicker(openPicker === 'end' ? null : 'end')}
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                setOpenPicker(openPicker === 'end' ? null : 'end');
+                                            }
+                                        }}
+                                    >
+                                        <span className={`pmd-date-text ${!formData.endDate ? 'pmd-empty' : ''}`}>
+                                            {formData.endDate ? formatDate(formData.endDate) : 'Project End Date'}
+                                        </span>
+                                        <CalendarInputIcon className="pmd-calendar-icon" />
+                                        <CustomDatePicker
+                                            isOpen={openPicker === 'end'}
+                                            onClose={() => setOpenPicker(null)}
+                                            value={formData.endDate}
+                                            onChange={(iso) => handleDatePick('endDate', iso)}
+                                            ignoreRef={endWrapperRef}
+                                            portal
+                                            boundaryRef={modalContentRef}
+                                        />
+                                    </div>
+                                    {errors.endDate && <span className="error-text">{errors.endDate}</span>}
                                 </div>
-                                {errors.endDate && <span className="error-text">{errors.endDate}</span>}
                             </div>
                         </div>
                     ) : (
@@ -307,11 +403,13 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, mode = 'add', initialData = n
                             )}
                         </div>
                     )}
+                        </div>
+                    </CustomScrollbar>
                 </div>
 
                 {/* Footer */}
                 <div className="modal-footer">
-                    <button type="button" className="btn-reset" onClick={onClose}>Cancel</button>
+                    <button type="button" className="btn-reset" onClick={handleReset}>Reset</button>
                     <button type="button" className="btn-submit" onClick={handleSubmit}>{mode === 'add' ? 'Add Project' : 'Save Details'}</button>
                 </div>
             </div>

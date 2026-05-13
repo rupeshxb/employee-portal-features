@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../style/ProjectsOverview.css';
-import { ProjectsOverviewEmptyIcon } from './Icons';
+import { ProjectsOverviewEmptyIcon, NoResultsIllustration } from './Icons';
 import ProjectsOverviewFilterBar from './ProjectsOverviewFilterBar';
 import ProjectModal from './ProjectModal';
 import ProjectCard from './ProjectCard';
@@ -227,25 +227,25 @@ const ProjectsOverview = () => {
 
       {/* --- LOADING & PROJECTS DISPLAY AREA --- */}
       {isLoading ? (
-        <div className="empty-state" style={{ marginTop: '60px' }}>
+        <div className="po-loading">
           <div className="custom-spinner"></div>
         </div>
       ) : projects.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon"><ProjectsOverviewEmptyIcon /></div>
-          <h3>No projects added yet!</h3>
-          <p>Projects once added will be shown here.</p>
+        <div className="no-results">
+          <ProjectsOverviewEmptyIcon />
+          <div className="no-results-text">
+            <h3>No projects added yet!</h3>
+            <p>Projects once added will be shown here.</p>
+          </div>
           <button className="add-project-btn-primary" onClick={handleOpenAddModal}>+ Add Project</button>
         </div>
       ) : filteredProjects.length === 0 ? (
-        <div className="empty-state">
-          <h3>No matching projects</h3>
-          <p>Try adjusting your search or filters.</p>
-          <button className="add-project-btn-primary" onClick={() => {
-            setSearchTerm('');
-            setTeamSizeFilter('All');
-            setDateRange({ start: '', end: '' });
-          }}>Clear Filters</button>
+        <div className="no-results">
+          <NoResultsIllustration />
+          <div className="no-results-text">
+            <h3>No results found!</h3>
+            <p>Try again with a different keyword.</p>
+          </div>
         </div>
       ) : (
         <div className="projects-grid">

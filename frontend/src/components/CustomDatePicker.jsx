@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import '../style/CustomDatePicker.css';
 
 const WEEKDAY_LABELS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
@@ -15,13 +16,60 @@ const isSameDay = (a, b) =>
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate();
 
-const DatePickerPanel = ({ value, onChange, onClose, ignoreRef }) => {
+const PANEL_WIDTH = 320;
+const PANEL_HEIGHT_ESTIMATE = 380;
+const GUTTER = 8;
+
+const DatePickerPanel = ({ value, onChange, onClose, ignoreRef, portal, boundaryRef }) => {
     const containerRef = useRef(null);
 
     const [viewDate, setViewDate] = useState(() => {
         const d = value ? new Date(value) : new Date();
         return new Date(d.getFullYear(), d.getMonth(), 1);
     });
+
+    // In portal mode, compute fixed coordinates from the trigger's bounding rect,
+    // clamped to the boundary (the modal) so the panel never spills outside.
+    const [portalPos, setPortalPos] = useState(null);
+    useLayoutEffect(() => {
+        if (!portal || !ignoreRef?.current) return;
+        const update = () => {
+            const triggerRect = ignoreRef.current.getBoundingClientRect();
+            const measuredHeight = containerRef.current?.offsetHeight || PANEL_HEIGHT_ESTIMATE;
+
+            // Boundary defaults to viewport when no modal ref provided
+            const bounds = boundaryRef?.current
+                ? boundaryRef.current.getBoundingClientRect()
+                : { left: 0, top: 0, right: window.innerWidth, bottom: window.innerHeight };
+
+            // Default: right-align with trigger, sit below trigger
+            let left = triggerRect.right - PANEL_WIDTH;
+            let top = triggerRect.bottom + GUTTER;
+
+            // Vertical: if panel would overflow below the boundary, flip it above the trigger
+            if (top + measuredHeight > bounds.bottom - GUTTER) {
+                const above = triggerRect.top - measuredHeight - GUTTER;
+                // Flip only if there's actually room above
+                if (above >= bounds.top + GUTTER) top = above;
+                else top = Math.max(bounds.top + GUTTER, bounds.bottom - measuredHeight - GUTTER);
+            }
+
+            // Horizontal: clamp inside the boundary
+            const minLeft = bounds.left + GUTTER;
+            const maxLeft = bounds.right - PANEL_WIDTH - GUTTER;
+            if (left < minLeft) left = minLeft;
+            if (left > maxLeft) left = maxLeft;
+
+            setPortalPos({ top, left });
+        };
+        update();
+        window.addEventListener('resize', update);
+        window.addEventListener('scroll', update, true);
+        return () => {
+            window.removeEventListener('resize', update);
+            window.removeEventListener('scroll', update, true);
+        };
+    }, [portal, ignoreRef, boundaryRef]);
 
     useEffect(() => {
         const handler = (e) => {
@@ -62,8 +110,18 @@ const DatePickerPanel = ({ value, onChange, onClose, ignoreRef }) => {
         onClose();
     };
 
-    return (
-        <div ref={containerRef} className="custom-date-picker" role="dialog" aria-label="Choose date">
+    const portalStyle = portal && portalPos
+        ? { position: 'fixed', top: `${portalPos.top}px`, left: `${portalPos.left}px`, right: 'auto', zIndex: 2000 }
+        : undefined;
+
+    const panel = (
+        <div
+            ref={containerRef}
+            className="custom-date-picker"
+            role="dialog"
+            aria-label="Choose date"
+            style={portalStyle}
+        >
             <div className="cdp-header">
                 <span className="cdp-month-label">{monthLabel}</span>
                 <div className="cdp-nav">
@@ -116,9 +174,14 @@ const DatePickerPanel = ({ value, onChange, onClose, ignoreRef }) => {
             </div>
         </div>
     );
+
+    if (portal) {
+        return createPortal(panel, document.body);
+    }
+    return panel;
 };
 
-const CustomDatePicker = ({ value, onChange, isOpen, onClose, ignoreRef }) => {
+const CustomDatePicker = ({ value, onChange, isOpen, onClose, ignoreRef, portal, boundaryRef }) => {
     if (!isOpen) return null;
     return (
         <DatePickerPanel
@@ -126,6 +189,8 @@ const CustomDatePicker = ({ value, onChange, isOpen, onClose, ignoreRef }) => {
             onChange={onChange}
             onClose={onClose}
             ignoreRef={ignoreRef}
+            portal={portal}
+            boundaryRef={boundaryRef}
         />
     );
 };
