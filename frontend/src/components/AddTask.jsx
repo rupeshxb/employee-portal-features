@@ -106,11 +106,12 @@ const AddTask = () => {
                 onConfirm={() => {
                     fetch(`${API_BASE_URL}/api/tasks/${deleteModal.task.id}/`, {
                         method: 'DELETE', headers: getAuthHeaders()
-                    }).then(() => { 
-                        fetchTasks(); 
-                        setDeleteModal({ show: false, task: null }); 
+                    }).then(() => {
+                        fetchTasks();
+                        setDeleteModal({ show: false, task: null });
                         // Trigger a refresh on delete too!
                         window.dispatchEvent(new Event('taskAdded'));
+                        showNotification("Daily task deleted successfully.");
                     });
                 }}
             />

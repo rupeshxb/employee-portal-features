@@ -23,14 +23,10 @@
     padding: 8px 12px;
     min-height: 48px;
     cursor: pointer;
-    background-color: #FFFFFF;
+    background-color: #F6F7FB;
     transition: border-color 0.2s;
 }
 
-.select-trigger.open {
-    border-color: #3B82F6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-}
 
 .selected-tags-container {
     display: flex;
@@ -106,26 +102,25 @@
     border-radius: 12px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     z-index: 50;
-    padding: 16px;
-    max-height: 350px;
-    overflow-y: auto;
+    padding: 16px 0 0 0;
+    max-height: 240px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-/* Custom Scrollbar for Dropdown */
-.select-dropdown-menu {
-    scrollbar-width: thin;
-    scrollbar-color: #BBBBBB transparent;
+.select-dropdown-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
 }
-.select-dropdown-menu::-webkit-scrollbar {
-    width: 5px;
+
+.select-dropdown-scroll-inner {
+    padding: 0 16px 16px 16px;
 }
-.select-dropdown-menu::-webkit-scrollbar-track {
-    background: transparent;
-    margin: 8px 0;
-}
-.select-dropdown-menu::-webkit-scrollbar-thumb {
-    background-color: #BBBBBB;
-    border-radius: 2.5px;
+
+.dropdown-selected-section:first-child {
+    border-top: none;
+    padding-top: 0;
 }
 
 /* --- Search Bar --- */
@@ -133,18 +128,16 @@
 .custom-multi-select .select-dropdown-menu .search-bar-wrapper {
     display: flex;
     align-items: center;
-    margin-bottom: 16px;
+    margin: 0 16px 16px 16px;
     border: 1px solid #CBD5E1;
     border-radius: 8px;
-    padding: 0 12px; 
+    padding: 0 12px;
     background-color: #FFFFFF;
     transition: border-color 0.2s;
-    height: 42px; 
+    height: 42px;
+    flex-shrink: 0;
 }
 
-.custom-multi-select .select-dropdown-menu .search-bar-wrapper:focus-within {
-    border-color: #3B82F6;
-}
 
 .custom-multi-select .select-dropdown-menu .search-bar-wrapper .ts-search-icon {
     flex-shrink: 0;
@@ -178,7 +171,10 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 16px;
+}
+
+.options-list.pill-layout + .dropdown-selected-section {
+    margin-top: 16px;
 }
 
 .search-result-pill {

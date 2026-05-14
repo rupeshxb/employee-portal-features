@@ -1,5 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
+import CustomScrollbar from './CustomScrollbar';
+import { SearchIcon } from './Icons';
 import '../style/TeamStructureSelect.css'
+
+const formatShortName = (fullName) => {
+    if (!fullName) return '';
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0];
+    return `${parts[0]} ${parts[parts.length - 1].charAt(0).toUpperCase()}.`;
+};
 
 const TeamStructureSelect = ({ label, options, selected, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -62,9 +71,9 @@ const TeamStructureSelect = ({ label, options, selected, onChange }) => {
                     {selected.length === 0 && <span className="placeholder-text">Select members...</span>}
                     
                     {visibleSelected.map(user => (
-                        <span key={user.id} className="selected-tag">
+                        <span key={user.id} className="selected-tag" title={user.full_name}>
                             <img src={getAvatarSrc(user)} alt={user.full_name} className="tag-avatar" />
-                            <span className="tag-name">{user.full_name}</span>
+                            <span className="tag-name">{formatShortName(user.full_name)}</span>
                             <button type="button" className="remove-tag-btn" onClick={(e) => removeOption(e, user.id)}>
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                                     <path d="M9 3L3 9M3 3l6 6"/>
@@ -89,9 +98,9 @@ const TeamStructureSelect = ({ label, options, selected, onChange }) => {
             {isOpen && (
                 <div className="select-dropdown-menu">
                     <div className="search-bar-wrapper">
-                        <svg className="ts-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-                        </svg>
+                        <span className="ts-search-icon">
+                            <SearchIcon />
+                        </span>
                         <input
                             type="text"
                             placeholder="Search team members"
@@ -101,36 +110,42 @@ const TeamStructureSelect = ({ label, options, selected, onChange }) => {
                         />
                     </div>
 
-                    {/* Unselected Options List */}
-                    <div className="options-list pill-layout">
-                        {unselectedFilteredOptions.map(user => (
-                            <div key={user.id} className="search-result-pill" onClick={() => toggleOption(user)}>
-                                <img src={getAvatarSrc(user)} alt={user.full_name} className="result-avatar" />
-                                <span className="result-name">{user.full_name}</span>
-                            </div>
-                        ))}
-                        {unselectedFilteredOptions.length === 0 && <p className="no-results">No members found.</p>}
-                    </div>
+                    <CustomScrollbar className="select-dropdown-scroll">
+                        <div className="select-dropdown-scroll-inner">
+                            {/* Unselected Options List — hidden when there's nothing to choose */}
+                            {(unselectedFilteredOptions.length > 0 || searchTerm) && (
+                                <div className="options-list pill-layout">
+                                    {unselectedFilteredOptions.map(user => (
+                                        <div key={user.id} className="search-result-pill" onClick={() => toggleOption(user)} title={user.full_name}>
+                                            <img src={getAvatarSrc(user)} alt={user.full_name} className="result-avatar" />
+                                            <span className="result-name">{formatShortName(user.full_name)}</span>
+                                        </div>
+                                    ))}
+                                    {unselectedFilteredOptions.length === 0 && <p className="no-results">No members found.</p>}
+                                </div>
+                            )}
 
-                    {/* Selected Section */}
-                    {selected.length > 0 && (
-                        <div className="dropdown-selected-section">
-                            <div className="section-label">SELECTED</div>
-                            <div className="selected-tags-container inside-dropdown">
-                                {selected.map(user => (
-                                    <span key={user.id} className="selected-tag">
-                                        <img src={getAvatarSrc(user)} alt={user.full_name} className="tag-avatar" />
-                                        <span className="tag-name">{user.full_name}</span>
-                                        <button type="button" className="remove-tag-btn" onClick={(e) => removeOption(e, user.id)}>
-                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                                <path d="M9 3L3 9M3 3l6 6"/>
-                                            </svg>
-                                        </button>
-                                    </span>
-                                ))}
-                            </div>
+                            {/* Selected Section */}
+                            {selected.length > 0 && (
+                                <div className="dropdown-selected-section">
+                                    <div className="section-label">SELECTED</div>
+                                    <div className="selected-tags-container inside-dropdown">
+                                        {selected.map(user => (
+                                            <span key={user.id} className="selected-tag" title={user.full_name}>
+                                                <img src={getAvatarSrc(user)} alt={user.full_name} className="tag-avatar" />
+                                                <span className="tag-name">{formatShortName(user.full_name)}</span>
+                                                <button type="button" className="remove-tag-btn" onClick={(e) => removeOption(e, user.id)}>
+                                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                                        <path d="M9 3L3 9M3 3l6 6"/>
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    )}
+                    </CustomScrollbar>
                 </div>
             )}
         </div>

@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
+import CustomScrollbar from './CustomScrollbar';
+import { ProfilePersonIcon, HeaderCalendarIcon, VerticalDividerIcon } from './Icons';
 import '../style/ProjectCard.css';
 
-const ProjectCard = ({ project, onEdit, onDelete }) => {
+const ProjectCard = ({ project, departments = [], onEdit, onDelete }) => {
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
 
-    // Close menu if clicking outside of it
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -21,35 +22,42 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
         return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     };
 
-    // --- NEW: Dynamic Timeline Calculation ---
-    const calculateProgress = () => {
-        if (!project.start_date || !project.end_date) return 0; // 0% if dates are missing
-        
-        const startDate = new Date(project.start_date).getTime();
-        const endDate = new Date(project.end_date).getTime();
-        const today = new Date().getTime();
+    const team = project.team_structure || project.teamStructure || {};
 
-        // If we haven't started yet
-        if (today <= startDate) return 0;
-        // If we are past the end date
-        if (today >= endDate) return 100;
-
-        // Calculate percentage
-        const totalDuration = endDate - startDate;
-        const timePassed = today - startDate;
-        return (timePassed / totalDuration) * 100;
+    const countFor = (value) => {
+        if (Array.isArray(value)) return value.length;
+        if (typeof value === 'number') return value;
+        return 0;
     };
 
-    const team = project.team_structure || project.teamStructure || {};
-    const cardBgColor = project.color_code || project.accentColor || '#7C3AED';
-    const progressPercentage = calculateProgress();
+    // Build rows from master department list + any extras in `team`, then sort so
+    // departments with members appear before those with none (stable within each group).
+    const rawRows = [];
+    const seen = new Set();
+    departments.forEach(d => {
+        rawRows.push({ name: d.name, count: countFor(team[d.name]) });
+        seen.add(d.name);
+    });
+    Object.entries(team).forEach(([name, value]) => {
+        if (!seen.has(name)) rawRows.push({ name, count: countFor(value) });
+    });
+    const rows = [
+        ...rawRows.filter(r => r.count > 0),
+        ...rawRows.filter(r => r.count <= 0),
+    ];
+
+    const totalCount = rows.reduce((sum, r) => sum + r.count, 0)
+        || Number(project.team_size)
+        || Number(project.total_team_size)
+        || 0;
+
+    const cardBgColor = project.color_code || project.accentColor || '#7751FF';
 
     return (
-        <div className="project-card" style={{ backgroundColor: cardBgColor }}>
-            
+        <div className="project-card" style={{ '--card-accent': cardBgColor }}>
             <div className="card-header" ref={menuRef}>
                 <button className="more-options-btn" onClick={() => setShowMenu(!showMenu)}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="12" cy="12" r="1.5"></circle>
                         <circle cx="19" cy="12" r="1.5"></circle>
                         <circle cx="5" cy="12" r="1.5"></circle>
@@ -75,51 +83,44 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
 
                 <div className="meta-row">
                     <span className="meta-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <ProfilePersonIcon />
                         {project.client_name || 'Unknown'}
                     </span>
-                    <span className="meta-divider">|</span>
+                    <VerticalDividerIcon className="card-meta-divider" opacity={0.3} height={12} />
                     <span className="meta-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <HeaderCalendarIcon width={15} height={15} />
                         {formatDate(project.end_date)}
                     </span>
                 </div>
             </div>
 
             <div className="card-body">
-                <div className="timeline-row">
-                    <span className="list-title">TIMELINE</span>
-                    <div className="progress-bar-bg">
-                        {/* Dynamic Progress Bar Applied Here */}
-                        <div 
-                            className="progress-bar-fill" 
-                            style={{ width: `${progressPercentage}%`, backgroundColor: cardBgColor }}
-                        ></div>
+                <div className="card-body-inner">
+                    <div className="list-title">TEAM STRUCTURE</div>
+                    <div className="team-section-divider" />
+
+                    <div className="team-list-wrap">
+                        <CustomScrollbar className="team-list-scroll">
+                            <div className="team-structure-list">
+                                {rows.length > 0 ? rows.map(({ name, count }) => (
+                                    <div className="list-item" key={name}>
+                                        <span className="list-name">{name}</span>
+                                        <span className="list-count">{count > 0 ? count : '-'}</span>
+                                    </div>
+                                )) : (
+                                    <div className="list-item">
+                                        <span className="list-name">No departments</span>
+                                        <span className="list-count">-</span>
+                                    </div>
+                                )}
+                            </div>
+                        </CustomScrollbar>
                     </div>
                 </div>
 
-                <hr className="section-divider" />
-
-                <div className="list-title">TEAM STRUCTURE</div>
-                
-                <div className="team-structure-list">
-                    {team && Object.keys(team).length > 0 ? (
-                        Object.entries(team).map(([deptName, count]) => (
-                            <div className="list-item" key={deptName}>
-                                <span>{deptName}</span>
-                                <span className="list-count">{count}</span>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="empty-state">
-                            No team assigned yet
-                        </div>
-                    )}
-                </div>
-                
                 <div className="card-footer-total">
                     <span>Total</span>
-                    <span className="total-number">{project.team_size || project.total_team_size || '-'}</span>
+                    <span className="total-number">{totalCount > 0 ? totalCount : '-'}</span>
                 </div>
             </div>
         </div>

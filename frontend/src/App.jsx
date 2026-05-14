@@ -17,6 +17,7 @@ import AddEmployee from './components/AddEmployee';
 import EditEmployee from './components/EditEmployee';
 import TagsManagement from "./components/TagsManagement";
 import DesignationManagement from "./components/DesignationManagement";
+import ScrollToTop from './components/ScrollToTop';
 
 // Import Context
 import { UserProvider, UserContext } from '../src/context/UserContext';
@@ -38,6 +39,7 @@ const AppContent = () => {
 
   return (
     <div className="app-container">
+      <ScrollToTop />
       {!user ? (
         <Routes>
           <Route path="/login" element={<LoginPage />} />

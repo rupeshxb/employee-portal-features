@@ -1,3 +1,9 @@
+/* Preserve dark-gray icon color after Icons.jsx switched to currentColor. */
+.icon-grey,
+.header-divider {
+    color: #17181A;
+}
+
 /* --- MAIN HEADER CONTAINER --- */
 .page-header {
     position: relative;

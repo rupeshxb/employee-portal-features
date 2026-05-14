@@ -79,10 +79,6 @@
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.overview-search-input:focus {
-    border-color: #2563EA;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
-}
 
 .overview-search-input::placeholder {
     color: #9CA3AF;
@@ -102,9 +98,6 @@
     min-width: 160px;
 }
 
-.overview-filter-select:focus {
-    border-color: #2563EA;
-}
 
 /* --- 4. TABLE --- */
 .overview-table-container {

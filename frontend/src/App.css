@@ -449,9 +449,7 @@ svg {
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
-  border-color: #4f46e5;
   background: white;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
 }
 
 .form-textarea {
@@ -804,11 +802,6 @@ svg {
   color: #1f2937;
   transition: all 0.2s ease;
   outline: none;
-}
-
-.input-wrapper input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
 .input-wrapper input:focus + .input-icon {

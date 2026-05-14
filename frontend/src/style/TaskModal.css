@@ -185,9 +185,7 @@
 .task-add-modal .form-textarea:focus,
 .task-add-modal .date-picker-input:focus,
 .task-add-modal .blocker-input:focus {
-  border-color: #2563ea;
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(37, 99, 234, 0.1);
 }
 
 /* --- Custom Dropdown --- */

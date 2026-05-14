@@ -145,10 +145,6 @@
     background-color: #ffffff;
     color: #17181A;
 }
-.search-input:focus {
-    border-color: #2563EB;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
-}
 .search-input::placeholder {
     color: #9CA3AF;
 }

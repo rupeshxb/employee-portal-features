@@ -1,0 +1,205 @@
+/* --- DATE RANGE PICKER --- */
+.drp-container {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 320px;
+    box-sizing: border-box;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 200;
+    font-family: 'Figtree', sans-serif;
+}
+
+/* --- Header --- */
+.drp-header {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    padding-left: 8px;
+    gap: 16px;
+}
+
+.drp-month-label {
+    flex: 1;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    color: #293050;
+    letter-spacing: -0.18px;
+}
+
+.drp-nav {
+    display: flex;
+}
+
+.drp-nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    transition: background-color 0.15s ease;
+}
+
+.drp-nav-btn:hover {
+    background: rgba(23, 24, 26, 0.06);
+}
+
+/* --- Weekday labels --- */
+.drp-weekdays {
+    display: flex;
+    height: 36px;
+}
+
+.drp-weekday {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    color: #7B8199;
+    letter-spacing: -0.18px;
+}
+
+/* --- Calendar grid --- */
+.drp-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 36px;
+}
+
+/* Base day cell — no background, no border-radius by default */
+.drp-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    height: 36px;
+    box-sizing: border-box;
+}
+
+/* Inner date circle */
+.drp-day-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 20px;
+    color: #293050;
+    letter-spacing: -0.18px;
+    transition: background-color 0.15s ease;
+    flex-shrink: 0;
+}
+
+/* Text variants */
+.drp-day.weekend .drp-day-circle {
+    color: #7B8199;
+}
+
+.drp-day.other-month .drp-day-circle {
+    color: rgba(24, 30, 48, 0.32);
+}
+
+/* Today: purple text, no circle background unless it's an endpoint */
+.drp-day.today:not(.range-start):not(.range-end):not(.range-single) .drp-day-circle {
+    color: #8A56E5;
+}
+
+/* Hover: subtle circle highlight on plain days */
+.drp-day:not(.range-start):not(.range-end):not(.range-single):hover .drp-day-circle {
+    background: rgba(23, 24, 26, 0.06);
+}
+
+/* Hover: slightly brighter on in-range cells */
+.drp-day.range-middle:hover .drp-day-circle {
+    background: rgba(138, 86, 229, 0.15);
+}
+
+/* --- Range band --- */
+
+/* Start: left-capped, right edge straight */
+.drp-day.range-start {
+    background: #E8DDFA;
+    border-radius: 18px 0 0 18px;
+}
+
+/* End: right-capped, left edge straight */
+.drp-day.range-end {
+    background: #E8DDFA;
+    border-radius: 0 18px 18px 0;
+}
+
+/* Middle: rectangular band, no radius */
+.drp-day.range-middle {
+    background: #E8DDFA;
+    border-radius: 0;
+}
+
+/* Single day selection: just circle, no band */
+.drp-day.range-single {
+    background: transparent;
+}
+
+/* Endpoint circles (start, end, single) */
+.drp-day.range-start .drp-day-circle,
+.drp-day.range-end .drp-day-circle,
+.drp-day.range-single .drp-day-circle {
+    background: #8A56E5;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+/* Hover on endpoints: slightly darker */
+.drp-day.range-start:hover .drp-day-circle,
+.drp-day.range-end:hover .drp-day-circle,
+.drp-day.range-single:hover .drp-day-circle {
+    background: #7240CC;
+}
+
+/* --- Footer (clear dates) --- */
+.drp-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 8px;
+    border-top: 1px solid rgba(23, 24, 26, 0.08);
+    margin-top: -4px;
+}
+
+.drp-clear-btn {
+    background: none;
+    border: none;
+    font-family: 'Figtree', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #7B8199;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s ease;
+}
+
+.drp-clear-btn:hover {
+    color: #293050;
+}

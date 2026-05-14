@@ -120,9 +120,6 @@
     min-width: 140px;
 }
 
-.desig-status-filter:focus {
-    border-color: #2563EA;
-}
 .desig-top-bar .search-container {
     position: relative;
     max-width: 914px;
@@ -149,10 +146,6 @@
     color: #17181A;
     transition: border-color 0.2s, box-shadow 0.2s;
     font-family: inherit;
-}
-.desig-top-bar .search-input:focus {
-    border-color: #2563EA;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 .desig-top-bar .search-input::placeholder {
     color: #9CA3AF;

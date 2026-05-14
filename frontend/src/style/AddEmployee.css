@@ -170,7 +170,6 @@
 
 .input-group > input:focus,
 .input-group > select:focus {
-    border-color: #2563EA;
     background-color: #fff;
 }
 
@@ -198,7 +197,6 @@
 }
 
 .date-input-wrapper input[type="date"]:focus {
-    border-color: #2563EA;
     background-color: #fff;
 }
 
@@ -243,7 +241,6 @@
 }
 
 .password-input-wrapper:focus-within {
-    border-color: #2563EA;
     background-color: #fff;
 }
 
@@ -323,7 +320,6 @@
 }
 
 .phone-input-wrapper:focus-within {
-    border-color: #2563EA;
     background-color: #fff;
 }
 
@@ -428,7 +424,6 @@
 }
 
 .designation-combobox input:focus {
-    border-color: #2563EA;
     background-color: #fff;
 }
 

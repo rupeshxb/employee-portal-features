@@ -1,40 +1,51 @@
 /* --- PROJECT CARD STYLES --- */
 .project-card {
+    --card-accent: #7751FF;
+    background: var(--card-accent);
     border-radius: 16px;
-    color: white;
+    color: #ffffff;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s;
+    align-items: center;
+    padding: 16px 8px 8px;
+    gap: 16px;
+    isolation: isolate;
+    box-shadow: 0 8px 16px rgba(23, 24, 26, 0.25);
     width: 100%;
-    max-width: 500px;
+    max-width: 360px;
     margin: 0 auto;
     font-family: inherit;
+    transition: transform 0.2s;
 }
 
 .project-card:hover {
     transform: translateY(-2px);
 }
 
-/* --- HEADER OVERHAUL --- */
+/* --- HEADER --- */
 .project-card .card-header {
     position: relative;
-    padding: 24px 20px 20px 20px;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centers contents horizontally */
+    align-items: center;
+    gap: 8px;
     text-align: center;
+    padding: 0 8px;
+    border-bottom: 0px;
+    margin-bottom: 0px;
 }
 
 .more-options-btn {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    top: -4px;
+    right: 4px;
     background: none;
     border: none;
     padding: 4px;
     cursor: pointer;
-    opacity: 0.8;
+    color: #ffffff;
+    opacity: 0.9;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,181 +56,182 @@
 }
 
 .project-title {
-    margin: 0 0 8px 0;
-    color: #ffffff; /* Explicitly white */
-    font-size: 24px; /* Increased from 20px */
-    font-weight: 700; /* Made slightly bolder to match Figma style */
-    line-height: 1.3;
-    letter-spacing: 0.3px;
-    padding: 0 24px; 
+    margin: 0;
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 26px;
+    letter-spacing: -0.03em;
+    padding: 0 36px;
 }
 
 .meta-row {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    font-size: 13px;
-    opacity: 0.9;
+    gap: 8px;
+    color: #ffffff;
+    font-size: 12px;
     font-weight: 400;
+    line-height: 14px;
 }
 
 .meta-item {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
 }
 
-.meta-divider {
-    opacity: 0.6;
-    font-size: 12px;
+.card-meta-divider {
+    color: #ffffff;
 }
 
-/* --- BODY & WHITE CONTENT BOX --- */
+/* --- BODY (white area wrapping the white card and light footer) --- */
 .card-body {
-    background: white;
-    margin: 0 10px 10px 10px;
-    border-radius: 12px;
-    padding: 16px 20px;
-    color: #334155;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    color: rgba(23, 24, 26, 0.8);
 }
 
-/* Timeline Layout */
-.timeline-row {
+.card-body-inner {
+    background: #ffffff;
+    border-radius: 12px 12px 0 0;
+    padding: 16px;
     display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 12px;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.progress-bar-bg {
-    flex-grow: 1;
-    height: 6px;
-    background-color: #E2E8F0; /* Light gray */
-    border-radius: 4px;
-    overflow: hidden;
+.team-section-divider {
+    height: 1px;
+    background: rgba(23, 24, 26, 0.1);
+    align-self: stretch;
 }
 
-.progress-bar-fill {
-    height: 100%;
-    border-radius: 4px;
-    /* Background color applied inline via React */
-}
-
-.section-divider {
-    border: none;
-    border-top: 1px solid #F1F5F9;
-    margin: 0 0 16px 0;
-    width: 100%;
-}
-
-/* Lists and Typography */
 .list-title {
     font-size: 11px;
-    font-weight: 700;
-    color: #64748B;
-    letter-spacing: 0.8px;
-    margin-bottom: 12px;
+    font-weight: 600;
+    color: rgba(23, 24, 26, 0.7);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    line-height: 13px;
 }
 
-/* Scrollable area for team structure matching the image */
+/* Show ~3 rows; CustomScrollbar exposes overflow */
+.team-list-wrap {
+    height: 72px;
+    position: relative;
+}
+
+.team-list-scroll {
+    height: 100%;
+}
+
+/* Custom thumb override: 4px wide, #757F9A, radius 2px (Figma spec) */
+.team-list-wrap .cs-track {
+    width: 4px;
+    right: 4px;
+}
+
+.team-list-wrap .cs-thumb {
+    width: 4px;
+    background-color: #757F9A;
+    border-radius: 2px;
+}
+
+.team-list-wrap .cs-thumb:hover {
+    background-color: #606978;
+}
+
 .team-structure-list {
-    max-height: 110px;
-    overflow-y: auto;
-    padding-right: 4px;
-    margin-bottom: 8px;
-    scrollbar-width: thin;
-    scrollbar-color: #BBBBBB transparent;
-}
-
-.team-structure-list::-webkit-scrollbar {
-    width: 5px;
-}
-.team-structure-list::-webkit-scrollbar-track {
-    background: transparent;
-}
-.team-structure-list::-webkit-scrollbar-thumb {
-    background-color: #BBBBBB;
-    border-radius: 2.5px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 12px; /* keep content clear of the 4px thumb */
 }
 
 .list-item {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
-    margin-bottom: 12px;
-    color: #475569;
+    align-items: center;
+    height: 20px;
+    padding: 0 12px;
+    gap: 12px;
 }
 
-.list-item:last-child {
-    margin-bottom: 4px;
+.list-name {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+    color: rgba(23, 24, 26, 0.8);
 }
 
 .list-count {
-    font-weight: 500;
-    color: #1E293B;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 22px;
+    color: rgba(23, 24, 26, 0.8);
 }
 
 .empty-state {
     color: #94A3B8;
-    display: block;
-    align-items: center;
-    justify-content: center;
     font-style: italic;
     font-size: 13px;
-    height: 40px; /* Give it a small fixed height so it stays well under the 110px max-height */
-    margin: 0; /* Ensures it doesn't push bounds */
+    padding: 16px 12px;
 }
 
+
+/* --- FOOTER (light-tinted accent) --- */
 .card-footer-total {
+    background: color-mix(in srgb, var(--card-accent) 10%, white);
+    border-radius: 0 0 12px 12px;
+    padding: 12px 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 12px;
-    padding-top: 12px;
-    background-color: #F8FAFC;
-    margin-left: -20px;
-    margin-right: -20px;
-    margin-bottom: -16px;
-    padding: 16px 20px;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
+    gap: 12px;
+    color: rgba(23, 24, 26, 0.8);
+}
+
+.card-footer-total > span:first-child {
+    font-size: 13px;
     font-weight: 600;
-    font-size: 15px;
-    color: #1E293B;
+    line-height: 20px;
 }
 
 .total-number {
-    font-size: 18px;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 29px;
 }
 
-/* --- DROP DOWNS AND MODALS (Untouched structure, improved alignment) --- */
+/* --- DROPDOWN --- */
 .card-dropdown-menu {
     position: absolute;
-    top: 40px;
-    right: 16px;
+    top: 28px;
+    right: 4px;
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    width: 160px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
+    width: 180px;
     display: flex;
     flex-direction: column;
-    padding: 8px;
+    padding: 0;
     z-index: 10;
+    overflow: hidden;
+    text-align: left;
 }
 
 .card-dropdown-menu button {
     background: transparent;
     border: none;
     text-align: left;
-    padding: 10px 12px;
-    border-radius: 6px;
+    height: 40px;
+    padding: 0 16px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 400;
     color: #17181A;
     display: flex;
     align-items: center;
@@ -235,23 +247,83 @@
     color: #FF493F;
 }
 
-/* --- TOAST NOTIFICATION STYLES (Untouched, ensuring green popup works perfectly) --- */
+/* --- TOAST (kept from previous styles) --- */
 .success-toast {
     position: absolute;
     top: 20px;
     right: 20px;
-    background-color: #22c55e;
+    background-color: #3FC43A;
     color: white;
-    padding: 12px 20px;
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    z-index: 50;
+    font-family: 'Figtree', sans-serif;
+    animation: slideInDown 0.3s ease-out forwards;
+}
+
+.success-toast-content {
     display: flex;
     align-items: center;
     gap: 10px;
+    padding: 12px 16px;
     font-size: 14px;
     font-weight: 500;
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-    z-index: 50;
-    animation: slideInDown 0.3s ease-out forwards;
+    line-height: 1.2;
+}
+
+.success-toast-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+}
+
+.success-toast-text {
+    color: white;
+    white-space: nowrap;
+}
+
+.success-toast-text strong {
+    font-weight: 700;
+}
+
+.success-toast-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+}
+
+.success-toast-close:hover {
+    opacity: 1;
+}
+
+.success-toast-progress {
+    height: 3px;
+    background-color: #ffffff;
+    width: 100%;
+    transform-origin: left center;
+    will-change: transform;
+    animation: successToastProgress 3s linear forwards;
+}
+
+@keyframes successToastProgress {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
 }
 
 .toast-close-btn {

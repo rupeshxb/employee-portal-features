@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../style/ProjectsOverview.css';
-import { ProjectsOverviewEmptyIcon, NoResultsIllustration } from './Icons';
+import { ProjectsOverviewEmptyIcon, NoResultsIllustration, ToastSuccessIcon } from './Icons';
 import ProjectsOverviewFilterBar from './ProjectsOverviewFilterBar';
 import ProjectModal from './ProjectModal';
 import ProjectCard from './ProjectCard';
@@ -10,6 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const ProjectsOverview = () => {
   const [projects, setProjects] = useState([]);
+  const [departments, setDepartments] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -49,6 +50,20 @@ const ProjectsOverview = () => {
       }
     };
     fetchProjects();
+
+    const fetchDepartments = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/departments/`, {
+          headers: { 'Authorization': `token ${localStorage.getItem('token')}` }
+        });
+        if (response.ok) {
+          setDepartments(await response.json());
+        }
+      } catch (error) {
+        console.error("Network error fetching departments:", error);
+      }
+    };
+    fetchDepartments();
   }, []);
 
   // --- Handlers for Add/Edit Form ---
@@ -108,10 +123,14 @@ const ProjectsOverview = () => {
 
         if (isAddMode) {
           setProjects([...projects, savedProject]);
-          setNotification(`Project ${savedProject.name} added successfully.`);
+          setNotification(
+            <>Project <strong>{savedProject.name}</strong> added successfully.</>
+          );
         } else {
           setProjects(projects.map(p => p.id === savedProject.id ? savedProject : p));
-          setNotification(`Project ${savedProject.name} updated successfully.`);
+          setNotification(
+            <>Project <strong>{savedProject.name}</strong> edited successfully.</>
+          );
         }
 
         setIsModalOpen(false);
@@ -143,9 +162,12 @@ const ProjectsOverview = () => {
       });
 
       if (response.ok) {
+        const deletedName = projectToDelete.name;
         setProjects(projects.filter(p => p.id !== projectToDelete.id));
         setProjectToDelete(null);
-        setNotification(`Project deleted successfully.`);
+        setNotification(
+          <>Project <strong>{deletedName}</strong> deleted successfully.</>
+        );
         setTimeout(() => setNotification(null), 3000);
       } else {
         console.error("Server failed to delete project");
@@ -198,8 +220,16 @@ const ProjectsOverview = () => {
 
       {notification && (
         <div className="success-toast">
-          <span>{notification}</span>
-          <button className="toast-close-btn" onClick={() => setNotification(null)}>✕</button>
+          <div className="success-toast-content">
+            <span className="success-toast-icon"><ToastSuccessIcon /></span>
+            <span className="success-toast-text">{notification}</span>
+            <button className="success-toast-close" onClick={() => setNotification(null)} aria-label="Close">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 5L5 15M5 5L15 15" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div className="success-toast-progress"></div>
         </div>
       )}
 
@@ -253,6 +283,7 @@ const ProjectsOverview = () => {
             <ProjectCard
               key={proj.id}
               project={proj}
+              departments={departments}
               onEdit={handleOpenEditModal}
               onDelete={handleOpenDeleteConfirm}
             />
@@ -273,9 +304,13 @@ const ProjectsOverview = () => {
       {projectToDelete && (
         <div className="modal-overlay">
           <div className="delete-confirm-box">
+            <button className="close-icon" onClick={() => setProjectToDelete(null)} aria-label="Close">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.5 5.5L5.5 16.5M5.5 5.5L16.5 16.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
             <div className="delete-header">
               <h3>Delete Project?</h3>
-              <button className="close-icon" onClick={() => setProjectToDelete(null)}>✕</button>
             </div>
             <p>Are you sure you want to delete project <strong>"{projectToDelete.name} {projectToDelete.acronym && `(${projectToDelete.acronym})`}"</strong>? This action cannot be undone afterwards.</p>
             <div className="delete-actions">

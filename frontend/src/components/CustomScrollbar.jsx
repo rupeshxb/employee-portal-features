@@ -20,7 +20,10 @@ const CustomScrollbar = ({ children, className = '' }) => {
         const maxScroll = scrollHeight - clientHeight;
         const maxThumbTop = clientHeight - thumbHeight;
         const top = maxScroll > 0 ? Math.round((scrollTop / maxScroll) * maxThumbTop) : 0;
-        setThumb({ height: thumbHeight, top, visible: true });
+        setThumb(prev => {
+            if (prev.visible && prev.height === thumbHeight && prev.top === top) return prev;
+            return { height: thumbHeight, top, visible: true };
+        });
     }, []);
 
     useEffect(() => {
@@ -39,8 +42,6 @@ const CustomScrollbar = ({ children, className = '' }) => {
             mo.disconnect();
         };
     }, [measure]);
-
-    useEffect(() => { measure(); });
 
     const onThumbMouseDown = (e) => {
         e.preventDefault();

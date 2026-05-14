@@ -7,21 +7,28 @@ export const PlusIcon = () => (
     </svg>
 );
 
-export const VerticalDividerIcon = ({ className }) => (
-    <svg className={className} width="1" height="24" viewBox="0 0 1 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="24" stroke="#17181A" strokeOpacity="0.1"/>
+export const VerticalDividerIcon = ({ className, opacity = 0.1, width = 1, height = 24 }) => (
+    <svg className={className} width={width} height={height} viewBox="0 0 1 24" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="24" stroke="currentColor" strokeOpacity={opacity}/>
     </svg>
 );
 
-export const HeaderCalendarIcon = ({ className }) => (
-    <svg className={className} width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7.33337 1.83301V4.58301" stroke="#17181A" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M14.6666 1.83301V4.58301" stroke="#17181A" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M3.20837 8.33203H18.7917" stroke="#17181A" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M19.25 7.79134V15.583C19.25 18.333 17.875 20.1663 14.6667 20.1663H7.33333C4.125 20.1663 2.75 18.333 2.75 15.583V7.79134C2.75 5.04134 4.125 3.20801 7.33333 3.20801H14.6667C17.875 3.20801 19.25 5.04134 19.25 7.79134Z" stroke="#17181A" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M10.9959 12.5579H11.0041" stroke="#17181A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M7.60308 12.5579H7.61131" stroke="#17181A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M7.60308 15.3079H7.61131" stroke="#17181A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+export const HeaderCalendarIcon = ({ className, width = 22, height = 22 }) => (
+    <svg className={className} width={width} height={height} viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.33337 1.83301V4.58301" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M14.6666 1.83301V4.58301" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M3.20837 8.33203H18.7917" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M19.25 7.79134V15.583C19.25 18.333 17.875 20.1663 14.6667 20.1663H7.33333C4.125 20.1663 2.75 18.333 2.75 15.583V7.79134C2.75 5.04134 4.125 3.20801 7.33333 3.20801H14.6667C17.875 3.20801 19.25 5.04134 19.25 7.79134Z" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M10.9959 12.5579H11.0041" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M7.60308 12.5579H7.61131" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M7.60308 15.3079H7.61131" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const ProfilePersonIcon = ({ className, width = 15, height = 15 }) => (
+    <svg className={className} width={width} height={height} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 8c1.84 0 3.333-1.493 3.333-3.333S9.84 1.333 8 1.333 4.667 2.827 4.667 4.667 6.16 8 8 8z" stroke="currentColor" strokeWidth="1.06" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M13.727 14.667c0-2.58-2.567-4.667-5.727-4.667S2.273 12.087 2.273 14.667" stroke="currentColor" strokeWidth="1.06" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );
 

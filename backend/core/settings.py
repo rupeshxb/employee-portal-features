@@ -132,10 +132,19 @@ CLOUDINARY_STORAGE = {
 
 # 5. STORAGE CONFIGURATION (NO COMPRESSION)
 # This uses standard storage for static files to bypass the Whitenoise compression crash.
+# Local dev opt-in: set USE_LOCAL_MEDIA=true in backend/.env to write media to
+# MEDIA_ROOT instead of Cloudinary (keeps the shared Cloudinary account clean).
+USE_LOCAL_MEDIA = os.environ.get('USE_LOCAL_MEDIA', '').lower() in ('1', 'true', 'yes')
+
+_MEDIA_BACKEND = (
+    'django.core.files.storage.FileSystemStorage'
+    if USE_LOCAL_MEDIA
+    else 'cloudinary_storage.storage.MediaCloudinaryStorage'
+)
+
 STORAGES = {
-    # Media files (Images) -> Cloudinary
     "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        "BACKEND": _MEDIA_BACKEND,
     },
     # Static files (CSS/JS) -> Standard Django Storage (No Compression)
     "staticfiles": {
@@ -145,7 +154,7 @@ STORAGES = {
 
 # 6. LEGACY FALLBACK (Must match above)
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = _MEDIA_BACKEND
 
 
 # --- CORS CONFIGURATION ---

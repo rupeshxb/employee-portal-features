@@ -113,9 +113,7 @@
     color: #9CA3AF;
 }
 .desig-form-group input[type="text"]:focus {
-    border-color: #2563EB;
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .desig-form-group textarea {
@@ -135,9 +133,7 @@
     color: #9CA3AF;
 }
 .desig-form-group textarea:focus {
-    border-color: #2563EB;
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .field-error {

@@ -7,6 +7,7 @@ import {
     MediumTeamIcon,
     LargeTeamIcon
 } from './Icons';
+import DateRangePicker from './DateRangePicker';
 
 const ProjectsOverviewFilterBar = ({
     searchTerm, setSearchTerm,
@@ -31,11 +32,14 @@ const ProjectsOverviewFilterBar = ({
 
     // Format the date range text for the pill
     const getFormattedDateRange = () => {
+        const fmt = (str) => {
+            const [y, m, d] = str.split('-').map(Number);
+            return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        };
         if (dateRange.start && dateRange.end) {
-            const start = new Date(dateRange.start).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            const end = new Date(dateRange.end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            return `${start} - ${end}`;
+            return `${fmt(dateRange.start)} - ${fmt(dateRange.end)}`;
         }
+        if (dateRange.start) return `${fmt(dateRange.start)} - ...`;
         return "Select Date Range";
     };
 
@@ -63,7 +67,7 @@ const ProjectsOverviewFilterBar = ({
                 />
             </div>
 
-            {/* 2. Date Range Dropdown (Reverted to standard inputs) */}
+            {/* 2. Date Range Dropdown */}
             <div ref={dateContainerRef} className="date-dropdown-container">
                 <div className="filter-item-wrapper date-dropdown-pill" onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}>
                     <CalendarIcon />
@@ -74,48 +78,12 @@ const ProjectsOverviewFilterBar = ({
                 </div>
 
                 {isDateDropdownOpen && (
-                    <div className="date-dropdown-menu custom-date-range-menu">
-                        <div className="date-range-inputs">
-                            <div className="date-input-group">
-                                <label>Start Date</label>
-                                <div className="custom-date-input-wrapper">
-                                    <input
-                                        type="date"
-                                        value={dateRange.start}
-                                        onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-                                        onClick={(e) => e.target.showPicker && e.target.showPicker()}
-                                    />
-                                    <CalendarIcon className="input-calendar-icon" />
-                                </div>
-                            </div>
-                            <div className="date-input-group">
-                                <label>End Date</label>
-                                <div className="custom-date-input-wrapper">
-                                    <input
-                                        type="date"
-                                        value={dateRange.end}
-                                        onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-                                        onClick={(e) => e.target.showPicker && e.target.showPicker()}
-                                    />
-                                    <CalendarIcon className="input-calendar-icon" />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="date-range-actions">
-                            <span
-                                className="clear-dates-btn"
-                                onClick={() => setDateRange({ start: '', end: '' })}
-                            >
-                                Clear
-                            </span>
-                            <button
-                                className="apply-dates-btn"
-                                onClick={() => setIsDateDropdownOpen(false)}
-                            >
-                                Apply
-                            </button>
-                        </div>
-                    </div>
+                    <DateRangePicker
+                        startDate={dateRange.start}
+                        endDate={dateRange.end}
+                        onChange={setDateRange}
+                        onClose={() => setIsDateDropdownOpen(false)}
+                    />
                 )}
             </div>
 
