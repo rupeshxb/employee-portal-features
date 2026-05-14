@@ -1,19 +1,20 @@
 /* =============================================
-   ADD EMPLOYEE — OUTER LAYOUT
+   ADD/EDIT EMPLOYEE — OUTER LAYOUT
    ============================================= */
 
 .add-employee-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 32px;
     padding: 0;
+    font-family: 'Figtree', sans-serif;
 }
 
-/* Back Navigation */
+/* --- Back Navigation --- */
 .back-nav {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
 }
 
 .back-circle-btn {
@@ -29,20 +30,25 @@
 }
 
 .back-circle-btn:hover {
-    opacity: 0.75;
+    opacity: 0.85;
 }
 
 .back-nav-static {
-    font-size: 14px;
-    color: #64748B;
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19px;
+    color: rgba(23, 24, 26, 0.8);
 }
 
 .back-text-link {
     background: none;
     border: none;
     color: #2563EA;
-    font-size: 14px;
-    font-weight: 500;
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19px;
     cursor: pointer;
     padding: 0;
     text-decoration: none;
@@ -52,29 +58,37 @@
     text-decoration: underline;
 }
 
-/* Page Title */
+/* --- Page Heading --- */
 .add-employee-info {
-    padding-left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .add-employee-info h2 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #0F172A;
-    margin: 0 0 6px 0;
-}
-
-.add-employee-info p {
-    font-size: 14px;
-    color: #64748B;
+    font-family: 'Figtree', sans-serif;
+    font-size: 36px;
+    font-weight: 600;
+    line-height: 43px;
+    letter-spacing: -0.03em;
+    color: #17181A;
     margin: 0;
 }
 
-/* Form Card */
+.add-employee-info p {
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 19px;
+    color: rgba(23, 24, 26, 0.75);
+    margin: 0;
+}
+
+/* --- Form Card (white) --- */
 .add-employee-page {
     background-color: #FFFFFF;
-    border-radius: 16px;
-    padding: 0;
+    border-radius: 24px;
+    padding: 52px 52px 0;
     overflow: hidden;
 }
 
@@ -85,47 +99,49 @@
 .add-employee-form {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 52px;
 }
 
 .form-section {
-    padding: 28px 32px;
-    border-bottom: 1px solid #F1F5F9;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: 0;
+    border: none;
 }
 
-.form-section:last-of-type {
-    border-bottom: none;
-}
-
-/* Section heading with blue underline accent */
+/* --- Section heading --- */
 .form-section h3 {
-    display: inline-block;
-    margin: 0 0 24px 0;
-    font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Figtree', sans-serif;
+    font-size: 24px;
     font-weight: 600;
-    color: #1E293B;
-    padding-bottom: 8px;
-    position: relative;
+    line-height: 29px;
+    letter-spacing: -0.03em;
+    color: #17181A;
 }
 
 .form-section h3::after {
     content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #2563EA;
-    border-radius: 2px;
+    display: block;
+    width: 80px;
+    height: 0;
+    border-bottom: 2px solid #2563EA;
 }
 
-/* 2-column grid by default; login section uses 3 */
+/* --- Form grid (2 columns by default) --- */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px 32px;
+    gap: 32px;
 }
 
+/* Account/Login section is single column */
 .login-details .form-grid {
     grid-template-columns: 1fr;
 }
@@ -138,39 +154,50 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-width: 0;
 }
 
 .input-group label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #475569;
+    font-family: 'Figtree', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 17px;
+    color: rgba(23, 24, 26, 0.65);
 }
 
-/* Direct-child inputs only — excludes wrapped inputs inside phone/password */
+/* Inputs/selects */
 .input-group > input[type="text"],
 .input-group > input[type="email"],
 .input-group > input[type="tel"],
 .input-group > input[type="date"],
 .input-group > select {
-    padding: 10px 14px;
-    border: 1px solid #E2E8F0;
+    height: 48px;
+    padding: 12px 16px;
+    border: none;
     border-radius: 8px;
-    font-size: 14px;
-    color: #0F172A;
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19px;
+    color: #17181A;
     background-color: #F6F7FB;
     outline: none;
-    transition: border-color 0.2s, background-color 0.2s;
-    height: 42px;
     box-sizing: border-box;
 }
 
 .input-group > input::placeholder {
-    color: #94A3B8;
+    color: rgba(23, 24, 26, 0.5);
 }
 
-.input-group > input:focus,
-.input-group > select:focus {
-    background-color: #fff;
+.input-group > select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'><path d='M4 6L8 10L12 6' stroke='rgba(23,24,26,0.8)' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 44px;
+    cursor: pointer;
 }
 
 /* =============================================
@@ -179,39 +206,36 @@
 
 .date-input-wrapper {
     position: relative;
+    background-color: #F6F7FB;
+    border-radius: 8px;
 }
 
 .date-input-wrapper input[type="date"] {
     width: 100%;
-    box-sizing: border-box;
-    padding-right: 40px;
-    padding: 10px 40px 10px 14px;
-    border: 1px solid #E2E8F0;
+    height: 48px;
+    padding: 12px 44px 12px 16px;
+    border: none;
     border-radius: 8px;
-    font-size: 14px;
-    color: #0F172A;
-    background-color: #F6F7FB;
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    color: #17181A;
+    background-color: transparent;
     outline: none;
-    transition: border-color 0.2s, background-color 0.2s;
-    height: 42px;
-}
-
-.date-input-wrapper input[type="date"]:focus {
-    background-color: #fff;
+    box-sizing: border-box;
 }
 
 .date-input-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     position: absolute;
     right: 0;
-    width: 40px;
+    width: 44px;
     height: 100%;
     cursor: pointer;
 }
 
 .date-input-icon {
     position: absolute;
-    right: 12px;
+    right: 16px;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
@@ -223,65 +247,63 @@
 
 .pwd-row {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    align-items: flex-start;
+    gap: 24px;
 }
 
 .password-input-wrapper {
     flex: 1;
     display: flex;
     align-items: center;
-    border: 1px solid #E2E8F0;
+    border: none;
     border-radius: 8px;
     background-color: #F6F7FB;
     overflow: hidden;
-    transition: border-color 0.2s, background-color 0.2s;
-    height: 42px;
+    height: 48px;
     min-width: 0;
-}
-
-.password-input-wrapper:focus-within {
-    background-color: #fff;
+    padding: 0 16px;
+    gap: 12px;
 }
 
 .password-input-wrapper input {
     flex: 1;
     border: none;
     background: transparent;
-    padding: 0 12px;
-    font-size: 14px;
-    color: #0F172A;
+    padding: 0;
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    color: #17181A;
     outline: none;
     height: 100%;
     min-width: 0;
 }
 
 .password-input-wrapper input::placeholder {
-    color: #94A3B8;
+    color: rgba(23, 24, 26, 0.5);
 }
 
 .pwd-icon-btn {
     background: none;
     border: none;
-    padding: 0 8px;
+    padding: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
     flex-shrink: 0;
-    color: #64748B;
+    color: #434446;
     transition: color 0.15s;
 }
 
 .pwd-icon-btn:hover {
-    color: #334155;
+    color: #17181A;
 }
 
 .pwd-divider {
     width: 1px;
-    height: 22px;
-    background-color: #E2E8F0;
+    height: 24px;
+    background-color: rgba(23, 24, 26, 0.2);
     flex-shrink: 0;
 }
 
@@ -289,13 +311,16 @@
     background-color: #2563EA;
     border: none;
     border-radius: 8px;
-    padding: 0 18px;
+    padding: 14px;
     cursor: pointer;
-    font-size: 13px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 18px;
     font-weight: 600;
+    line-height: 22px;
     color: #fff;
     transition: background-color 0.2s;
-    height: 42px;
+    width: 160px;
+    height: 48px;
     flex-shrink: 0;
     white-space: nowrap;
 }
@@ -305,45 +330,49 @@
 }
 
 /* =============================================
-   PHONE INPUT (country code + number)
+   PHONE INPUT (two boxes side-by-side)
    ============================================= */
 
 .phone-input-wrapper {
     display: flex;
-    align-items: center;
-    border: 1px solid #E2E8F0;
-    border-radius: 8px;
-    background-color: #F6F7FB;
-    /* No overflow:hidden — allows CountryCodeSelect dropdown to escape */
-    transition: border-color 0.2s, background-color 0.2s;
-    height: 42px;
+    align-items: stretch;
+    gap: 8px;
+    height: 48px;
 }
 
-.phone-input-wrapper:focus-within {
-    background-color: #fff;
+.phone-input-wrapper > :first-child {
+    width: 125px;
+    flex-shrink: 0;
+    background-color: #F6F7FB;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
 }
 
 .phone-divider {
     width: 1px;
-    height: 22px;
-    background-color: #E2E8F0;
+    height: 24px;
+    background-color: rgba(23, 24, 26, 0.2);
     flex-shrink: 0;
 }
 
 .phone-number-input {
     flex: 1;
     border: none;
-    background: transparent;
-    padding: 0 12px;
-    font-size: 14px;
-    color: #0F172A;
+    background-color: #F6F7FB;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    color: #17181A;
     outline: none;
-    height: 100%;
+    height: 48px;
     min-width: 0;
+    box-sizing: border-box;
 }
 
 .phone-number-input::placeholder {
-    color: #94A3B8;
+    color: rgba(23, 24, 26, 0.5);
 }
 
 /* =============================================
@@ -352,17 +381,20 @@
 
 .radio-group {
     display: flex;
-    gap: 24px;
+    gap: 56px;
     align-items: center;
-    height: 42px;
+    height: 48px;
 }
 
 .radio-label {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #0F172A;
+    gap: 12px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19px;
+    color: rgba(23, 24, 26, 0.75);
     cursor: pointer;
     user-select: none;
 }
@@ -374,20 +406,21 @@
 .radio-custom {
     width: 18px;
     height: 18px;
-    border: 2px solid #CBD5E1;
+    border: 1px solid rgba(23, 24, 26, 0.4);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     transition: border-color 0.2s;
-    background: #F6F7FB;
+    background: transparent;
+    box-sizing: border-box;
 }
 
 .radio-custom::after {
     content: '';
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: transparent;
     transition: background 0.2s;
@@ -401,6 +434,10 @@
     background: #2563EA;
 }
 
+.radio-label input[type="radio"]:checked ~ * {
+    color: #17181A;
+}
+
 /* =============================================
    DESIGNATION COMBOBOX
    ============================================= */
@@ -411,24 +448,20 @@
 
 .designation-combobox input {
     width: 100%;
-    padding: 10px 14px;
-    border: 1px solid #E2E8F0;
+    height: 48px;
+    padding: 12px 16px;
+    border: none;
     border-radius: 8px;
-    font-size: 14px;
-    color: #0F172A;
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    color: #17181A;
     background-color: #F6F7FB;
     outline: none;
-    transition: border-color 0.2s, background-color 0.2s;
     box-sizing: border-box;
-    height: 42px;
-}
-
-.designation-combobox input:focus {
-    background-color: #fff;
 }
 
 .designation-combobox input::placeholder {
-    color: #94A3B8;
+    color: rgba(23, 24, 26, 0.5);
 }
 
 .designation-dropdown-list {
@@ -446,28 +479,13 @@
     margin: 0;
     padding: 4px 0;
     list-style: none;
-    scrollbar-width: thin;
-    scrollbar-color: #BBBBBB transparent;
-}
-
-.designation-dropdown-list::-webkit-scrollbar {
-    width: 5px;
-}
-
-.designation-dropdown-list::-webkit-scrollbar-track {
-    background: transparent;
-    margin: 4px 0;
-}
-
-.designation-dropdown-list::-webkit-scrollbar-thumb {
-    background-color: #BBBBBB;
-    border-radius: 2.5px;
 }
 
 .designation-dropdown-item {
-    padding: 9px 14px;
-    font-size: 14px;
-    color: #0F172A;
+    padding: 10px 16px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 15px;
+    color: #17181A;
     cursor: pointer;
     transition: background 0.15s;
 }
@@ -478,48 +496,57 @@
 }
 
 .designation-no-results {
-    padding: 9px 14px;
+    padding: 10px 16px;
     font-size: 14px;
-    color: #94A3B8;
+    color: rgba(23, 24, 26, 0.5);
     cursor: default;
 }
 
 /* =============================================
-   FORM ACTIONS
+   FORM ACTIONS (bottom bar with divider)
    ============================================= */
 
 .form-actions {
+    margin: 0 -52px;
+    padding: 24px 52px 24px;
+    border-top: 1px solid rgba(23, 24, 26, 0.1);
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
-    padding: 24px 32px;
+    gap: 13px;
 }
 
 .btn-cancel {
-    padding: 10px 24px;
-    background: white;
-    border: 1px solid #E2E8F0;
+    width: 140px;
+    height: 48px;
+    padding: 14px 10px;
+    background: transparent;
+    border: 1px solid #747575;
     border-radius: 8px;
-    color: #64748B;
-    font-size: 14px;
+    color: #747575;
+    font-family: 'Figtree', sans-serif;
+    font-size: 18px;
     font-weight: 500;
+    line-height: 22px;
     cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
+    transition: background 0.15s;
 }
 
 .btn-cancel:hover {
-    background: #F8FAFC;
-    border-color: #CBD5E1;
+    background: rgba(116, 117, 117, 0.06);
 }
 
 .btn-submit {
-    padding: 10px 32px;
+    width: 160px;
+    height: 48px;
+    padding: 14px;
     background: #2563EA;
     border: none;
     border-radius: 8px;
     color: white;
-    font-size: 14px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 18px;
     font-weight: 600;
+    line-height: 22px;
     cursor: pointer;
     transition: background 0.2s;
 }
@@ -534,7 +561,7 @@
 }
 
 /* =============================================
-   ERROR BANNER
+   ERRORS
    ============================================= */
 
 .error-banner {
@@ -542,13 +569,9 @@
     color: #B91C1C;
     padding: 12px 16px;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin: 0 0 24px 0;
     font-size: 14px;
 }
-
-/* =============================================
-   FIELD VALIDATION ERRORS
-   ============================================= */
 
 .field-error {
     display: block;
@@ -562,6 +585,6 @@
 .add-employee-form select.input-error,
 .add-employee-form .date-input-wrapper.input-error,
 .add-employee-form .phone-input-wrapper.input-error {
-    border-color: #EF4444 !important;
-    background-color: #FEF2F2 !important;
+    box-shadow: inset 0 0 0 1px #EF4444;
+    background-color: #FEF2F2;
 }

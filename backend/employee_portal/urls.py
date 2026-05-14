@@ -7,7 +7,8 @@ from .views import (
     ProjectDetail,         
     team_updates,          
     EmployeeProfileView,
-    ChangePasswordView, 
+    ChangePasswordView,
+    RemoveAvatarView,
     SubmitDailyTasksView,
     DepartmentListView,
     EmployeeListView,
@@ -29,6 +30,7 @@ urlpatterns = [
     # Profile & Settings
     path('profile/', EmployeeProfileView.as_view(), name='profile'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
+    path('profile/avatar/', RemoveAvatarView.as_view(), name='remove-avatar'),
 
     # Tasks
     path('tasks/', DailyTaskListCreate.as_view(), name='task-list-create'),

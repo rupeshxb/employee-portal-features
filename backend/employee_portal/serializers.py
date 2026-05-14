@@ -197,6 +197,7 @@ class EmployeeOverviewSerializer(serializers.ModelSerializer):
     designation_name = serializers.CharField(source='designation.name', read_only=True)
     projects = ProjectPillSerializer(many=True, read_only=True)
     reports_to_name = serializers.SerializerMethodField()
+    avatar = serializers.SerializerMethodField()
 
     class Meta:
         model = Employee
@@ -208,6 +209,26 @@ class EmployeeOverviewSerializer(serializers.ModelSerializer):
 
     def get_full_name(self, obj):
         return obj.user.get_full_name() or obj.user.username
+
+    def get_avatar(self, obj):
+        if not obj.avatar:
+            return None
+        try:
+            url = obj.avatar.url
+        except Exception:
+            return None
+        if url.startswith('http'):
+            return url
+        # Local file — verify it actually exists on disk before returning a URL
+        import os
+        from django.conf import settings
+        local_path = os.path.join(settings.MEDIA_ROOT, obj.avatar.name)
+        if not os.path.exists(local_path):
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(url)
+        return url
 
     def get_reports_to_name(self, obj):
         if obj.reports_to:

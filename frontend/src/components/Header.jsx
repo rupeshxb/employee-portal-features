@@ -7,6 +7,7 @@ import { VerticalDividerIcon, HeaderCalendarIcon } from './Icons';
 
 const Header = () => {
   const { user, logout } = useUser();
+  const [avatarError, setAvatarError] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -65,9 +66,14 @@ const Header = () => {
   const displayName = getDisplayName();
   const avatarUrl = getAvatarUrl(user?.avatar || user?.profile_pic);
 
-  const getInitials = (name) => {
-    if (!name) return 'U';
-    return name.charAt(0).toUpperCase();
+  useEffect(() => { setAvatarError(false); }, [avatarUrl]);
+
+  const getInitials = () => {
+    if (user?.first_name || user?.last_name) {
+      return ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase();
+    }
+    if (user?.username) return user.username[0].toUpperCase();
+    return 'U';
   };
 
   return (
@@ -89,15 +95,16 @@ const Header = () => {
         >
           {/* AVATAR */}
           <div style={{ flexShrink: 0 }}>
-            {avatarUrl ? (
+            {avatarUrl && !avatarError ? (
               <img
                 src={avatarUrl}
                 alt="Profile"
                 style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #E5E7EB', display: 'block' }}
+                onError={() => setAvatarError(true)}
               />
             ) : (
               <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#4F46E5', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px', border: '1px solid #E5E7EB' }}>
-                {getInitials(displayName)}
+                {getInitials()}
               </div>
             )}
           </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import EmployeeOverviewFilterBar from './EmployeeOverviewFilterBar';
 import EmployeeDetailsModal from './EmployeeDetailsModal'; // <-- NEW IMPORT
 import '../style/EmployeeOverview.css';
@@ -6,6 +7,15 @@ import { PlusIcon, MoreVerticalIcon, EyeIcon, EditIcon, TrashIcon } from './Icon
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from "../../config";
 import "../style/Header.css"
+
+const EmployeeAvatar = ({ avatar, fullName }) => {
+    const [error, setError] = useState(false);
+    const initials = fullName
+        ? fullName.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('')
+        : '?';
+    if (!avatar || error) return initials;
+    return <img src={avatar} alt={fullName} onError={() => setError(true)} />;
+};
 
 const EmployeeOverview = () => {
     // --- State for the reusable Filter Bar ---
@@ -21,11 +31,16 @@ const EmployeeOverview = () => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [openMenuId, setOpenMenuId] = useState(null);
+    const [menuPos, setMenuPos] = useState({ top: 0, right: 0 });
     const navigate = useNavigate();
 
     // --- NEW: State for the Details Modal ---
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+
+    // --- State for Delete Confirmation Modal ---
+    const [employeeToDelete, setEmployeeToDelete] = useState(null);
+    const [deleteError, setDeleteError] = useState('');
 
     const token = localStorage.getItem('token');
 
@@ -91,7 +106,15 @@ const EmployeeOverview = () => {
 
 
     // --- Action Menu UI Handlers ---
-    const toggleMenu = (id) => setOpenMenuId(openMenuId === id ? null : id);
+    const toggleMenu = (e, id) => {
+        if (openMenuId === id) { setOpenMenuId(null); return; }
+        const rect = e.currentTarget.getBoundingClientRect();
+        const menuHeight = 136; // 3 items × ~44px + 8px padding
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const top = spaceBelow > menuHeight + 8 ? rect.bottom + 4 : rect.top - menuHeight - 4;
+        setMenuPos({ top, right: window.innerWidth - rect.right });
+        setOpenMenuId(id);
+    };
 
     useEffect(() => {
         const handleClickOutside = () => setOpenMenuId(null);
@@ -114,23 +137,36 @@ const EmployeeOverview = () => {
         setIsDetailsModalOpen(false); // Ensure modal is closed if triggered from inside the modal
     };
 
-    const handleDeleteEmployee = async (id) => {
+    const handleDeleteEmployee = (emp) => {
         setOpenMenuId(null);
-        if (!window.confirm("Are you sure you want to permanently delete this employee?")) return;
+        setDeleteError('');
+        setEmployeeToDelete(emp);
+    };
 
+    const confirmDeleteEmployee = async () => {
+        if (!employeeToDelete) return;
+        setDeleteError('');
         try {
-            // Pointing to the new detail endpoint we discussed
-            const res = await fetch(`${API_BASE_URL}/api/manager/employees/${id}/`, {
+            const res = await fetch(`${API_BASE_URL}/api/manager/employees/${employeeToDelete.id}/`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Token ${token}` }
             });
             if (res.ok) {
-                fetchEmployees(); // Refresh the table
+                setEmployeeToDelete(null);
+                fetchEmployees();
             } else {
-                alert("Failed to delete employee.");
+                let msg = `Failed to delete employee (status ${res.status}).`;
+                try {
+                    const body = await res.json();
+                    if (body.detail) msg = body.detail;
+                    else if (typeof body === 'object') msg = Object.values(body).flat().join(' ');
+                } catch { /* response had no JSON body */ }
+                console.error('Delete failed:', res.status, msg);
+                setDeleteError(msg);
             }
         } catch (err) {
-            console.error("Delete error:", err);
+            console.error('Delete network error:', err);
+            setDeleteError('Network error. Please try again.');
         }
     };
 
@@ -217,7 +253,7 @@ const EmployeeOverview = () => {
                                 <td>
                                     <div className="overview-emp-cell">
                                         <div className="overview-avatar employee-individual-avatar">
-                                            {emp.avatar ? <img src={emp.avatar} alt="avatar" /> : emp.full_name.charAt(0).toUpperCase()}
+                                            <EmployeeAvatar avatar={emp.avatar} fullName={emp.full_name} />
                                         </div>
                                         <div className="overview-emp-details">
                                             <span className="overview-emp-name">{emp.full_name}</span>
@@ -235,22 +271,27 @@ const EmployeeOverview = () => {
                                 </td>
                                 <td>{emp.reports_to_name || '-'}</td>
                                 <td className="overview-action-cell">
-                                    <button className="action-btn-icon" onClick={(e) => { e.stopPropagation(); toggleMenu(emp.id); }}>
+                                    <button className="action-btn-icon" onClick={(e) => { e.stopPropagation(); toggleMenu(e, emp.id); }}>
                                         <MoreVerticalIcon />
                                     </button>
 
-                                    {openMenuId === emp.id && (
-                                        <div className="table-action-menu" onClick={(e) => e.stopPropagation()}>
+                                    {openMenuId === emp.id && createPortal(
+                                        <div
+                                            className="table-action-menu"
+                                            style={{ position: 'fixed', top: `${menuPos.top}px`, right: `${menuPos.right}px` }}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
                                             <button className="menu-item" onClick={() => handleViewDetails(emp.id)}>
                                                 <EyeIcon /> View Details
                                             </button>
                                             <button className="menu-item" onClick={() => handleEditDetails(emp.id)}>
                                                 <EditIcon /> Edit Details
                                             </button>
-                                            <button className="menu-item text-danger" onClick={() => handleDeleteEmployee(emp.id)}>
+                                            <button className="menu-item text-danger" onClick={() => handleDeleteEmployee(emp)}>
                                                 <TrashIcon /> Delete Employee
                                             </button>
-                                        </div>
+                                        </div>,
+                                        document.body
                                     )}
                                 </td>
                             </tr>
@@ -260,15 +301,50 @@ const EmployeeOverview = () => {
             </div>
 
             {/* 5. PAGINATION */}
-            <div className="overview-pagination">
-                <span className="pagination-text">Showing {employees.length} entries of {totalCount} total</span>
-                <div className="pagination-controls">
-                    <button className="page-btn text-btn" onClick={() => setPage(1)} disabled={page === 1}>First</button>
-                    <button className="page-btn icon-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>&lt;</button>
-                    <button className="page-btn active">{page}</button>
-                    <button className="page-btn icon-btn" onClick={() => setPage(p => p + 1)} disabled={employees.length < 10}>&gt;</button>
-                </div>
-            </div>
+            {(() => {
+                const PAGE_SIZE = 10;
+                const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+                const showStart = totalCount === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+                const showEnd = Math.min(page * PAGE_SIZE, totalCount);
+
+                const genPages = () => {
+                    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+                    if (page <= 3) return [1, 2, 3, '…', totalPages - 2, totalPages - 1, totalPages];
+                    if (page >= totalPages - 2) return [1, 2, 3, '…', totalPages - 2, totalPages - 1, totalPages];
+                    return [1, '…', page - 1, page, page + 1, '…', totalPages];
+                };
+
+                return (
+                    <div className="overview-pagination">
+                        <span className="pagination-text">
+                            {totalCount === 0 ? 'No entries found' : `Showing ${showStart} to ${showEnd} of ${totalCount} entries`}
+                        </span>
+                        <div className="pagination-controls">
+                            <button className="page-btn pg-first-last" onClick={() => setPage(1)} disabled={page === 1}>First</button>
+                            <button className="page-btn pg-prev-next" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11.25 13.5L6.75 9L11.25 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            </button>
+
+                            {genPages().map((p, i) =>
+                                p === '…' ? (
+                                    <span key={`dots-${i}`} className="pg-dots">…</span>
+                                ) : (
+                                    <button
+                                        key={p}
+                                        className={`page-btn pg-number${p === page ? ' active' : ''}${p === page + 1 ? ' next-to-active' : ''}`}
+                                        onClick={() => setPage(p)}
+                                    >{p}</button>
+                                )
+                            )}
+
+                            <button className="page-btn pg-prev-next" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6.75 4.5L11.25 9L6.75 13.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            </button>
+                            <button className="page-btn pg-first-last pg-last" onClick={() => setPage(totalPages)} disabled={page === totalPages}>Last</button>
+                        </div>
+                    </div>
+                );
+            })()}
 
             {/* 6. MODAL COMPONENT */}
             <EmployeeDetailsModal
@@ -277,6 +353,30 @@ const EmployeeOverview = () => {
                 employeeId={selectedEmployeeId}
                 onEditClick={handleEditDetails}
             />
+
+            {/* 7. DELETE CONFIRMATION MODAL */}
+            {employeeToDelete && (
+                <div className="modal-overlay" onClick={() => setEmployeeToDelete(null)}>
+                    <div className="delete-confirm-box" onClick={(e) => e.stopPropagation()}>
+                        <button className="close-icon" onClick={() => setEmployeeToDelete(null)} aria-label="Close">
+                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16.5 5.5L5.5 16.5M5.5 5.5L16.5 16.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                        </button>
+                        <div className="delete-header">
+                            <h3>Delete Employee?</h3>
+                        </div>
+                        <p>
+                            Are you sure you want to delete employee <strong>"{employeeToDelete.full_name}"</strong>? This will permanently remove their account and all associated records. This action cannot be undone afterwards.
+                        </p>
+                        {deleteError && <p style={{ color: '#FF493F', fontSize: '13px', margin: 0 }}>{deleteError}</p>}
+                        <div className="delete-actions">
+                            <button className="btn-cancel" onClick={() => setEmployeeToDelete(null)}>Cancel</button>
+                            <button className="btn-confirm-delete" onClick={confirmDeleteEmployee}>Delete</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

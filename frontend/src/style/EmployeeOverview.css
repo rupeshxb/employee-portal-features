@@ -263,18 +263,15 @@
     background: #F3F4F6;
 }
 .table-action-menu {
-    position: absolute;
-    right: 40px;
-    top: 20px;
     background: white;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    z-index: 50;
-    min-width: 160px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    z-index: 9999;
     display: flex;
     flex-direction: column;
     padding: 8px 0;
+    white-space: nowrap;
 }
 .menu-item {
     background: none;
@@ -288,6 +285,7 @@
     color: #334155;
     text-align: left;
     width: 100%;
+    white-space: nowrap;
 }
 .menu-item:hover {
     background-color: #f8fafc;
@@ -301,39 +299,208 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px 0;
-    color: #64748b;
-    font-size: 14px;
+    padding: 20px 0 8px;
 }
+
+.pagination-text {
+    font-family: 'Figtree', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 17px;
+    letter-spacing: 0.02em;
+    color: #5C676A;
+}
+
 .pagination-controls {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 }
+
 .page-btn {
-    border: 1px solid #e2e8f0;
-    background: white;
-    min-width: 32px;
-    height: 32px;
+    height: 40px;
+    width: 40px;
+    border: none;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
-    color: #334155;
+    font-family: 'Figtree', sans-serif;
     font-size: 14px;
-    font-family: inherit;
+    font-weight: 400;
+    line-height: 20px;
+    color: rgba(4, 21, 26, 0.65);
+    font-feature-settings: 'ss01' on, 'ss03' on;
+    transition: background 0.15s ease;
 }
+
+.page-btn:disabled {
+    cursor: default;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.page-btn:not(:disabled):not(.active):hover {
+    background: rgba(23, 24, 26, 0.06);
+}
+
+.pg-first-last {
+    width: 56px;
+    color: rgba(4, 21, 26, 0.45);
+}
+
+.pg-last {
+    color: #04151A;
+}
+
+.pg-prev-next {
+    width: 40px;
+    color: #04151A;
+}
+
 .page-btn.active {
-    background-color: #2563EA;
-    color: white;
-    border-color: #2563EA;
+    background: rgba(23, 24, 26, 0.75);
+    color: #FFFFFF;
 }
-.page-btn.text-btn {
-    padding: 0 12px;
+
+.page-btn.next-to-active {
+    border: 1px solid rgba(23, 24, 26, 0.75);
+    color: rgba(23, 24, 26, 0.75);
+}
+
+.pg-dots {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Figtree', sans-serif;
+    font-size: 14px;
+    color: rgba(4, 21, 26, 0.65);
+    user-select: none;
+}
+
+/* =============================================
+   DELETE CONFIRMATION MODAL (employee)
+   ============================================= */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.delete-confirm-box {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 28px 32px 32px;
+    width: 460px;
+    max-width: 92vw;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    box-shadow: 0px 16px 40px rgba(0, 0, 0, 0.18);
+    font-family: 'Figtree', sans-serif;
+}
+
+.delete-confirm-box .delete-header {
+    display: flex;
+    align-items: flex-start;
+}
+
+.delete-confirm-box .delete-header h3 {
+    margin: 0;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 29px;
+    letter-spacing: -0.03em;
+    color: #141414;
+}
+
+.delete-confirm-box > p {
+    margin: 0;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    color: rgba(23, 24, 26, 0.75);
+}
+
+.delete-confirm-box .close-icon {
+    position: absolute;
+    top: 18px;
+    right: 21px;
+    background: none;
     border: none;
-    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(23, 24, 26, 0.45);
 }
-.page-dots {
-    color: #94a3b8;
+
+.delete-confirm-box .delete-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.delete-confirm-box .btn-cancel {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    width: 134px;
+    height: 44px;
+    border: 1px solid #747575;
+    border-radius: 8px;
+    background: transparent;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    color: #747575;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.delete-confirm-box .btn-cancel:hover {
+    background: rgba(116, 117, 117, 0.06);
+}
+
+.delete-confirm-box .btn-confirm-delete {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    width: 134px;
+    height: 44px;
+    background: #FF493F;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 19px;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.delete-confirm-box .btn-confirm-delete:hover {
+    background: #e03e35;
 }

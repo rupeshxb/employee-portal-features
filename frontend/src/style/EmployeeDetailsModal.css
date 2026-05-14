@@ -1,94 +1,133 @@
-/* Overlay to darken the background */
+/* --- Overlay --- */
 .emp-modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.4);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     z-index: 1000;
-    backdrop-filter: blur(2px);
+    padding: 20px;
+    font-family: 'Figtree', sans-serif;
 }
 
-/* Main Modal Container */
+/* --- Container --- */
 .emp-modal-container {
-    background-color: #f8fafc;
-    width: 90%;
-    max-width: 750px;
-    height: 90vh;
-    max-height: 850px;
+    width: 600px;
+    max-width: 100%;
+    max-height: 90vh;
+    background: #F2F3F7;
     border-radius: 16px;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    animation: modalSlideUp 0.3s ease-out;
+    font-family: 'Figtree', sans-serif;
+    position: relative;
 }
 
-@keyframes modalSlideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Inset the scrollbar so it stays inside the rounded corners */
+.emp-modal-container::-webkit-scrollbar {
+    width: 6px;
+}
+.emp-modal-container::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 20px 0;
+}
+.emp-modal-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+.emp-modal-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
 }
 
-/* Hero Header */
+/* --- Loading state --- */
+.emp-modal-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 0;
+    background: #F2F3F7;
+}
+
+/* ============ HEADER ============ */
 .emp-modal-header {
     position: relative;
-    background: linear-gradient(135deg, #1e1b4b 0%, #2d1b69 60%, #1e3a8a 100%);
-    padding: 2.5rem 1.5rem 2rem;
-    color: white;
-    text-align: center;
+    height: 329px;
+    background:
+        linear-gradient(180deg, #520770 -9.42%, #0F1945 43.94%, #17181A 79.33%),
+        #071A70;
+    overflow: hidden;
     flex-shrink: 0;
+    border-radius: 16px;
 }
 
-/* The close (X) button */
+/* Tile pattern overlay */
+.header-tiles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.header-tile {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    transform: matrix(-0.71, -0.71, -0.71, 0.71, 0, 0);
+}
+
+/* Close button */
 .emp-modal-close {
     position: absolute;
-    top: 1rem;
-    right: 1.5rem;
-    background: rgba(255,255,255,0.15);
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
     border: none;
-    color: white;
-    font-size: 1rem;
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
-    font-weight: 500;
+    z-index: 3;
+    border-radius: 8px;
+    transition: background 0.15s;
+    padding: 0;
 }
 
 .emp-modal-close:hover {
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.12);
 }
 
-/* Profile Picture inside Header */
+/* Profile block */
 .emp-modal-profile {
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 16px;
+    padding-top: 32px;
 }
 
 .emp-avatar-large {
-    width: 80px;
-    height: 80px;
+    width: 96px;
+    height: 96px;
     border-radius: 50%;
-    background-color: white;
-    color: #4F46E5;
-    font-size: 2rem;
-    font-weight: 700;
+    background: rgba(255, 255, 255, 0.12);
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 3px solid white;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    margin-bottom: 1rem;
-    overflow: hidden;
+    color: white;
+    font-size: 32px;
+    font-weight: 600;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .emp-avatar-large img {
@@ -97,159 +136,200 @@
     object-fit: cover;
 }
 
-.emp-modal-profile h2 {
-    margin: 0 0 0.25rem 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-.emp-modal-profile p {
-    margin: 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
-}
-
-/* Scrollable Body */
-.emp-modal-body {
-    padding: 1.5rem;
-    overflow-y: auto;
-    flex-grow: 1;
-    background-color: #f8fafc;
-}
-
-/* Info Cards */
-.emp-details-card {
-    background-color: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.emp-details-card:last-child {
-    margin-bottom: 0;
-}
-
-/* Card Header */
-.emp-details-card .card-header {
+.emp-modal-name-block {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid #f1f5f9;
-    padding-bottom: 1rem;
+    gap: 6px;
+}
+
+.emp-modal-name-block h2 {
+    margin: 0;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 29px;
+    letter-spacing: -0.03em;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.emp-modal-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 14px;
+    line-height: 17px;
+}
+
+.emp-modal-meta .desig {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 400;
+}
+
+.emp-modal-meta .dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+}
+
+.emp-modal-meta .email {
+    color: #598EF2;
+    text-decoration: underline;
+    font-weight: 400;
+}
+
+.emp-modal-meta .email:hover {
+    opacity: 0.85;
+}
+
+/* ============ BODY ============ */
+.emp-modal-body {
+    padding: 0 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: transparent;
+    position: relative;
+    z-index: 1;
+    margin-top: -101px;
+}
+
+/* ============ CARDS ============ */
+.emp-details-card {
+    background: #FFFFFF;
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.15);
+    border-radius: 16px;
+    padding: 20px 24px 24px;
+    position: relative;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px 14px 24px;
+    margin: 0 -24px 20px -24px;
+    border-bottom: 1px solid #D2E3F4;
 }
 
 .card-title-group {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 10px;
 }
 
-.icon-wrapper {
-    background-color: #EEF2FF;
-    color: #4F46E5;
-    padding: 8px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.emp-details-card .card-header h3 {
+.card-title-group h3 {
     margin: 0;
-    font-size: 1.1rem;
-    color: #1e293b;
-    font-weight: 600;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+    color: #2563EA;
 }
 
 .edit-icon-btn {
-    background: #F1F5F9;
-    border: 1px solid #E2E8F0;
-    border-radius: 6px;
+    background: transparent;
+    border: none;
     cursor: pointer;
-    width: 30px;
-    height: 30px;
+    padding: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #64748B;
-    transition: background 0.2s, color 0.2s;
-    flex-shrink: 0;
+    border-radius: 6px;
+    color: #17181A;
+    transition: background 0.15s;
 }
 
 .edit-icon-btn:hover {
-    background: #EEF2FF;
-    color: #4F46E5;
-    border-color: #C7D2FE;
+    background: rgba(23, 24, 26, 0.05);
 }
 
-.edit-icon-btn svg {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2px;
-}
-
-/* Grid Layout for details */
+/* Grid */
 .card-grid {
     display: grid;
+    gap: 24px 16px;
+}
+
+.card-grid.three-col {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.card-grid.two-col {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+}
+
+.grid-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
 }
 
 .grid-item span {
-    display: block;
-    font-size: 0.8rem;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.25rem;
-    font-weight: 500;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 14px;
+    color: rgba(23, 24, 26, 0.5);
 }
 
 .grid-item p {
     margin: 0;
-    font-size: 0.95rem;
-    color: #0f172a;
-    font-weight: 500;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 18px;
+    color: #17181A;
+    word-break: break-word;
 }
 
-/* Status Pill specifically for the modal */
-.status-pill {
+/* Status pill */
+.emp-status-pill {
     display: inline-flex;
     align-items: center;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    gap: 6px;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 18px;
 }
 
-.status-pill.active { background-color: #dcfce7; color: #166534; }
-.status-pill.inactive { background-color: #fee2e2; color: #991b1b; }
-.status-pill.on_leave { background-color: #fef9c3; color: #854d0e; }
-
-/* Loading State */
-.emp-modal-loading {
+.emp-status-pill .dot-outer {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    color: #64748b;
+    background: rgba(63, 196, 58, 0.2);
 }
 
-.spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #4F46E5;
+.emp-status-pill .dot-inner {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
+    background: #3FC43A;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.emp-status-pill.active { color: #3FC43A; }
+.emp-status-pill.active .dot-outer { background: rgba(63, 196, 58, 0.2); }
+.emp-status-pill.active .dot-inner { background: #3FC43A; }
+
+.emp-status-pill.inactive,
+.emp-status-pill.on_leave { color: #F9AB45; }
+.emp-status-pill.inactive .dot-outer,
+.emp-status-pill.on_leave .dot-outer { background: rgba(249, 171, 69, 0.2); }
+.emp-status-pill.inactive .dot-inner,
+.emp-status-pill.on_leave .dot-inner { background: #F9AB45; }
+
+/* Responsive */
+@media (max-width: 520px) {
+    .card-grid.three-col,
+    .card-grid.two-col {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }

@@ -382,6 +382,18 @@ class EmployeeProfileView(generics.RetrieveUpdateAPIView):
         return get_object_or_404(Employee, user=self.request.user)
 
 
+class RemoveAvatarView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        employee = get_object_or_404(Employee, user=request.user)
+        if employee.avatar:
+            employee.avatar.delete(save=False)
+        employee.avatar = None
+        employee.save()
+        return Response({'avatar': None}, status=200)
+
+
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -444,7 +456,7 @@ class ManagerEmployeeOverview(APIView):
         paginator = StandardResultsSetPagination()
         paginated_queryset = paginator.paginate_queryset(queryset, request, view=self)
         
-        serializer = EmployeeOverviewSerializer(paginated_queryset, many=True)
+        serializer = EmployeeOverviewSerializer(paginated_queryset, many=True, context={'request': request})
 
         return paginator.get_paginated_response({
             'total_count': total_count,
@@ -523,8 +535,10 @@ class EmployeeDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
+        # Deleting the User cascades to the Employee via OneToOneField(on_delete=CASCADE),
+        # so we only need to delete the user — deleting the employee first then calling
+        # user.delete() works too but is redundant.
         user = instance.user
-        instance.delete()
         user.delete()
 
 

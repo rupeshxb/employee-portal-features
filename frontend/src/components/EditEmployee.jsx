@@ -408,7 +408,7 @@ const EditEmployee = () => {
           <div className="form-actions">
             <button type="button" className="btn-cancel" onClick={() => navigate("/manager/employee-overview")}>Cancel</button>
             <button type="submit" className="btn-submit" disabled={loading}>
-              {loading ? "Saving..." : "Save Changes"}
+              {loading ? "Saving..." : "Save Details"}
             </button>
           </div>
         </form>

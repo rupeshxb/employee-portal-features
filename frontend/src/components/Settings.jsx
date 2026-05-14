@@ -11,6 +11,7 @@ const Settings = () => {
     const { user, updateUser, fetchUser } = useUser();
     const [message, setMessage] = useState({ text: '', type: '' });
     const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', designation: '', avatar: null });
+    const [designations, setDesignations] = useState([]);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -24,7 +25,19 @@ const Settings = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => { fetchUser(); }, []);
-    useEffect(() => { if (user) setProfile(prev => ({ ...prev, ...user })); }, [user]);
+    useEffect(() => {
+        if (user) {
+            setProfile(prev => ({ ...prev, ...user }));
+            if (user.is_manager) {
+                fetch(`${API_BASE_URL}/api/designations/`, {
+                    headers: { 'Authorization': `Token ${localStorage.getItem('token')}` }
+                })
+                    .then(r => r.ok ? r.json() : [])
+                    .then(data => setDesignations(data))
+                    .catch(() => {});
+            }
+        }
+    }, [user]);
 
     const getImageUrl = (avatarPath) => {
         if (!avatarPath) return null;
@@ -99,6 +112,9 @@ const Settings = () => {
             const formData = new FormData();
             formData.append('first_name', profile.first_name);
             formData.append('last_name', profile.last_name);
+            if (profile.is_manager && profile.designation) {
+                formData.append('designation', profile.designation);
+            }
             const res = await fetch(`${API_BASE_URL}/api/profile/`, {
                 method: 'PATCH',
                 headers: { 'Authorization': `Token ${token}` },
@@ -113,13 +129,32 @@ const Settings = () => {
         } catch (error) { showMessage('Network error occurred.', 'error'); }
     };
 
-    // Updated to accept blob from ProfilePictureModal
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedImage(file);
+            setIsProfileModalOpen(true);
+            e.target.value = '';
+        }
+    };
+
     const handleImageSave = async (blob) => {
-        if (blob) {
-            setIsUploadingImage(true);
-            const formData = new FormData();
-            formData.append('avatar', blob, 'profile.jpg');
-            try {
+        setIsUploadingImage(true);
+        try {
+            if (blob === null) {
+                const res = await fetch(`${API_BASE_URL}/api/profile/avatar/`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Token ${token}` }
+                });
+                if (res.ok) {
+                    closeProfileModal();
+                    setProfile(prev => ({ ...prev, avatar: null }));
+                    updateUser({ ...profile, avatar: null });
+                    showMessage('Profile picture removed!', 'success');
+                }
+            } else {
+                const formData = new FormData();
+                formData.append('avatar', blob, 'profile.jpg');
                 const res = await fetch(`${API_BASE_URL}/api/profile/`, {
                     method: 'PATCH',
                     headers: { 'Authorization': `Token ${token}` },
@@ -130,29 +165,13 @@ const Settings = () => {
                     closeProfileModal();
                     setProfile(data);
                     updateUser(data);
-
-                    // Remove the old plain text message
                     showMessage('Profile picture updated!', 'success');
                 }
-            } catch (error) {
-                // It's okay to keep the old showMessage for errors, or you can build an error toast later!
-                showMessage('Failed to upload image.', 'error');
             }
-            finally {
-                setIsUploadingImage(false); // <-- Turn OFF the loading spinner
-            }
-        }
-    };
-
-    const handleFileChange = (e) => {
-        console.log("File input triggered!");
-
-        const file = e.target.files[0];
-        console.log("Selected file:", file);
-        if (file) {
-            setSelectedImage(file);
-            setIsProfileModalOpen(true);
-            e.target.value = '';
+        } catch (error) {
+            showMessage('Failed to update profile picture.', 'error');
+        } finally {
+            setIsUploadingImage(false);
         }
     };
 
@@ -211,10 +230,16 @@ const Settings = () => {
                                 ) : (
                                     <div className="avatar-placeholder">{getInitials(profile.first_name, profile.last_name)}</div>
                                 )}
-                                <label className="camera-btn" htmlFor="profile-image-upload">
-                                    <SettingsCameraIcon />
-                                    <input id="profile-image-upload" type="file" style={{ display: 'none' }} hidden onChange={handleFileChange} accept="image/*" />
-                                </label>
+                                {getImageUrl(profile.avatar) ? (
+                                    <button className="camera-btn" onClick={() => setIsProfileModalOpen(true)}>
+                                        <SettingsCameraIcon />
+                                    </button>
+                                ) : (
+                                    <label className="camera-btn" htmlFor="profile-image-upload">
+                                        <SettingsCameraIcon />
+                                        <input id="profile-image-upload" type="file" style={{ display: 'none' }} hidden onChange={handleFileChange} accept="image/*" />
+                                    </label>
+                                )}
                             </div>
                             <h2 className="user-fullname">{profile.first_name} {profile.last_name}</h2>
                         </div>
@@ -254,7 +279,20 @@ const Settings = () => {
                             {/* Row 2 */}
                             <div className="input-group designation-wrapper">
                                 <label>Designation</label>
-                                <input type="text" className="text-input disabled" value={profile.designation_name || 'N/A'} disabled />
+                                {profile.is_manager ? (
+                                    <select
+                                        className="text-input"
+                                        value={profile.designation || ''}
+                                        onChange={e => setProfile({ ...profile, designation: e.target.value })}
+                                    >
+                                        <option value="">Select designation</option>
+                                        {designations.map(d => (
+                                            <option key={d.id} value={d.id}>{d.name}</option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <input type="text" className="text-input disabled" value={profile.designation_name || 'N/A'} disabled />
+                                )}
                             </div>
 
                             {/* Row 3 */}
@@ -279,7 +317,7 @@ const Settings = () => {
             <ProfilePictureModal
                 isOpen={isProfileModalOpen}
                 onClose={closeProfileModal}
-                image={selectedImage}
+                image={getImageUrl(profile.avatar) || selectedImage}
                 onSave={handleImageSave}
                 isLoading={isUploadingImage}
             />

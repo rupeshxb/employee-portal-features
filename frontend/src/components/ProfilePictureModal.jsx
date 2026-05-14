@@ -8,28 +8,37 @@ import { SpinnerIcon } from './Icons';
 const ProfilePictureModal = ({ isOpen, onClose, image, onSave, isLoading }) => {
   const [scale, setScale] = useState(1.2);
   const [localImage, setLocalImage] = useState(null);
+  const [wasCleared, setWasCleared] = useState(false);
   const editorRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  // Sync the local image with the parent prop when modal opens
   useEffect(() => {
     if (isOpen) {
       setScale(1.2);
-      setLocalImage(image);
+      setWasCleared(false);
+      if (typeof image === 'string' && image.length > 0) {
+        // Fetch existing avatar URL as a blob so AvatarEditor canvas stays untainted
+        fetch(image)
+          .then(r => r.blob())
+          .then(blob => setLocalImage(URL.createObjectURL(blob)))
+          .catch(() => setLocalImage(null));
+      } else {
+        setLocalImage(image || null);
+      }
     }
   }, [isOpen, image]);
 
   if (!isOpen) return null;
 
   const handleSaveClick = () => {
-    if (!localImage) return;
-    
-    if (editorRef.current) {
+    if (!localImage && wasCleared) {
+      onSave(null);
+      return;
+    }
+    if (localImage && editorRef.current) {
       const canvas = editorRef.current.getImageScaledToCanvas();
       canvas.toBlob((blob) => {
-        if (blob) {
-          onSave(blob);
-        }
+        if (blob) onSave(blob);
       }, 'image/jpeg', 0.95);
     }
   };
@@ -38,20 +47,18 @@ const ProfilePictureModal = ({ isOpen, onClose, image, onSave, isLoading }) => {
     const file = e.target.files[0];
     if (file) {
       setLocalImage(file);
+      setWasCleared(false);
       setScale(1.2);
       e.target.value = '';
     }
   };
 
-  const triggerFileSelect = () => {
-      fileInputRef.current.click();
-  };
+  const triggerFileSelect = () => fileInputRef.current.click();
 
   return createPortal(
     <div className="profile-modal-backdrop" onClick={!isLoading ? onClose : undefined}>
       <div className="profile-modal-box" onClick={(e) => e.stopPropagation()}>
 
-        {/* Loading Overlay */}
         {isLoading && (
           <div className="loading-overlay">
             <SpinnerIcon className="profile-spinner" size={60} />
@@ -59,7 +66,6 @@ const ProfilePictureModal = ({ isOpen, onClose, image, onSave, isLoading }) => {
           </div>
         )}
 
-        {/* Header */}
         <div className="profile-modal-header">
           <h3>Change Profile Picture</h3>
           <button className="profile-close-btn" onClick={!isLoading ? onClose : undefined} style={isLoading ? { opacity: 0.4, cursor: 'default' } : {}}>
@@ -67,19 +73,17 @@ const ProfilePictureModal = ({ isOpen, onClose, image, onSave, isLoading }) => {
           </button>
         </div>
 
-        {/* Cropper Body - Hide content while loading */}
         <div className={`cropper-body ${isLoading ? 'hidden-content' : ''}`}>
           <div className="canvas-container">
             {localImage ? (
               <>
-                <button 
-                    className="delete-image-btn" 
-                    onClick={() => setLocalImage(null)}
-                    title="Remove image"
+                <button
+                  className="delete-image-btn"
+                  onClick={() => { setLocalImage(null); setWasCleared(true); }}
+                  title="Remove image"
                 >
-                    <Trash2 size={16} />
+                  <Trash2 size={16} />
                 </button>
-                
                 <AvatarEditor
                   ref={editorRef}
                   image={localImage}
@@ -95,13 +99,12 @@ const ProfilePictureModal = ({ isOpen, onClose, image, onSave, isLoading }) => {
             ) : (
               <div className="upload-placeholder-box">
                 <button className="btn-modal-save" onClick={triggerFileSelect}>
-                    Select Image
+                  Select Image
                 </button>
               </div>
             )}
           </div>
 
-          {/* Controls */}
           <div className="zoom-control-wrapper">
             <div className="zoom-label">
               <span>Zoom</span>
@@ -120,31 +123,28 @@ const ProfilePictureModal = ({ isOpen, onClose, image, onSave, isLoading }) => {
           </div>
         </div>
 
-        {/* Footer Actions - Hide buttons while loading */}
         {!isLoading && (
           <div className="profile-modal-actions">
             <button onClick={onClose} className="btn-modal-cancel">
               Cancel
             </button>
-            <button 
-              onClick={handleSaveClick} 
-              className="btn-modal-save" 
-              disabled={!localImage}
+            <button
+              onClick={handleSaveClick}
+              className="btn-modal-save"
+              disabled={!localImage && !wasCleared}
             >
               Save
             </button>
           </div>
         )}
-        
-        {/* Hidden file input */}
-        <input
-            type="file"
-            ref={fileInputRef}
-            hidden
-            onChange={handleFileSelect}
-            accept="image/*"
-        />
 
+        <input
+          type="file"
+          ref={fileInputRef}
+          hidden
+          onChange={handleFileSelect}
+          accept="image/*"
+        />
       </div>
     </div>,
     document.body
