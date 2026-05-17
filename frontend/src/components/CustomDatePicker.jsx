@@ -121,6 +121,7 @@ const DatePickerPanel = ({ value, onChange, onClose, ignoreRef, portal, boundary
             role="dialog"
             aria-label="Choose date"
             style={portalStyle}
+            onClick={e => e.stopPropagation()}
         >
             <div className="cdp-header">
                 <span className="cdp-month-label">{monthLabel}</span>

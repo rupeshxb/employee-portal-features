@@ -18,30 +18,18 @@
     max-height: 90vh;
     background: #F2F3F7;
     border-radius: 16px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    overscroll-behavior: contain;
-    scrollbar-gutter: stable;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     font-family: 'Figtree', sans-serif;
     position: relative;
 }
 
-/* Inset the scrollbar so it stays inside the rounded corners */
-.emp-modal-container::-webkit-scrollbar {
-    width: 6px;
-}
-.emp-modal-container::-webkit-scrollbar-track {
-    background: transparent;
-    margin: 20px 0;
-}
-.emp-modal-container::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-}
-.emp-modal-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
+/* Custom scrollbar sizing for the modal */
+.emp-modal-scroll.cs-wrapper {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 90vh;
 }
 
 /* --- Loading state --- */
@@ -207,7 +195,7 @@
     position: relative;
 }
 
-.card-header {
+.emp-details-card .card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;

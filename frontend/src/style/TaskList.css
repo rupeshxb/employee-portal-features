@@ -160,6 +160,11 @@
   padding-top: 6px;
 }
 
+.date-card .blocker-section.blocker-no-separator {
+  border-top: none;
+  padding-top: 16px;
+}
+
 .blocker-section-title {
   display: flex;
   align-items: center;
@@ -197,4 +202,24 @@
 
 .task-list.daily-tasks-task-list {
   gap: 32px;
+}
+
+/* Scoped icon sizing + color-only hover for add-daily-tasks */
+.daily-tasks-task-list .action-btn svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.daily-tasks-task-list .action-btn:hover {
+  background: transparent;
+}
+.daily-tasks-task-list .action-btn:not(.delete):hover svg path {
+  stroke: var(--primary-blue);
+}
+.daily-tasks-task-list .action-btn.delete:hover {
+  background: transparent;
+}
+.daily-tasks-task-list .action-btn.delete:hover svg path {
+  stroke: #FF493F;
 }

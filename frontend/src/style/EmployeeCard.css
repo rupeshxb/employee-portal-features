@@ -172,6 +172,48 @@
     padding: 4px 0 8px 0;
 }
 
+/* Not submitted state */
+.ec-not-submitted {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    background: rgba(255, 73, 63, 0.1);
+    border-radius: 12px;
+    padding: 12px;
+    height: 100%;
+    min-height: 140px;
+}
+
+.ec-not-submitted-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.ec-not-submitted-label {
+    font-family: 'Figtree', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 13px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #FF493F;
+}
+
+.ec-not-submitted-desc {
+    font-family: 'Figtree', sans-serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 20px;
+    color: rgba(23, 24, 26, 0.6);
+    text-align: center;
+}
+
 /* --- Custom Project Badges --- */
 .mini-tag {
     color: white;

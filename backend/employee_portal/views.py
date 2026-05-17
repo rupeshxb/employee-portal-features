@@ -120,24 +120,25 @@ class DailyTaskDetail(generics.RetrieveUpdateDestroyAPIView):
 @api_view(['GET'])
 def team_updates(request):
     date_param = request.GET.get('date')
+    filter_type = request.GET.get('filter_type', '')  # 'today', 'yesterday', 'custom', or ''
     search_query = request.GET.get('search', '')
     project_filter = request.GET.get('project', 'All Projects')
     role_filter = request.GET.get('role', 'All Roles')
 
-    is_specific_date = bool(date_param) 
-    if date_param:
-        target_date = parse_date(date_param)
-    else:
+    # Trust the client's date (it sends LOCAL date matching how DailyTask.date is stored)
+    target_date = parse_date(date_param) if date_param else date.today()
+    if not target_date:
         target_date = date.today()
-    
-    if not target_date: target_date = date.today()
+
     prev_date = target_date - timedelta(days=1)
+    show_prev_day = filter_type != 'custom'
+    show_previous = not filter_type  # only for the "All" (no filter) case
 
     employees = Employee.objects.select_related('user').all()
 
     if search_query:
         employees = employees.filter(
-            Q(user__username__icontains=search_query) | 
+            Q(user__username__icontains=search_query) |
             Q(user__first_name__icontains=search_query) |
             Q(user__last_name__icontains=search_query)
         )
@@ -154,28 +155,39 @@ def team_updates(request):
             tasks_query = tasks_query.filter(project__name=project_filter)
 
         today_tasks = tasks_query.filter(date=target_date, is_blocker=False)
-        yesterday_tasks = tasks_query.filter(date=prev_date, is_blocker=False)
         blockers = tasks_query.filter(date=target_date, is_blocker=True)
-        previous_tasks = DailyTask.objects.none()
+        has_target_activity = today_tasks.exists() or blockers.exists()
 
-        if not is_specific_date:
+        if filter_type:
+            # Specific date selected: prev day only shown if target date is active
+            if not has_target_activity:
+                continue
+            yesterday_tasks = tasks_query.filter(date=prev_date, is_blocker=False) if show_prev_day else DailyTask.objects.none()
+            previous_tasks = DailyTask.objects.none()
+        else:
+            # "All" filter: show any historical activity, no anchor restriction
+            yesterday_tasks = tasks_query.filter(date=prev_date, is_blocker=False)
             previous_tasks = tasks_query.filter(date__lt=prev_date, is_blocker=False)
-
-        has_activity = (today_tasks.exists() or yesterday_tasks.exists() or blockers.exists() or previous_tasks.exists())
-
-        if not has_activity:
-            continue 
+            if not has_target_activity and not yesterday_tasks.exists() and not previous_tasks.exists():
+                continue
 
         emp_data = TeamUpdateEmployeeSerializer(emp).data
         emp_data['tasks'] = {
             'today': DailyTaskSerializer(today_tasks, many=True).data,
             'yesterday': DailyTaskSerializer(yesterday_tasks, many=True).data,
             'blockers': DailyTaskSerializer(blockers, many=True).data,
-            'previous': DailyTaskSerializer(previous_tasks, many=True).data
+            'previous': DailyTaskSerializer(previous_tasks, many=True).data,
         }
         response_data.append(emp_data)
 
-    return Response(response_data)
+    return Response({
+        'meta': {
+            'target_date': str(target_date),
+            'prev_date': str(prev_date),
+            'filter_type': filter_type,
+        },
+        'employees': response_data,
+    })
 
 
 # --- MANAGER TEAM UPDATES VIEW ---
@@ -198,26 +210,28 @@ class ManagerTeamUpdatesView(APIView):
             }, status=403)
 
         # 1. Date Filter Logic
-        date_str = request.query_params.get('date', 'all').strip().lower()
-        real_today = timezone.now().date()
-        real_yesterday = real_today - timedelta(days=1)
+        date_str = request.query_params.get('date', '').strip()
+        filter_type = request.query_params.get('filter_type', '')  # 'today', 'yesterday', 'custom'
 
-        # Determine target_date for the daily submission wrapper (defaults to today)
-        if date_str in ['all', '', 'today']:
-            target_date = real_today
-        elif date_str == 'yesterday':
-            target_date = real_yesterday
-        else:
-            target_date = parse_date(date_str) or real_today
+        # Trust the client's date (it sends LOCAL date matching how DailyTask.date is stored)
+        target_date = parse_date(date_str) if date_str else timezone.now().date()
+        if not target_date:
+            target_date = timezone.now().date()
+
+        prev_date = target_date - timedelta(days=1)
+        show_prev_day = filter_type != 'custom'
 
         # Filters
         department_filter = request.query_params.get('department', 'All')
-        time_filter = request.query_params.get('time', 'Time') 
+        time_filter = request.query_params.get('time', 'Time')
         search_query = request.query_params.get('search', '')
         project_filter = request.query_params.get('project', 'All Projects')
 
-        # PREFETCHING: Fetch all required related data upfront (Kills N+1)
-        tasks_qs = DailyTask.objects.select_related('project').order_by('-date', '-created_at')
+        # Scope prefetch to only the dates we care about — old tasks cannot leak through
+        relevant_dates = [target_date, prev_date] if show_prev_day else [target_date]
+        tasks_qs = DailyTask.objects.select_related('project').filter(
+            date__in=relevant_dates
+        ).order_by('-date', '-created_at')
         if project_filter != 'All Projects':
             tasks_qs = tasks_qs.filter(project__name__iexact=project_filter)
 
@@ -266,23 +280,19 @@ class ManagerTeamUpdatesView(APIView):
             elif time_filter in ['before_10', 'after_10']:
                 continue 
 
-            today_tasks, yesterday_tasks, previous_tasks, blockers = [], [], [], []
+            today_tasks, prev_day_tasks, blockers = [], [], []
 
             for t in emp_tasks:
-                if date_str in ['all', '']:
-                    if t.is_blocker: blockers.append(t)
-                    elif t.date == real_today: today_tasks.append(t)
-                    elif t.date == real_yesterday: yesterday_tasks.append(t)
-                    else: previous_tasks.append(t)
-                elif date_str == 'today':
-                    if t.date == real_today and t.is_blocker: blockers.append(t)
-                    elif t.date == real_today and not t.is_blocker: today_tasks.append(t)
-                elif date_str == 'yesterday':
-                    if t.date == real_yesterday and t.is_blocker: blockers.append(t)
-                    elif t.date == real_yesterday and not t.is_blocker: yesterday_tasks.append(t)
-                else:
-                    if t.date == target_date and t.is_blocker: blockers.append(t)
-                    elif t.date == target_date and not t.is_blocker: previous_tasks.append(t)
+                if t.date == target_date:
+                    if t.is_blocker:
+                        blockers.append(t)
+                    else:
+                        today_tasks.append(t)
+                elif t.date == prev_date and show_prev_day and not t.is_blocker:
+                    prev_day_tasks.append(t)
+
+            # Only show prev-day tasks if target date had a submission
+            yesterday_tasks = prev_day_tasks if (today_tasks or blockers) else []
 
             submitted_time_iso = actual_submit_time.isoformat() if actual_submit_time else None
 
@@ -294,7 +304,6 @@ class ManagerTeamUpdatesView(APIView):
             emp_data['tasks'] = {
                 'today': DailyTaskSerializer(today_tasks, many=True).data,
                 'yesterday': DailyTaskSerializer(yesterday_tasks, many=True).data,
-                'previous': DailyTaskSerializer(previous_tasks, many=True).data,
                 'blockers': DailyTaskSerializer(blockers, many=True).data,
             }
             
@@ -314,7 +323,12 @@ class ManagerTeamUpdatesView(APIView):
 
         return Response({
             "total_in_department": total_in_department,
-            "employees": final_employees_list
+            "meta": {
+                "target_date": str(target_date),
+                "prev_date": str(prev_date),
+                "filter_type": filter_type,
+            },
+            "employees": final_employees_list,
         })
 
 

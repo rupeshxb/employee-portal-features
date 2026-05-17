@@ -82,7 +82,7 @@ const Header = () => {
       <div className="header-right" ref={dropdownRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '24px' }}>
         <div className="date-display">
           <HeaderCalendarIcon className="icon-grey" />
-          <span>{new Date().toDateString()}</span>
+          <span>{new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span>
         </div>
         <VerticalDividerIcon className="header-divider" />
         <div className="notification-icon">

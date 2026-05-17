@@ -1,5 +1,19 @@
 import React from 'react';
 
+export const TagAddPlusIcon = () => (
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11 4.58398V17.4173" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M4.58331 11H17.4166" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const TagsEmptyIcon = () => (
+    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M80 21.25C80 27.45 74.95 32.5 68.75 32.5H51.25C48.15 32.5 45.35 31.25 43.3 29.2C41.25 27.15 40 24.35 40 21.25C40 15.05 45.05 10 51.25 10H68.75C71.85 10 74.65 11.25 76.7 13.3C78.75 15.35 80 18.15 80 21.25Z" fill="#C6C7CF"/>
+        <path d="M94.15 25.1496C93 24.1996 91.7 23.4496 90.3 22.8996C88.85 22.3496 87.4 23.4996 87.1 24.9996C85.4 33.5496 77.85 39.9996 68.75 39.9996H51.25C46.25 39.9996 41.55 38.0496 38 34.4996C35.4 31.8996 33.6 28.5996 32.9 25.0496C32.6 23.5496 31.1 22.3496 29.65 22.9496C23.85 25.2996 20 30.5996 20 41.2496V89.9996C20 105 28.95 110 40 110H80C91.05 110 100 105 100 89.9996V41.2496C100 33.0996 97.75 28.0996 94.15 25.1496ZM40 61.2496H60C62.05 61.2496 63.75 62.9496 63.75 64.9996C63.75 67.0496 62.05 68.7496 60 68.7496H40C37.95 68.7496 36.25 67.0496 36.25 64.9996C36.25 62.9496 37.95 61.2496 40 61.2496ZM80 88.7496H40C37.95 88.7496 36.25 87.0496 36.25 84.9996C36.25 82.9496 37.95 81.2496 40 81.2496H80C82.05 81.2496 83.75 82.9496 83.75 84.9996C83.75 87.0496 82.05 88.7496 80 88.7496Z" fill="#DADBE3"/>
+    </svg>
+);
+
 export const PlusIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M5 12h14" />
@@ -54,8 +68,8 @@ export const EditIcon = () => (
 );
 
 export const TrashIcon = () => (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M14.25 5.25L13.5995 14.3569C13.5434 15.1418 12.8903 15.75 12.1033 15.75H5.89668C5.10972 15.75 4.45656 15.1418 4.40049 14.3569L3.75 5.25M7.5 8.25V12.75M10.5 8.25V12.75M11.25 5.25V3C11.25 2.58579 10.9142 2.25 10.5 2.25H7.5C7.08579 2.25 6.75 2.58579 6.75 3V5.25M3 5.25H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.4167 6.41667L16.6217 17.5473C16.5532 18.5067 15.7549 19.25 14.793 19.25H7.20713C6.24529 19.25 5.44699 18.5067 5.37846 17.5473L4.58341 6.41667M9.16675 10.0833V15.5833M12.8334 10.0833V15.5833M13.7501 6.41667V3.66667C13.7501 3.16041 13.3397 2.75 12.8334 2.75H9.16675C8.66049 2.75 8.25008 3.16041 8.25008 3.66667V6.41667M3.66675 6.41667H18.3334" stroke="#17181A" strokeOpacity="0.7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );
 export const TodayIcon = () => (
@@ -109,6 +123,20 @@ export const BlockerAlertIcon = () => (
         <path d="M10 6.45898V10.834" stroke="#FF493F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M17.5666 7.14938V12.8493C17.5666 13.7827 17.0666 14.6494 16.2583 15.1244L11.3083 17.9827C10.5 18.4494 9.49994 18.4494 8.68327 17.9827L3.73327 15.1244C2.92493 14.6577 2.42493 13.791 2.42493 12.8493V7.14938C2.42493 6.21604 2.92493 5.34934 3.73327 4.87434L8.68327 2.01602C9.4916 1.54935 10.4916 1.54935 11.3083 2.01602L16.2583 4.87434C17.0666 5.34934 17.5666 6.20771 17.5666 7.14938Z" stroke="#FF493F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M10 13.5V13.5833" stroke="#FF493F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+
+export const NotSubmittedWarningIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4.01096 20.918H19.9888C20.2483 20.9179 20.5033 20.8506 20.729 20.7224C20.9547 20.5943 21.1433 20.4099 21.2763 20.1871C21.4094 19.9643 21.4824 19.7108 21.4881 19.4513C21.4939 19.1919 21.4323 18.9354 21.3092 18.7069L13.3208 3.87094C12.7541 2.81906 11.2456 2.81906 10.6789 3.87094L2.69049 18.7069C2.56747 18.9354 2.50583 19.1919 2.5116 19.4513C2.51737 19.7108 2.59035 19.9643 2.7234 20.1871C2.85646 20.4099 3.04504 20.5943 3.27072 20.7224C3.4964 20.8506 3.75146 20.9179 4.01096 20.918Z" stroke="#FF493F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M11.7311 9.1588L12.0002 14.8776L12.2688 9.16115C12.2705 9.1246 12.2646 9.0881 12.2517 9.05388C12.2388 9.01966 12.219 8.98843 12.1936 8.96211C12.1682 8.93578 12.1377 8.91492 12.104 8.90078C12.0702 8.88665 12.034 8.87954 11.9974 8.8799C11.9614 8.88025 11.9259 8.8878 11.893 8.9021C11.86 8.9164 11.8302 8.93716 11.8054 8.96316C11.7806 8.98915 11.7612 9.01986 11.7485 9.05346C11.7357 9.08707 11.7298 9.12288 11.7311 9.1588Z" stroke="#FF493F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M12 18.6211C11.8146 18.6211 11.6333 18.5661 11.4792 18.4631C11.325 18.3601 11.2048 18.2137 11.1339 18.0424C11.0629 17.8711 11.0443 17.6826 11.0805 17.5007C11.1167 17.3188 11.206 17.1518 11.3371 17.0207C11.4682 16.8896 11.6352 16.8003 11.8171 16.7641C11.999 16.7279 12.1875 16.7465 12.3588 16.8175C12.5301 16.8884 12.6765 17.0086 12.7795 17.1627C12.8825 17.3169 12.9375 17.4982 12.9375 17.6836C12.9375 17.9322 12.8387 18.1707 12.6629 18.3465C12.4871 18.5223 12.2486 18.6211 12 18.6211Z" fill="#FF493F"/>
+    </svg>
+);
+
+export const PencilEditIcon = () => (
+    <svg width="19" height="19" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14.1667 2.5009C14.3856 2.28203 14.6455 2.10842 14.9314 1.98996C15.2174 1.87151 15.5239 1.81055 15.8334 1.81055C16.1429 1.81055 16.4494 1.87151 16.7354 1.98996C17.0214 2.10842 17.2812 2.28203 17.5001 2.5009C17.719 2.71977 17.8926 2.97961 18.011 3.26558C18.1295 3.55154 18.1904 3.85804 18.1904 4.16757C18.1904 4.4771 18.1295 4.7836 18.011 5.06956C17.8926 5.35553 17.719 5.61537 17.5001 5.83424L6.25008 17.0842L1.66675 18.3342L2.91675 13.7509L14.1667 2.5009Z" stroke="#17181A" strokeOpacity="0.7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );
 
@@ -196,8 +224,8 @@ export const TagIcon = () => (
 
 export const CheckmarkRound = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M9.99996 18.3327C14.5833 18.3327 18.3333 14.5827 18.3333 9.99935C18.3333 5.41602 14.5833 1.66602 9.99996 1.66602C5.41663 1.66602 1.66663 5.41602 1.66663 9.99935C1.66663 14.5827 5.41663 18.3327 9.99996 18.3327Z" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M6.45837 10.0009L8.81671 12.3592L13.5417 7.64258" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M10.0001 18.3327C14.5834 18.3327 18.3334 14.5827 18.3334 9.99935C18.3334 5.41602 14.5834 1.66602 10.0001 1.66602C5.41675 1.66602 1.66675 5.41602 1.66675 9.99935C1.66675 14.5827 5.41675 18.3327 10.0001 18.3327Z" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M6.45825 10.0009L8.81659 12.3592L13.5416 7.64258" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -219,6 +247,18 @@ export const CalendarInputIcon = ({ className }) => (
         <path d="M10.9958 15.3079H11.004" stroke="#17181A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         <path d="M7.6032 12.5579H7.61143" stroke="#17181A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         <path d="M7.6032 15.3079H7.61143" stroke="#17181A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const DateCalendarIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5.33331 1.33325V3.33325" stroke="#17181A" strokeOpacity="0.7" strokeWidth="1.33333" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M10.6667 1.33325V3.33325" stroke="#17181A" strokeOpacity="0.7" strokeWidth="1.33333" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M2.33331 6.06006H13.6666" stroke="#17181A" strokeOpacity="0.7" strokeWidth="1.33333" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M14 5.66659V11.3333C14 13.3333 13 14.6666 10.6667 14.6666H5.33333C3 14.6666 2 13.3333 2 11.3333V5.66659C2 3.66659 3 2.33325 5.33333 2.33325H10.6667C13 2.33325 14 3.66659 14 5.66659Z" stroke="#17181A" strokeOpacity="0.7" strokeWidth="1.33333" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M7.99697 9.13338H8.00296" stroke="#17181A" strokeOpacity="0.7" strokeWidth="1.77778" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M5.52956 9.13338H5.53555" stroke="#17181A" strokeOpacity="0.7" strokeWidth="1.77778" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M5.52956 11.1334H5.53555" stroke="#17181A" strokeOpacity="0.7" strokeWidth="1.77778" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );
 
@@ -247,8 +287,7 @@ export const PasswordEyeOffIcon = ({ className }) => (
 
 export const CopyIcon = ({ className }) => (
     <svg className={className} width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M14.6667 2.75H5.5C4.58333 2.75 3.66667 3.66667 3.66667 4.58333V15.5833" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        <rect x="7.33333" y="6.41667" width="11" height="13.75" rx="1.83333" stroke="#434446" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M17.9027 7.33333L12.8335 2.26417C12.7047 2.1352 12.5299 2.06266 12.3477 2.0625H10.0835C9.41493 2.0625 8.77375 2.32809 8.301 2.80084C7.82825 3.27358 7.56266 3.91477 7.56266 4.58333V5.72917H6.41683C5.74826 5.72917 5.10708 5.99475 4.63433 6.4675C4.16158 6.94025 3.896 7.58143 3.896 8.25V17.4167C3.896 18.0852 4.16158 18.7264 4.63433 19.1992C5.10708 19.6719 5.74826 19.9375 6.41683 19.9375H12.8335C13.5021 19.9375 14.1432 19.6719 14.616 19.1992C15.0887 18.7264 15.3543 18.0852 15.3543 17.4167V16.2708H15.5835C16.2521 16.2708 16.8932 16.0052 17.366 15.5325C17.8387 15.0598 18.1043 14.4186 18.1043 13.75V7.79167C18.0971 7.61897 18.0251 7.45533 17.9027 7.33333ZM13.0627 4.40917L15.7577 7.10417H13.0627V4.40917ZM13.9793 17.4167C13.9793 17.7206 13.8586 18.012 13.6437 18.2269C13.4288 18.4418 13.1374 18.5625 12.8335 18.5625H6.41683C6.11294 18.5625 5.82149 18.4418 5.6066 18.2269C5.39172 18.012 5.271 17.7206 5.271 17.4167V8.25C5.271 7.94611 5.39172 7.65466 5.6066 7.43977C5.82149 7.22489 6.11294 7.10417 6.41683 7.10417H7.56266V13.75C7.56266 14.4186 7.82825 15.0598 8.301 15.5325C8.77375 16.0052 9.41493 16.2708 10.0835 16.2708H13.9793V17.4167ZM15.5835 14.8958H10.0835C9.7796 14.8958 9.48815 14.7751 9.27327 14.5602C9.05838 14.3453 8.93766 14.0539 8.93766 13.75V4.58333C8.93766 4.27944 9.05838 3.98799 9.27327 3.77311C9.48815 3.55822 9.7796 3.4375 10.0835 3.4375H11.6877V7.79167C11.69 7.97326 11.7632 8.14676 11.8917 8.27518C12.0201 8.4036 12.1936 8.47679 12.3752 8.47917H16.7293V13.75C16.7293 14.0539 16.6086 14.3453 16.3937 14.5602C16.1788 14.7751 15.8874 14.8958 15.5835 14.8958Z" fill="#434446"/>
     </svg>
 );
 
@@ -307,8 +346,8 @@ export const SettingsEmailIcon = () => (
   <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="48" height="48" rx="6" fill="#EDEEF0" fillOpacity="0.3"/>
     <rect x="0.5" y="0.5" width="47" height="47" rx="5.5" stroke="#5C676A" strokeOpacity="0.2"/>
-    <path d="M33 16H15C13.9 16 13 16.9 13 18V30C13 31.1 13.9 32 15 32H33C34.1 32 35 31.1 35 30V18C35 16.9 34.1 16 33 16Z" stroke="rgba(23,24,26,0.65)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M13 18L24 25L35 18" stroke="rgba(23,24,26,0.65)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M29 32.5H19C16 32.5 14 31 14 27.5V20.5C14 17 16 15.5 19 15.5H29C32 15.5 34 17 34 20.5V27.5C34 31 32 32.5 29 32.5Z" stroke="#17181A" strokeOpacity="0.65" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M29 21L25.87 23.5C24.84 24.32 23.15 24.32 22.12 23.5L19 21" stroke="#17181A" strokeOpacity="0.65" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -404,5 +443,31 @@ export const HourglassIcon = () => (
 export const BlockIcon = () => (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path fillRule="evenodd" clipRule="evenodd" d="M10 1.66675C5.4 1.66675 1.66667 5.40008 1.66667 10.0001C1.66667 14.6001 5.4 18.3334 10 18.3334C14.6 18.3334 18.3333 14.6001 18.3333 10.0001C18.3333 5.40008 14.6 1.66675 10 1.66675ZM3.33333 10.0001C3.33333 6.31675 6.31667 3.33341 10 3.33341C11.5417 3.33341 12.9583 3.85841 14.0833 4.74175L4.74167 14.0834C3.85833 12.9584 3.33333 11.5417 3.33333 10.0001ZM10 16.6667C8.45833 16.6667 7.04167 16.1417 5.91667 15.2584L15.2583 5.91675C16.1417 7.04175 16.6667 8.45841 16.6667 10.0001C16.6667 13.6834 13.6833 16.6667 10 16.6667Z" fill="#17181A"/>
+    </svg>
+);
+
+export const BadgeCloseIcon = () => (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 3L3 9" stroke="#2563EA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M3 3L9 9" stroke="#2563EA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const CheckTickIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.33325 8.66602L5.99992 11.3327L12.6666 4.66602" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+export const RadioSelectedIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="9" cy="9" r="8.5" stroke="#2563EA"/>
+        <circle cx="9" cy="9" r="5" fill="#2563EA"/>
+    </svg>
+);
+
+export const RadioUnselectedIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="9" cy="9" r="8.5" stroke="#17181A" strokeOpacity="0.4"/>
     </svg>
 );

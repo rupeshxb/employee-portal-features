@@ -1,5 +1,6 @@
 import React from 'react';
-import { Calendar, Clock, Edit2, Trash2 } from 'lucide-react';
+import { Clock } from 'lucide-react';
+import { TrashIcon, PencilEditIcon, DateCalendarIcon } from './Icons';
 import { getSafeBackgroundColor } from '../utils/helpers';
 import '../style/TaskList.css';
 
@@ -31,7 +32,7 @@ const TaskList = ({ groupedTasks, onEdit, onDelete, onAddNewTask }) => {
           {/* --- HEADER --- */}
           <div className="date-header">
             <div className="date-text">
-              <Calendar size={14} style={{ color: '#9CA3AF' }} />
+              <DateCalendarIcon />
               {new Date(group.date).toLocaleDateString('en-US', {
                 weekday: 'long',
                 month: 'short',
@@ -49,21 +50,23 @@ const TaskList = ({ groupedTasks, onEdit, onDelete, onAddNewTask }) => {
           </div>
 
           {/* --- STANDARD TASKS --- */}
-          <div className="task-group">
-            {group.tasks.map((task, idx) => (
-              <TaskRow
-                key={task.id}
-                task={task}
-                index={idx}
-                onEdit={onEdit}
-                onDelete={onDelete}
-              />
-            ))}
-          </div>
+          {group.tasks.length > 0 && (
+            <div className="task-group">
+              {group.tasks.map((task, idx) => (
+                <TaskRow
+                  key={task.id}
+                  task={task}
+                  index={idx}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                />
+              ))}
+            </div>
+          )}
 
           {/* --- BLOCKERS SECTION --- */}
           {group.blockers && group.blockers.length > 0 && (
-            <div className="blocker-section">
+            <div className={`blocker-section${group.tasks.length === 0 ? ' blocker-no-separator' : ''}`}>
               <div className="blocker-section-title">
                 BLOCKERS
               </div>
@@ -126,7 +129,7 @@ const TaskRow = ({ task, index, onEdit, onDelete, isBlocker }) => {
             onClick={() => onEdit(task)}
             title="Edit Task"
           >
-            <Edit2 size={15} />
+            <PencilEditIcon />
           </button>
 
           <button
@@ -134,7 +137,7 @@ const TaskRow = ({ task, index, onEdit, onDelete, isBlocker }) => {
             onClick={() => onDelete(task)}
             title="Delete Task"
           >
-            <Trash2 size={15} />
+            <TrashIcon />
           </button>
         </div>
       </div>

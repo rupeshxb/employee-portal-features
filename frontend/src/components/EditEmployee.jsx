@@ -3,8 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../style/AddEmployee.css";
 import "../style/EditEmployee.css";
 import { API_BASE_URL } from "../../config";
-import { CalendarInputIcon, BackArrowIcon } from "./Icons";
+import { CalendarInputIcon, BackArrowIcon, RadioSelectedIcon, RadioUnselectedIcon } from "./Icons";
 import CountryCodeSelect from "./CountryCodeSelect";
+import CustomSelect from "./CustomSelect";
 import { getDialCode, detectCountry } from "../data/countryCodes";
 
 const EditEmployee = () => {
@@ -178,7 +179,7 @@ const EditEmployee = () => {
       });
 
       if (res.ok) {
-        navigate("/manager/employee-overview");
+        navigate("/manager/employee-overview", { state: { toastMessage: 'Employee details updated successfully!' } });
       } else {
         const errData = await res.json();
         let errorMsg = "Failed to update employee.";
@@ -296,7 +297,6 @@ const EditEmployee = () => {
                 <label>Phone Number *</label>
                 <div className={`phone-input-wrapper ${fieldErrors.phone_number ? 'input-error' : ''}`}>
                   <CountryCodeSelect value={phoneCountry} onChange={setPhoneCountry} />
-                  <span className="phone-divider" />
                   <input type="tel" name="phone_number" value={formData.phone_number} onChange={handleChange} placeholder="Phone number" className="phone-number-input" />
                 </div>
                 {fieldErrors.phone_number && <span className="field-error">{fieldErrors.phone_number}</span>}
@@ -305,7 +305,6 @@ const EditEmployee = () => {
                 <label>Emergency Contact Number</label>
                 <div className="phone-input-wrapper">
                   <CountryCodeSelect value={emergencyCountry} onChange={setEmergencyCountry} />
-                  <span className="phone-divider" />
                   <input type="tel" name="emergency_contact" value={formData.emergency_contact} onChange={handleChange} placeholder="Phone number" className="phone-number-input" />
                 </div>
               </div>
@@ -318,38 +317,44 @@ const EditEmployee = () => {
             <div className="form-grid">
               <div className="input-group">
                 <label>Employment Type *</label>
-                <select name="employment_type" required value={formData.employment_type} onChange={handleChange}>
-                  <option value="Full-Time">Full-Time</option>
-                  <option value="Part-Time">Part-Time</option>
-                  <option value="Contract">Contract</option>
-                  <option value="Internship">Internship</option>
-                </select>
+                <CustomSelect
+                  value={formData.employment_type}
+                  onChange={(v) => setFormData(p => ({ ...p, employment_type: v }))}
+                  options={[
+                    { value: 'Full-Time', label: 'Full-Time' },
+                    { value: 'Part-Time', label: 'Part-Time' },
+                    { value: 'Contract', label: 'Contract' },
+                    { value: 'Internship', label: 'Internship' },
+                  ]}
+                  placeholder="Select employment type"
+                />
               </div>
 
               <div className="input-group">
                 <label>Status *</label>
-                <div className="radio-group">
-                  <label className="radio-label">
-                    <input type="radio" name="status" value="Active" checked={formData.status === "Active"} onChange={handleChange} />
-                    <span className="radio-custom" />
-                    Active
+                <div className="ae-radio-group">
+                  <label className="ae-radio-label" onClick={() => setFormData(p => ({ ...p, status: "Active" }))}>
+                    {formData.status === "Active" ? <RadioSelectedIcon /> : <RadioUnselectedIcon />}
+                    <span className={`ae-radio-text${formData.status === "Active" ? " ae-radio-text--active" : ""}`}>Active</span>
                   </label>
-                  <label className="radio-label">
-                    <input type="radio" name="status" value="Inactive" checked={formData.status === "Inactive"} onChange={handleChange} />
-                    <span className="radio-custom" />
-                    Inactive
+                  <label className="ae-radio-label" onClick={() => setFormData(p => ({ ...p, status: "Inactive" }))}>
+                    {formData.status === "Inactive" ? <RadioSelectedIcon /> : <RadioUnselectedIcon />}
+                    <span className={`ae-radio-text${formData.status === "Inactive" ? " ae-radio-text--active" : ""}`}>Inactive</span>
                   </label>
                 </div>
               </div>
 
               <div className="input-group">
                 <label>Department *</label>
-                <select name="department" value={formData.department} onChange={handleChange} className={fieldErrors.department ? 'input-error' : ''}>
-                  <option value="">Select Department</option>
-                  {departments.map((dept) => (
-                    <option key={dept.id} value={dept.id}>{dept.name}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={formData.department}
+                  onChange={(v) => { setFormData(p => ({ ...p, department: v })); if (fieldErrors.department) setFieldErrors(p => ({ ...p, department: '' })); }}
+                  options={departments.map(d => ({ value: d.id, label: d.name }))}
+                  placeholder="Select Department"
+                  searchable
+                  searchPlaceholder="Search department..."
+                  hasError={!!fieldErrors.department}
+                />
                 {fieldErrors.department && <span className="field-error">{fieldErrors.department}</span>}
               </div>
 
@@ -394,12 +399,15 @@ const EditEmployee = () => {
 
               <div className="input-group">
                 <label>Reporting Manager *</label>
-                <select name="reporting_manager" value={formData.reporting_manager} onChange={handleChange} className={fieldErrors.reporting_manager ? 'input-error' : ''}>
-                  <option value="">Select Manager</option>
-                  {managers.map((mgr) => (
-                    <option key={mgr.id} value={mgr.id}>{mgr.full_name || mgr.username}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={formData.reporting_manager}
+                  onChange={(v) => { setFormData(p => ({ ...p, reporting_manager: v })); if (fieldErrors.reporting_manager) setFieldErrors(p => ({ ...p, reporting_manager: '' })); }}
+                  options={managers.map(m => ({ value: m.id, label: m.full_name || m.username }))}
+                  placeholder="Select Manager"
+                  searchable
+                  searchPlaceholder="Search manager..."
+                  hasError={!!fieldErrors.reporting_manager}
+                />
                 {fieldErrors.reporting_manager && <span className="field-error">{fieldErrors.reporting_manager}</span>}
               </div>
             </div>

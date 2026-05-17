@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../style/AddEmployee.css";
 import { API_BASE_URL } from "../../config";
-import { CalendarInputIcon, BackArrowIcon, PasswordEyeIcon, PasswordEyeOffIcon, CopyIcon } from "./Icons";
+import { CalendarInputIcon, BackArrowIcon, PasswordEyeIcon, PasswordEyeOffIcon, CopyIcon, RadioSelectedIcon, RadioUnselectedIcon } from "./Icons";
 import CountryCodeSelect from "./CountryCodeSelect";
+import CustomDatePicker from "./CustomDatePicker";
+import CustomSelect from "./CustomSelect";
 import { getDialCode } from "../data/countryCodes";
 
 const AddEmployee = () => {
@@ -34,6 +36,9 @@ const AddEmployee = () => {
   const [emergencyCountry, setEmergencyCountry] = useState("NP");
   const [showPassword, setShowPassword] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const datePickerRef = useRef(null);
+  const formCardRef = useRef(null);
 
   const [managers, setManagers] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -87,6 +92,13 @@ const AddEmployee = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const formatDateDisplay = (isoDate) => {
+    if (!isoDate) return '';
+    const [y, m, d] = isoDate.split('-');
+    return new Date(parseInt(y), parseInt(m) - 1, parseInt(d))
+      .toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
   const generatePassword = () => {
@@ -143,7 +155,7 @@ const AddEmployee = () => {
       });
 
       if (res.ok) {
-        navigate("/manager/employee-overview");
+        navigate("/manager/employee-overview", { state: { toastMessage: 'Employee added successfully!' } });
       } else {
         const errData = await res.json();
         let errorMsg = "Failed to add employee. Please check the inputs.";
@@ -183,7 +195,7 @@ const AddEmployee = () => {
       </div>
 
       {/* Form Card */}
-      <div className="add-employee-page">
+      <div className="add-employee-page" ref={formCardRef}>
         {error && <div className="error-banner">{error}</div>}
 
         <form onSubmit={handleSubmit} className="add-employee-form">
@@ -207,12 +219,17 @@ const AddEmployee = () => {
                 <div className="pwd-row">
                   <div className="password-input-wrapper">
                     <input
-                      type={showPassword ? "text" : "password"}
+                      type="text"
                       name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="Generated password"
-                      className={fieldErrors.password ? 'input-error' : ''}
+                      value={showPassword ? formData.password : '*'.repeat(formData.password.length)}
+                      onChange={(e) => {
+                        if (!showPassword) return;
+                        setFormData((prev) => ({ ...prev, password: e.target.value }));
+                        if (fieldErrors.password) setFieldErrors((prev) => ({ ...prev, password: '' }));
+                      }}
+                      placeholder=""
+                      className={[!showPassword ? 'pwd-masked' : '', fieldErrors.password ? 'input-error' : ''].filter(Boolean).join(' ')}
+                      autoComplete="new-password"
                     />
                     <button type="button" className="pwd-icon-btn" onClick={() => setShowPassword((v) => !v)} title={showPassword ? "Hide" : "Show"}>
                       {showPassword ? <PasswordEyeOffIcon /> : <PasswordEyeIcon />}
@@ -247,9 +264,27 @@ const AddEmployee = () => {
               </div>
               <div className="input-group">
                 <label>Joined Date *</label>
-                <div className={`date-input-wrapper ${fieldErrors.joined_date ? 'input-error' : ''}`}>
-                  <input type="date" name="joined_date" value={formData.joined_date} onChange={(e) => { handleChange(e); if (fieldErrors.joined_date) setFieldErrors(p => ({ ...p, joined_date: '' })); }} />
+                <div
+                  className={`date-input-wrapper${fieldErrors.joined_date ? ' input-error' : ''}`}
+                  ref={datePickerRef}
+                  onClick={() => setDatePickerOpen(v => !v)}
+                >
+                  <span className={`date-display${!formData.joined_date ? ' placeholder' : ''}`}>
+                    {formData.joined_date ? formatDateDisplay(formData.joined_date) : 'Select joining date'}
+                  </span>
                   <CalendarInputIcon className="date-input-icon" />
+                  <CustomDatePicker
+                    value={formData.joined_date}
+                    onChange={(val) => {
+                      setFormData(prev => ({ ...prev, joined_date: val }));
+                      if (fieldErrors.joined_date) setFieldErrors(prev => ({ ...prev, joined_date: '' }));
+                    }}
+                    isOpen={datePickerOpen}
+                    onClose={() => setDatePickerOpen(false)}
+                    ignoreRef={datePickerRef}
+                    portal={true}
+                    boundaryRef={formCardRef}
+                  />
                 </div>
                 {fieldErrors.joined_date && <span className="field-error">{fieldErrors.joined_date}</span>}
               </div>
@@ -277,7 +312,6 @@ const AddEmployee = () => {
                 <label>Phone Number *</label>
                 <div className={`phone-input-wrapper ${fieldErrors.phone_number ? 'input-error' : ''}`}>
                   <CountryCodeSelect value={phoneCountry} onChange={setPhoneCountry} />
-                  <span className="phone-divider" />
                   <input type="tel" name="phone_number" value={formData.phone_number} onChange={handleChange} placeholder="Phone number" className="phone-number-input" />
                 </div>
                 {fieldErrors.phone_number && <span className="field-error">{fieldErrors.phone_number}</span>}
@@ -286,7 +320,6 @@ const AddEmployee = () => {
                 <label>Emergency Contact Number</label>
                 <div className="phone-input-wrapper">
                   <CountryCodeSelect value={emergencyCountry} onChange={setEmergencyCountry} />
-                  <span className="phone-divider" />
                   <input type="tel" name="emergency_contact" value={formData.emergency_contact} onChange={handleChange} placeholder="Phone number" className="phone-number-input" />
                 </div>
               </div>
@@ -299,38 +332,44 @@ const AddEmployee = () => {
             <div className="form-grid">
               <div className="input-group">
                 <label>Employment Type *</label>
-                <select name="employment_type" required value={formData.employment_type} onChange={handleChange}>
-                  <option value="Full-Time">Full-Time</option>
-                  <option value="Part-Time">Part-Time</option>
-                  <option value="Contract">Contract</option>
-                  <option value="Internship">Internship</option>
-                </select>
+                <CustomSelect
+                  value={formData.employment_type}
+                  onChange={(v) => setFormData(p => ({ ...p, employment_type: v }))}
+                  options={[
+                    { value: 'Full-Time', label: 'Full-Time' },
+                    { value: 'Part-Time', label: 'Part-Time' },
+                    { value: 'Contract', label: 'Contract' },
+                    { value: 'Internship', label: 'Internship' },
+                  ]}
+                  placeholder="Select employment type"
+                />
               </div>
 
               <div className="input-group">
                 <label>Status *</label>
-                <div className="radio-group">
-                  <label className="radio-label">
-                    <input type="radio" name="status" value="Active" checked={formData.status === "Active"} onChange={handleChange} />
-                    <span className="radio-custom" />
-                    Active
+                <div className="ae-radio-group">
+                  <label className="ae-radio-label" onClick={() => setFormData(p => ({ ...p, status: "Active" }))}>
+                    {formData.status === "Active" ? <RadioSelectedIcon /> : <RadioUnselectedIcon />}
+                    <span className={`ae-radio-text${formData.status === "Active" ? " ae-radio-text--active" : ""}`}>Active</span>
                   </label>
-                  <label className="radio-label">
-                    <input type="radio" name="status" value="Inactive" checked={formData.status === "Inactive"} onChange={handleChange} />
-                    <span className="radio-custom" />
-                    Inactive
+                  <label className="ae-radio-label" onClick={() => setFormData(p => ({ ...p, status: "Inactive" }))}>
+                    {formData.status === "Inactive" ? <RadioSelectedIcon /> : <RadioUnselectedIcon />}
+                    <span className={`ae-radio-text${formData.status === "Inactive" ? " ae-radio-text--active" : ""}`}>Inactive</span>
                   </label>
                 </div>
               </div>
 
               <div className="input-group">
                 <label>Department *</label>
-                <select name="department" value={formData.department} onChange={handleChange} className={fieldErrors.department ? 'input-error' : ''}>
-                  <option value="">Select Department</option>
-                  {departments.map((dept) => (
-                    <option key={dept.id} value={dept.id}>{dept.name}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={formData.department}
+                  onChange={(v) => { setFormData(p => ({ ...p, department: v })); if (fieldErrors.department) setFieldErrors(p => ({ ...p, department: '' })); }}
+                  options={departments.map(d => ({ value: d.id, label: d.name }))}
+                  placeholder="Select Department"
+                  searchable
+                  searchPlaceholder="Search department..."
+                  hasError={!!fieldErrors.department}
+                />
                 {fieldErrors.department && <span className="field-error">{fieldErrors.department}</span>}
               </div>
 
@@ -375,12 +414,15 @@ const AddEmployee = () => {
 
               <div className="input-group">
                 <label>Reporting Manager *</label>
-                <select name="reporting_manager" value={formData.reporting_manager} onChange={handleChange} className={fieldErrors.reporting_manager ? 'input-error' : ''}>
-                  <option value="">Select Manager</option>
-                  {managers.map((mgr) => (
-                    <option key={mgr.id} value={mgr.id}>{mgr.full_name || mgr.username}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  value={formData.reporting_manager}
+                  onChange={(v) => { setFormData(p => ({ ...p, reporting_manager: v })); if (fieldErrors.reporting_manager) setFieldErrors(p => ({ ...p, reporting_manager: '' })); }}
+                  options={managers.map(m => ({ value: m.id, label: m.full_name || m.username }))}
+                  placeholder="Select Manager"
+                  searchable
+                  searchPlaceholder="Search manager..."
+                  hasError={!!fieldErrors.reporting_manager}
+                />
                 {fieldErrors.reporting_manager && <span className="field-error">{fieldErrors.reporting_manager}</span>}
               </div>
             </div>

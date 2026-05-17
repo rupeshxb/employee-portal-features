@@ -1,4 +1,5 @@
 import React from 'react';
+import '../style/TagDeleteModal.css';
 
 const DeleteModal = ({ show, task, onClose, onConfirm }) => {
   if (!show || !task) return null;
@@ -11,23 +12,19 @@ const DeleteModal = ({ show, task, onClose, onConfirm }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content delete-modal">
-        <button className="delete-modal-close" onClick={onClose} aria-label="Close">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18 6L6 18" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M6 6L18 18" stroke="#747575" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <div className="delete-confirm-box">
+        <button className="close-icon" onClick={onClose} aria-label="Close">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.5 5.5L5.5 16.5M5.5 5.5L16.5 16.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
-
-        <h2 className="delete-modal-title">Delete Task?</h2>
-
-        <p className="delete-modal-body">
-          Are you sure you want to delete task for <strong>"{formattedDate}"</strong>? This action cannot be undone afterwards.
-        </p>
-
-        <div className="delete-modal-actions">
-          <button className="delete-modal-cancel" onClick={onClose}>Cancel</button>
-          <button className="delete-modal-confirm" onClick={onConfirm}>Delete</button>
+        <div className="delete-header">
+          <h3>Delete Task?</h3>
+        </div>
+        <p>Are you sure you want to delete task for <strong>"{formattedDate}"</strong>?<br />This action cannot be undone afterwards.</p>
+        <div className="delete-actions">
+          <button className="btn-cancel" onClick={onClose}>Cancel</button>
+          <button className="btn-confirm-delete" onClick={onConfirm}>Delete</button>
         </div>
       </div>
     </div>

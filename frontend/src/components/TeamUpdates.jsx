@@ -14,6 +14,7 @@ import { NoResultsIllustration } from './Icons';
 const TeamUpdates = () => {
     // --- STATE ---
     const [employees, setEmployees] = useState([]);
+    const [dateMeta, setDateMeta] = useState({ target_date: '', prev_date: '' });
     const [loading, setLoading] = useState(true);
 
     // Filter States
@@ -27,11 +28,7 @@ const TeamUpdates = () => {
 
     // Dropdown Data States
     const [projectList, setProjectList] = useState([]);
-    const [roleList, setRoleList] = useState([
-        'All Roles', 'Frontend Developer', 'Backend Developer',
-        'Full Stack Developer', 'UI/UX Designer', 'QA Engineer',
-        'DevOps Engineer', 'Project Manager', 'HR', 'Intern'
-    ]);
+    const [roleList, setRoleList] = useState(['All Roles']);
 
     // --- 1. FETCH FILTER OPTIONS (Projects & Roles) ---
     useEffect(() => {
@@ -43,14 +40,15 @@ const TeamUpdates = () => {
             .then(data => setProjectList(data))
             .catch(err => console.error("Error fetching projects:", err));
 
-        // B. Fetch Employees to get Designations dynamically
-        fetch(`${API_BASE_URL}/api/employees/`, { headers })
+        // B. Fetch Designations directly
+        fetch(`${API_BASE_URL}/api/designations/`, { headers })
             .then(res => res.json())
             .then(data => {
-                const uniqueDesignations = [...new Set(data.map(emp => emp.designation_name).filter(Boolean))];
-                setRoleList(['All Roles', ...uniqueDesignations]);
+                const results = data.results || data;
+                const names = results.map(d => d.name).filter(Boolean);
+                setRoleList(['All Roles', ...names]);
             })
-            .catch(err => console.error("Error fetching roles:", err));
+            .catch(err => console.error("Error fetching designations:", err));
 
     }, []);
 
@@ -80,26 +78,31 @@ const TeamUpdates = () => {
     const fetchUpdates = () => {
         setLoading(true);
 
-        let queryDate = ''; // Blank means fetch ALL
+        const toLocalDateStr = (d) => {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        };
+
+        let queryDate = '';
+        let filterType = '';
         if (dateFilter === 'Today') {
-            queryDate = new Date().toISOString().split('T')[0];
+            queryDate = toLocalDateStr(new Date());
+            filterType = 'today';
         } else if (dateFilter === 'Yesterday') {
             const d = new Date();
             d.setDate(d.getDate() - 1);
-            queryDate = d.toISOString().split('T')[0];
+            queryDate = toLocalDateStr(d);
+            filterType = 'yesterday';
         } else if (dateFilter === 'Custom') {
             queryDate = customDate;
+            filterType = 'custom';
         }
 
-        // Cleanly construct URL parameters
         const params = new URLSearchParams();
-        
-        // ONLY add the date parameter if we actually have a date to filter by
-        if (queryDate) {
-            params.append('date', queryDate);
-        }
-        
-        // Always add the other filters (assuming your backend handles "All Projects" properly)
+        if (queryDate) params.append('date', queryDate);
+        if (filterType) params.append('filter_type', filterType);
         params.append('search', searchTerm);
         params.append('project', selectedProject);
         params.append('role', selectedRole);
@@ -115,13 +118,12 @@ const TeamUpdates = () => {
                 return res.json();
             })
             .then(data => {
-                // Quick debug step: Check your console to ensure the backend is sending 'previous' tasks
-                console.log("Fetched Data:", data); 
-
-                if (Array.isArray(data)) {
-                    setEmployees(data);
+                if (data && data.employees) {
+                    setEmployees(data.employees);
+                    setDateMeta(data.meta || { target_date: '', prev_date: '' });
                 } else {
                     setEmployees([]);
+                    setDateMeta({ target_date: '', prev_date: '' });
                 }
                 setLoading(false);
             })
@@ -159,7 +161,13 @@ const TeamUpdates = () => {
                 <div className="employee-cards-grid">
                     {employees.length > 0 ? (
                         employees.map(emp => (
-                            <EmployeeCard key={emp.id} emp={emp} />
+                            <EmployeeCard
+                                key={emp.id}
+                                emp={emp}
+                                filterType={dateMeta.filter_type || ''}
+                                targetDate={dateMeta.target_date}
+                                prevDate={dateMeta.prev_date}
+                            />
                         ))
                     ) : (
                         <div className="no-results">

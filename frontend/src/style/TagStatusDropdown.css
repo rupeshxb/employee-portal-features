@@ -1,40 +1,41 @@
 /* Custom Dropdown Container */
 .status-filter-container.custom-dropdown {
     position: relative;
-    min-width: 160px;
+    width: 200px;
+    flex-shrink: 0;
 }
 
 .custom-dropdown-trigger {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 10px 16px;
+    height: 44px;
+    padding: 0 12px 0 16px;
     background: #ffffff;
-    border: 1px solid #E5E7EB; 
-    border-radius: 8px; 
+    border: 1px solid rgba(23, 24, 26, 0.2);
+    border-radius: 8px;
     cursor: pointer;
     user-select: none;
-    font-size: 14px;
-    color: #374151;
+    font-family: 'Figtree', 'Inter', sans-serif;
+    font-size: 15px;
+    color: #17181A;
+    box-sizing: border-box;
 }
 
 .trigger-content {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .custom-dropdown-menu {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 4px);
     right: 0;
-    margin-top: 4px;
     background: #ffffff;
-    border: 1px solid #E5E7EB;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0px 8px 16px rgba(23, 24, 26, 0.25);
+    width: 268px;
     z-index: 50;
     overflow: hidden;
 }
@@ -47,8 +48,9 @@
     cursor: pointer;
     background: #ffffff;
     transition: background 0.15s ease;
-    font-size: 14px;
-    color: #374151;
+    font-family: 'Figtree', 'Inter', sans-serif;
+    font-size: 15px;
+    color: #17181A;
 }
 
 .custom-dropdown-item:hover {
@@ -58,20 +60,23 @@
 .item-label {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
-/* Force the checkmark SVG to appear BEFORE the text */
+/* Force the status icon SVG to appear BEFORE the text (size stays at SVG's native) */
 .trigger-content svg,
 .item-label svg {
-    order: -1;          
-    flex-shrink: 0;     
+    order: -1;
+    flex-shrink: 0;
 }
 
 /* Ensure the main dropdown arrow stays on the right */
 .custom-dropdown-trigger > svg,
 .arrow-icon {
-    order: 2 !important; 
+    order: 2 !important;
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
     transition: transform 0.2s ease-in-out;
 }
 

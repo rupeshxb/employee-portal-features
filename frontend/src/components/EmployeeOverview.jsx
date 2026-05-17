@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import EmployeeOverviewFilterBar from './EmployeeOverviewFilterBar';
-import EmployeeDetailsModal from './EmployeeDetailsModal'; // <-- NEW IMPORT
+import EmployeeDetailsModal from './EmployeeDetailsModal';
 import '../style/EmployeeOverview.css';
-import { PlusIcon, MoreVerticalIcon, EyeIcon, EditIcon, TrashIcon } from './Icons';
-import { useNavigate } from 'react-router-dom';
+import { TagAddPlusIcon, MoreVerticalIcon, EyeIcon, EditIcon, TrashIcon, ToastSuccessIcon } from './Icons';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { API_BASE_URL } from "../../config";
 import "../style/Header.css"
 
@@ -33,6 +33,23 @@ const EmployeeOverview = () => {
     const [openMenuId, setOpenMenuId] = useState(null);
     const [menuPos, setMenuPos] = useState({ top: 0, right: 0 });
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // --- Toast notification ---
+    const [toast, setToast] = useState(null);
+
+    useEffect(() => {
+        if (location.state?.toastMessage) {
+            setToast(location.state.toastMessage);
+            window.history.replaceState({}, '');
+        }
+    }, [location.state]);
+
+    useEffect(() => {
+        if (!toast) return;
+        const t = setTimeout(() => setToast(null), 3000);
+        return () => clearTimeout(t);
+    }, [toast]);
 
     // --- NEW: State for the Details Modal ---
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -153,6 +170,7 @@ const EmployeeOverview = () => {
             });
             if (res.ok) {
                 setEmployeeToDelete(null);
+                setToast('Employee deleted successfully!');
                 fetchEmployees();
             } else {
                 let msg = `Failed to delete employee (status ${res.status}).`;
@@ -191,6 +209,22 @@ const EmployeeOverview = () => {
 
             {/* 1. STANDARD REUSABLE HEADER */}
             <div className="page-header">
+
+                {/* TOAST NOTIFICATION */}
+                {toast && (
+                    <div className="emp-success-toast">
+                        <div className="emp-success-toast-content">
+                            <span className="emp-success-toast-icon"><ToastSuccessIcon /></span>
+                            <span className="emp-success-toast-text">{toast}</span>
+                            <button className="emp-success-toast-close" onClick={() => setToast(null)} aria-label="Close">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M15 5L5 15M5 5L15 15" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div className="emp-success-toast-progress"></div>
+                    </div>
+                )}
                 {/* Decoration Layer */}
                 <div className="hero-decor" aria-hidden="true">
                     <div className="hero-circle hero-circle-1" />
@@ -206,7 +240,7 @@ const EmployeeOverview = () => {
                     </div>
 
                     <button className="btn-add-employee" onClick={() => navigate('/manager/employee-overview/add-employee')}>
-                        <PlusIcon /> Add Employee
+                        <TagAddPlusIcon /> Add Employee
                     </button>
                 </div>
             </div>

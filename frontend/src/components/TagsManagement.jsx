@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../style/TagsManagement.css';
 import { fetchTags, fetchDesignations, createTag, updateTag, deleteTag } from '../utils/tagsApi';
+import { TagAddPlusIcon, TagsEmptyIcon, DropdownSearchIcon } from './Icons';
 
 // Subcomponents
 import TagStatusDropdown from './TagStatusDropdown';
@@ -59,15 +60,9 @@ const TagsManagement = () => {
 
     const getPageNumbers = () => {
         if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
-        const pages = [];
-        if (currentPage <= 4) {
-            pages.push(1, 2, 3, 4, 5, '...', totalPages - 1, totalPages);
-        } else if (currentPage >= totalPages - 3) {
-            pages.push(1, 2, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
-        } else {
-            pages.push(1, 2, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages - 1, totalPages);
-        }
-        return pages;
+        if (currentPage <= 3) return [1, 2, 3, '…', totalPages - 2, totalPages - 1, totalPages];
+        if (currentPage >= totalPages - 2) return [1, 2, 3, '…', totalPages - 2, totalPages - 1, totalPages];
+        return [1, '…', currentPage - 1, currentPage, currentPage + 1, '…', totalPages];
     };
 
     // Handlers
@@ -114,8 +109,8 @@ const TagsManagement = () => {
                         <h2>Tags Management</h2>
                         <p>Create and manage employee groups, designations using tags.</p>
                     </div>
-                    <button className="add-project-btn" onClick={() => handleOpenModal()}>
-                        + Add Tag
+                    <button className="tags-add-btn tags-add-btn-dark" onClick={() => handleOpenModal()}>
+                        <TagAddPlusIcon /> Add Tag
                     </button>
                 </div>
             </div>
@@ -128,9 +123,7 @@ const TagsManagement = () => {
 
             <div className="tags-top-bar">
                 <div className="search-container">
-                    <svg className="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
+                    <span className="tags-search-icon"><DropdownSearchIcon /></span>
                     <input
                         type="text" placeholder="Search tags by name"
                         value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
@@ -141,34 +134,51 @@ const TagsManagement = () => {
                 <TagStatusDropdown statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
             </div>
 
+            {!loading && tags.length === 0 ? (
+                <div className="tags-empty-section">
+                    <TagsEmptyIcon />
+                    <div className="tags-empty-text">
+                        <h3>No tags added yet!</h3>
+                        <p>All of the added tags will be shown here.</p>
+                    </div>
+                    <button className="tags-add-btn" onClick={() => handleOpenModal()}>
+                        <TagAddPlusIcon /> Add Tag
+                    </button>
+                </div>
+            ) : (
             <div className="tags-table-container">
-                <TagsTable 
-                    tags={currentTags} 
-                    loading={loading} 
-                    onEdit={handleOpenModal} 
-                    onDelete={(tag) => { setSelectedTag(tag); setIsDeleteModalOpen(true); }} 
+                <TagsTable
+                    tags={currentTags}
+                    loading={loading}
+                    onEdit={handleOpenModal}
+                    onDelete={(tag) => { setSelectedTag(tag); setIsDeleteModalOpen(true); }}
                     onAddTag={() => handleOpenModal()}
                 />
 
-                {!loading && tags.length > 0 && currentTags.length > 0 && (
+                {!loading && tags.length > 0 && (
                     <div className="pagination-footer">
-                        <span className="showing-text">
-                            Showing <strong>{(currentPage - 1) * entriesPerPage + 1}</strong> to <strong>{Math.min(currentPage * entriesPerPage, totalEntries)}</strong> of <strong>{totalEntries}</strong> entries
+                        <span className="pagination-text">
+                            {totalEntries === 0 ? 'No entries found' : `Showing ${(currentPage - 1) * entriesPerPage + 1} to ${Math.min(currentPage * entriesPerPage, totalEntries)} of ${totalEntries} entries`}
                         </span>
                         <div className="pagination-controls">
-                            <button disabled={currentPage === 1} onClick={() => setCurrentPage(1)}>First</button>
-                            <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>&lt;</button>
+                            <button className="page-btn pg-first-last" disabled={currentPage === 1} onClick={() => setCurrentPage(1)}>First</button>
+                            <button className="page-btn pg-prev-next" disabled={currentPage === 1} onClick={() => setCurrentPage(p => Math.max(1, p - 1))}>
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11.25 13.5L6.75 9L11.25 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            </button>
                             {getPageNumbers().map((p, i) =>
-                                p === '...'
-                                    ? <span key={`dots-${i}`} className="page-dots">...</span>
-                                    : <button key={p} className={p === currentPage ? 'active' : ''} onClick={() => setCurrentPage(p)}>{p}</button>
+                                p === '…'
+                                    ? <span key={`dots-${i}`} className="pg-dots">…</span>
+                                    : <button key={p} className={`page-btn pg-number${p === currentPage ? ' active' : ''}${p === currentPage + 1 ? ' next-to-active' : ''}`} onClick={() => setCurrentPage(p)}>{p}</button>
                             )}
-                            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => prev + 1)}>&gt;</button>
-                            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(totalPages)}>Last</button>
+                            <button className="page-btn pg-prev-next" disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}>
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M6.75 4.5L11.25 9L6.75 13.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            </button>
+                            <button className="page-btn pg-first-last" disabled={currentPage === totalPages} onClick={() => setCurrentPage(totalPages)}>Last</button>
                         </div>
                     </div>
                 )}
             </div>
+            )}
 
             <TagAddEditModal 
                 isOpen={isAddEditModalOpen} 

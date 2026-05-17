@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../style/TagAddEditModal.css';
+import { ModalCloseIcon, BadgeCloseIcon } from './Icons';
+import CustomScrollbar from './CustomScrollbar';
 
 const PREDEFINED_COLORS = [
     '#00C897', '#FF33A1', '#5D5DFF', '#FF4B4B', '#7B3BFF',
@@ -25,11 +27,14 @@ const ChevronDown = ({ isOpen }) => (
     </svg>
 );
 
+const BADGE_LIMIT = 4;
+
 const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
     const [formData, setFormData] = useState(defaultFormState);
     const [isCustomColor, setIsCustomColor] = useState(false);
     const [isDesignationOpen, setIsDesignationOpen] = useState(false);
     const [errors, setErrors] = useState({});
+    const [showAllBadges, setShowAllBadges] = useState(false);
 
     const dropdownRef = useRef(null);
 
@@ -51,6 +56,7 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
             }
             setErrors({});
             setIsDesignationOpen(false);
+            setShowAllBadges(false);
         }
     }, [isOpen, tag]);
 
@@ -93,13 +99,19 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
     return (
         <div className="modal-overlay">
             <div className="modal-content tag-modal">
-                <button className="modal-close" onClick={onClose}>×</button>
-                <h2>{tag ? 'Edit Tag' : 'Add New Tag'}</h2>
-                <p className="modal-subtitle">
-                    {tag ? 'Update tag name, description, status & attach designations.' : 'Adding tag allows you to group manage designations.'}
-                </p>
+                <button className="modal-close" onClick={onClose} aria-label="Close">
+                    <ModalCloseIcon size={28} color="#64748B" strokeWidth={2} />
+                </button>
+                <div className="tag-modal-header">
+                    <h2>{tag ? 'Edit Tag' : 'Add New Tag'}</h2>
+                    <p className="modal-subtitle">
+                        {tag ? 'Update tag name, description, status & attach designations.' : 'Adding tag allows you to group manage designations.'}
+                    </p>
+                </div>
 
                 <form onSubmit={handleSubmit} className="tag-form">
+                    <CustomScrollbar className="tag-form-scroll">
+                        <div className="tag-form-fields">
                     <div className="form-group">
                         <label>Display Name <span className="req">*</span></label>
                         <input
@@ -215,15 +227,21 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                         </div>
 
                         <div className="selected-badges-area">
-                            {formData.designation_ids.map(id => {
+                            {(showAllBadges ? formData.designation_ids : formData.designation_ids.slice(0, BADGE_LIMIT)).map(id => {
                                 const d = designations.find(des => des.id === id);
                                 return d ? (
                                     <span key={id} className="sel-badge">
                                         {d.name}
-                                        <button type="button" onClick={() => { handleDesignationToggle(id); if (errors.designations) setErrors(p => ({ ...p, designations: '' })); }}>×</button>
+                                        <button type="button" onClick={() => { handleDesignationToggle(id); if (errors.designations) setErrors(p => ({ ...p, designations: '' })); }}><BadgeCloseIcon /></button>
                                     </span>
                                 ) : null;
                             })}
+                            {!showAllBadges && formData.designation_ids.length > BADGE_LIMIT && (
+                                <span className="sel-badge-count">+{formData.designation_ids.length - BADGE_LIMIT}</span>
+                            )}
+                            {!showAllBadges && formData.designation_ids.length > BADGE_LIMIT && (
+                                <button type="button" className="sel-badge-viewall" onClick={() => setShowAllBadges(true)}>view all</button>
+                            )}
                         </div>
                         {errors.designations && <span className="field-error">{errors.designations}</span>}
                     </div>
@@ -232,8 +250,8 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                         <label>Status</label>
                         <div className="status-radios">
                             <label className="radio-label">
-                                <input 
-                                    type="checkbox" 
+                                <input
+                                    type="checkbox"
                                     className="blue-checkbox"
                                     checked={formData.status === 'Active'}
                                     onChange={() => handleStatusToggle('Active')}
@@ -241,8 +259,8 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                                 <span>Active</span>
                             </label>
                             <label className="radio-label">
-                                <input 
-                                    type="checkbox" 
+                                <input
+                                    type="checkbox"
                                     className="blue-checkbox"
                                     checked={formData.status === 'Inactive'}
                                     onChange={() => handleStatusToggle('Inactive')}
@@ -251,11 +269,12 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                             </label>
                         </div>
                     </div>
-
-                    <div className="modal-actions">
-                        <button type="button" className="btn-outline" onClick={() => setFormData(defaultFormState)}>Reset</button>
-                        <button type="submit" className="btn-primary">{tag ? 'Update Tag' : 'Add Tag'}</button>
-                    </div>
+                        </div>
+                        <div className="tag-modal-actions">
+                            <button type="button" className="btn-outline" onClick={() => setFormData(defaultFormState)}>Reset</button>
+                            <button type="submit" className="btn-primary">{tag ? 'Update Tag' : 'Add Tag'}</button>
+                        </div>
+                    </CustomScrollbar>
                 </form>
             </div>
         </div>

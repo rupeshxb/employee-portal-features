@@ -34,7 +34,9 @@ const CountryCodeSelect = ({ value, onChange }) => {
         className="cc-trigger"
         onClick={() => setOpen((v) => !v)}
       >
-        <span>{selected.code} {selected.dial}</span>
+        <span className="cc-code">{selected.code}</span>
+        <span className="cc-pipe">|</span>
+        <span className="cc-dial">{selected.dial}</span>
         <svg className={`cc-chevron ${open ? "cc-chevron-open" : ""}`} viewBox="0 0 10 6" fill="none">
           <path d="M1 1l4 4 4-4" stroke="#64748B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>

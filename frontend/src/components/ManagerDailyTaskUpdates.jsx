@@ -11,7 +11,8 @@ import '../style/Header.css';
 const ManagerDailyTaskUpdates = () => {
     // --- STATE ---
     const [employees, setEmployees] = useState([]);
-    const [totalDepartmentCount, setTotalDepartmentCount] = useState(0); // NEW: Tracks absolute total
+    const [dateMeta, setDateMeta] = useState({ target_date: '', prev_date: '' });
+    const [totalDepartmentCount, setTotalDepartmentCount] = useState(0);
     const [filteredEmployees, setFilteredEmployees] = useState([]);
     const [loading, setLoading] = useState(false);
     const [projectList, setProjectList] = useState([]);
@@ -62,16 +63,27 @@ const ManagerDailyTaskUpdates = () => {
                 if (selectedProject !== 'All Projects') params.append('project', selectedProject);
                 if (timeFilter !== 'Time') params.append('time', timeFilter);
 
-                // Handle Dates
+                // Handle Dates — use LOCAL date so it matches how DailyTask.date is stored
+                const toLocalDateStr = (d) => {
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    return `${y}-${m}-${day}`;
+                };
+                let filterType = '';
                 if (dateFilter === 'Today') {
-                    params.append('date', new Date().toISOString().split('T')[0]);
+                    params.append('date', toLocalDateStr(new Date()));
+                    filterType = 'today';
                 } else if (dateFilter === 'Yesterday') {
                     const yest = new Date();
                     yest.setDate(yest.getDate() - 1);
-                    params.append('date', yest.toISOString().split('T')[0]);
+                    params.append('date', toLocalDateStr(yest));
+                    filterType = 'yesterday';
                 } else if (dateFilter === 'Custom Date' && customDate) {
                     params.append('date', customDate);
+                    filterType = 'custom';
                 }
+                if (filterType) params.append('filter_type', filterType);
 
                 // Call your Django backend
                 const response = await fetch(`${API_BASE_URL}/api/manager/team-updates/?${params.toString()}`, {
@@ -87,7 +99,8 @@ const ManagerDailyTaskUpdates = () => {
                 //    total_in_department: 25, 
                 //    employees: [ ... array of employee objects with tasks ... ]
                 // }
-                setEmployees(data.employees || data); // Fallback to 'data' if backend isn't wrapped
+                setEmployees(data.employees || data);
+                setDateMeta(data.meta || { target_date: '', prev_date: '' });
                 setTotalDepartmentCount(data.total_in_department ?? data.length ?? 0);
 
             } catch (error) {
@@ -209,7 +222,14 @@ const ManagerDailyTaskUpdates = () => {
             ) : filteredEmployees.length > 0 ? (
                 <div className="manager-daily-update-employee-card employee-cards-grid">
                     {filteredEmployees.map(emp => (
-                        <EmployeeCard key={emp.id} emp={emp} variant="manager" />
+                        <EmployeeCard
+                            key={emp.id}
+                            emp={emp}
+                            variant="manager"
+                            filterType={dateMeta.filter_type || ''}
+                            targetDate={dateMeta.target_date}
+                            prevDate={dateMeta.prev_date}
+                        />
                     ))}
                 </div>
             ) : (

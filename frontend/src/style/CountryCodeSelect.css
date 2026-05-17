@@ -9,11 +9,11 @@
 .cc-trigger {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     background: transparent;
     border: none;
-    padding: 0 8px 0 12px;
-    font-size: 13px;
+    padding: 0 12px 0 16px;
+    font-size: 12px;
     font-weight: 500;
     color: #334155;
     cursor: pointer;
@@ -24,6 +24,26 @@
 
 .cc-trigger:hover {
     color: #0F172A;
+}
+
+.cc-code {
+    font-size: 12px;
+    font-weight: 500;
+    color: #334155;
+}
+
+.cc-pipe {
+    color: rgba(23, 24, 26, 0.25);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.cc-dial {
+    font-size: 12px;
+    font-weight: 500;
+    color: #334155;
 }
 
 .cc-chevron {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../style/ProjectsOverview.css';
-import { ProjectsOverviewEmptyIcon, NoResultsIllustration, ToastSuccessIcon } from './Icons';
+import { ProjectsOverviewEmptyIcon, NoResultsIllustration, ToastSuccessIcon, TagAddPlusIcon } from './Icons';
 import ProjectsOverviewFilterBar from './ProjectsOverviewFilterBar';
 import ProjectModal from './ProjectModal';
 import ProjectCard from './ProjectCard';
@@ -243,7 +243,7 @@ const ProjectsOverview = () => {
             <h2>Projects Overview</h2>
             <p>View and manage all ongoing projects, teams, and allocations in one place.</p>
           </div>
-          <button className="add-project-btn" onClick={handleOpenAddModal}>+ Add Project</button>
+          <button className="add-project-btn" onClick={handleOpenAddModal}><TagAddPlusIcon /> Add Project</button>
         </div>
       </div>
 

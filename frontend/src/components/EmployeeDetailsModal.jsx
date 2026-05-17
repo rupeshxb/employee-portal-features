@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import '../style/EmployeeDetailsModal.css';
 import { API_BASE_URL } from "../../config";
 import { ModalCloseIcon } from './Icons';
+import CustomScrollbar from './CustomScrollbar';
 
 const HEADER_TILES = [
     { left: -30, top: 179, opacity: 0.02 },
@@ -118,7 +119,7 @@ const EmployeeDetailsModal = ({ isOpen, onClose, employeeId, onEditClick }) => {
                         <div className="custom-spinner"></div>
                     </div>
                 ) : (
-                    <>
+                    <CustomScrollbar className="emp-modal-scroll">
                         <div className="emp-modal-header">
                             <div className="header-tiles" aria-hidden="true">
                                 {HEADER_TILES.map((t, i) => (
@@ -223,7 +224,7 @@ const EmployeeDetailsModal = ({ isOpen, onClose, employeeId, onEditClick }) => {
                             </div>
 
                         </div>
-                    </>
+                    </CustomScrollbar>
                 )}
             </div>
         </div>,

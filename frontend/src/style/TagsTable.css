@@ -3,22 +3,33 @@
     background: white;
     border-radius: 16px;
     border: 1px solid #E5E7EB;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #D1D5DB transparent;
+}
+.tags-table-container::-webkit-scrollbar {
+    height: 6px;
+}
+.tags-table-container::-webkit-scrollbar-thumb {
+    background: #D1D5DB;
+    border-radius: 3px;
 }
 .tags-table {
     width: 100%;
+    min-width: max-content;
     border-collapse: collapse;
     text-align: left;
     font-family: 'Figtree', 'Inter', sans-serif;
 }
 .tags-table th {
-    background-color: #F9FAFB;
+    background-color: #EFF0F2;
     color: #6B7280;
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    padding: 14px 24px;
+    padding: 12px 16px;
     border-bottom: 1px solid #E5E7EB;
     white-space: nowrap;
 }
@@ -35,11 +46,56 @@
     border-bottom: none;
 }
 .tags-table td {
-    padding: 0 24px;
+    padding: 0 16px;
     border-bottom: 1px solid #F3F4F6;
     font-size: 14px;
     vertical-align: middle;
     color: #374151;
+}
+/* All non-description columns shrink to their content width */
+.tags-table th:nth-child(1), .tags-table td:nth-child(1),
+.tags-table th:nth-child(3), .tags-table td:nth-child(3),
+.tags-table th:nth-child(4), .tags-table td:nth-child(4),
+.tags-table th:nth-child(5), .tags-table td:nth-child(5),
+.tags-table th:nth-child(6), .tags-table td:nth-child(6) {
+    width: auto;
+    white-space: nowrap;
+}
+/* Status column needs a guaranteed min-width — inline-flex badge confuses auto sizing */
+.tags-table th:nth-child(5),
+.tags-table td:nth-child(5) {
+    min-width: 110px;
+}
+/* Color column: center both the COLOR header and the color dot */
+.tags-table th:nth-child(3),
+.tags-table td:nth-child(3) {
+    text-align: center;
+}
+/* Designations column: header allowed to wrap so column follows badge content width */
+.tags-table th:nth-child(4) {
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.2;
+}
+/* Description: widest column, text wraps up to 2 lines */
+.tags-table th:nth-child(2),
+.description-cell {
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
+    vertical-align: middle;
+}
+.description-cell {
+    overflow: hidden;
+}
+.description-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
 }
 
 /* Table Specific Elements */
@@ -51,20 +107,29 @@
     flex-shrink: 0;
 }
 .designation-badges {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.badge-row {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    gap: 2px;
 }
 .badge {
-    background-color: #F3F4F6;
-    color: #374151;
-    border: 1px solid #E5E7EB;
-    padding: 4px 8px;
-    border-radius: 4px;
+    background: transparent;
+    color: #454647;
+    border: 1px solid rgba(23, 24, 26, 0.2);
+    padding: 3px 5px;
+    border-radius: 6px;
+    font-family: 'Figtree', sans-serif;
     font-size: 12px;
+    font-weight: 500;
+    line-height: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 .badge-overflow {
-    background-color: #E5E7EB;
+    background: transparent;
 }
 
 /* Status Pill */
@@ -79,6 +144,9 @@
     font-weight: 500;
     background: white;
     border: 1px solid;
+    width: max-content;
+    white-space: nowrap;
+    box-sizing: border-box;
 }
 .status-dot {
     width: 8px;
@@ -91,32 +159,53 @@
 .status-badge.inactive { border-color: #FF493F; color: #FF493F; }
 .status-badge.inactive .status-dot { background-color: #FF493F; }
 
-/* Table Actions */
-.action-cells {
+/* Tags-table Actions (unique classes — don't share with other tables) */
+.tags-action-cell {
     display: flex;
     gap: 8px;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: center;
+    height: inherit;
 }
-.btn-icon {
+.tags-action-buttons {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+}
+/* Bump the ACTIONS header padding so its text aligns with the icon's
+   visual content (icon sits 8px inside the button due to tags-btn-icon padding) */
+.tags-table th:nth-child(6) {
+    padding-left: 24px;
+}
+.tags-btn-icon {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 6px;
+    padding: 8px;
     border-radius: 6px;
     transition: background-color 0.2s;
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #17181A;
 }
-.btn-icon:hover {
+.tags-btn-icon svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+}
+.tags-btn-icon:hover {
     background-color: #F3F4F6;
 }
-.btn-icon:hover svg {
+.tags-btn-icon:hover svg path {
     stroke: #374151;
 }
-.btn-icon-danger:hover {
+.tags-btn-icon-danger:hover {
     background-color: #FEF2F2;
 }
-.btn-icon-danger:hover svg {
+.tags-btn-icon-danger:hover svg path {
     stroke: #FF493F;
 }
 
@@ -145,4 +234,11 @@
     color: #6B7280;
     font-size: 14px;
     margin-bottom: 24px;
+}
+
+.loading-state {
+    padding: 48px;
+    text-align: center;
+    color: #6B7280;
+    font-size: 14px;
 }

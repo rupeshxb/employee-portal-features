@@ -1,6 +1,6 @@
 import React from 'react';
 import { getImageUrl, getInitials } from '../utils/teamUpdatesUtils';
-import { TodayIcon, HistoryIcon, BlockerAlertIcon } from './Icons';
+import { CalendarIcon, HistoryIcon, BlockerAlertIcon, NotSubmittedWarningIcon } from './Icons';
 import '../style/EmployeeCard.css';
 
 // --- NEW INLINE ICONS FOR MANAGER STATUS BAR ---
@@ -92,6 +92,18 @@ const getLocalDateString = (dateObj) => {
     return `${year}-${month}-${day}`;
 };
 
+const labelForDate = (dateStr) => {
+    if (!dateStr) return null;
+    const todayStr = getLocalDateString(new Date());
+    const yest = new Date();
+    yest.setDate(yest.getDate() - 1);
+    const yesterdayStr = getLocalDateString(yest);
+    if (dateStr === todayStr) return 'TODAY';
+    if (dateStr === yesterdayStr) return 'YESTERDAY';
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).toUpperCase();
+};
+
 // --- UPDATED HELPER IN EmployeeCard.jsx ---
 const formatTimeLocal = (timeValue) => {
     // 1. If it's empty, null, or the literal string "Not Submitted", return null
@@ -112,38 +124,33 @@ const formatTimeLocal = (timeValue) => {
 
 // --- MAIN COMPONENT: Employee Card ---
 // Added "variant" prop. Defaults to 'employee', can be set to 'manager'.
-const EmployeeCard = ({ emp, variant = 'employee' }) => {
-    console.log(`Checking tasks for ${emp.full_name}:`, emp);
+const EmployeeCard = ({ emp, variant = 'employee', filterType = '', targetDate = '', prevDate = '' }) => {
     const avatarUrl = getImageUrl(emp.avatar);
 
     const groupedTasks = React.useMemo(() => {
-        // Safe fallback if tasks don't exist yet
         if (!emp || !emp.tasks) return [];
 
         const groups = [];
 
-        // 1. Today's Tasks
         if (emp.tasks.today && emp.tasks.today.length > 0) {
             groups.push({
                 dateKey: 'today',
-                title: 'TODAY',
-                icon: <TodayIcon />,
+                title: labelForDate(targetDate) || 'TODAY',
+                icon: <CalendarIcon />,
                 tasks: emp.tasks.today
             });
         }
 
-        // 2. Yesterday's Tasks
         if (emp.tasks.yesterday && emp.tasks.yesterday.length > 0) {
             groups.push({
                 dateKey: 'yesterday',
-                title: 'YESTERDAY',
+                title: labelForDate(prevDate) || 'YESTERDAY',
                 icon: <HistoryIcon />,
                 tasks: emp.tasks.yesterday
             });
         }
 
-        // 3. Previous Tasks (Crucial for the Employee Portal!)
-        if (emp.tasks.previous && emp.tasks.previous.length > 0) {
+        if (emp.tasks.previous && emp.tasks.previous.length > 0 && variant !== 'manager') {
             groups.push({
                 dateKey: 'previous',
                 title: 'PREVIOUS',
@@ -152,7 +159,6 @@ const EmployeeCard = ({ emp, variant = 'employee' }) => {
             });
         }
 
-        // 4. Blockers
         if (emp.tasks.blockers && emp.tasks.blockers.length > 0) {
             groups.push({
                 dateKey: 'blockers',
@@ -163,9 +169,7 @@ const EmployeeCard = ({ emp, variant = 'employee' }) => {
         }
 
         return groups;
-    }, [emp.tasks]);
-
-    console.log(`Checking time for ${emp.full_name}:`, emp.submittedTime);
+    }, [emp.tasks, targetDate, prevDate, variant]);
 
     return (
         <div className="employee-card">
@@ -227,6 +231,18 @@ const EmployeeCard = ({ emp, variant = 'employee' }) => {
                             tasks={tasks}
                         />
                     ))
+                ) : filterType !== '' ? (
+                    <div className="ec-not-submitted">
+                        <NotSubmittedWarningIcon />
+                        <div className="ec-not-submitted-text">
+                            <span className="ec-not-submitted-label">Not Submitted</span>
+                            <span className="ec-not-submitted-desc">
+                                {filterType === 'today' && 'No task update submitted as of today.'}
+                                {filterType === 'yesterday' && 'No task update submitted yesterday.'}
+                                {filterType === 'custom' && `No task update submitted on ${labelForDate(targetDate)}.`}
+                            </span>
+                        </div>
+                    </div>
                 ) : (
                     <div className="day-section">
                         <div className="empty-state">No tasks posted.</div>
