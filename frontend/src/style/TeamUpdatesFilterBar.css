@@ -166,6 +166,11 @@
     border-bottom: 1px solid #f1f5f9;
 }
 
+.status-dropdown-container .date-dropdown-menu {
+    width: 268px;
+    min-width: 268px;
+}
+
 .date-invisible-input {
     position: absolute;
     top: 100%;
