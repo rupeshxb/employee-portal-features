@@ -195,9 +195,10 @@ const EditEmployee = () => {
     }
   };
 
-  const filteredDesignations = designations.filter((d) =>
-    d.name.toLowerCase().includes(designationSearch.toLowerCase())
-  );
+  const selectedDesignationName = designations.find(d => d.id === formData.designation)?.name;
+  const filteredDesignations = (selectedDesignationName && designationSearch === selectedDesignationName)
+    ? designations
+    : designations.filter((d) => d.name.toLowerCase().includes(designationSearch.toLowerCase()));
 
   if (fetchingData) {
     return (
