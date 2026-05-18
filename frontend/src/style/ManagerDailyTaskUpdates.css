@@ -23,6 +23,34 @@
     margin-bottom: 0px;
 }
 
+/* When more than 8 tabs, allow horizontal scroll — native bar hidden, custom SVG used instead */
+.department-nav--scrollable {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+}
+
+.department-nav--scrollable::-webkit-scrollbar {
+    display: none;
+}
+
+.department-nav--scrollable .dept-tab {
+    flex: 0 0 auto;
+    min-width: 150px;
+}
+
+.dept-nav-scrollbar {
+    margin-top: 4px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.department-nav-wrapper:hover .dept-nav-scrollbar {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .department-nav button:focus {
     outline: none;
 }

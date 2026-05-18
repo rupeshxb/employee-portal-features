@@ -222,7 +222,7 @@ class ManagerTeamUpdatesView(APIView):
         show_prev_day = filter_type != 'custom'
 
         # Filters
-        department_filter = request.query_params.get('department', 'All')
+        tag_filter = request.query_params.get('tag', 'all')
         time_filter = request.query_params.get('time', 'Time')
         search_query = request.query_params.get('search', '')
         project_filter = request.query_params.get('project', 'All Projects')
@@ -244,8 +244,12 @@ class ManagerTeamUpdatesView(APIView):
             Prefetch('daily_submissions', queryset=submissions_qs, to_attr='prefetched_target_submissions')
         )
 
-        if department_filter and department_filter.lower() != 'all':
-            employees = employees.filter(department__name__iexact=department_filter)
+        if tag_filter and str(tag_filter).lower() != 'all':
+            try:
+                tag_id = int(tag_filter)
+                employees = employees.filter(designation__tags__id=tag_id).distinct()
+            except (ValueError, TypeError):
+                pass
 
         total_in_department = employees.count()
 
