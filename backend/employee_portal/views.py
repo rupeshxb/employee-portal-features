@@ -543,7 +543,9 @@ class ManagerListView(generics.ListAPIView):
     pagination_class = None 
 
     def get_queryset(self):
-        return Employee.objects.select_related('user').filter(is_manager=True, status='Active')
+        return Employee.objects.select_related('user').filter(
+            Q(is_manager=True) | Q(role='Manager'), status='Active'
+        )
     
 
 # --- EMPLOYEE DETAIL / DELETE VIEW ---
