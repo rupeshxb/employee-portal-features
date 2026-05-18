@@ -132,7 +132,6 @@ const AddEmployee = () => {
     if (!formData.phone_number.trim()) newFieldErrors.phone_number = 'Phone number is required.';
     if (!formData.department) newFieldErrors.department = 'Department is required.';
     if (!formData.designation) newFieldErrors.designation = 'Please select a designation from the list.';
-    if (!formData.reporting_manager) newFieldErrors.reporting_manager = 'Reporting manager is required.';
 
     if (Object.keys(newFieldErrors).length > 0) {
       setFieldErrors(newFieldErrors);
@@ -414,17 +413,15 @@ const AddEmployee = () => {
               </div>
 
               <div className="input-group">
-                <label>Reporting Manager *</label>
+                <label>Reporting Manager</label>
                 <CustomSelect
                   value={formData.reporting_manager}
-                  onChange={(v) => { setFormData(p => ({ ...p, reporting_manager: v })); if (fieldErrors.reporting_manager) setFieldErrors(p => ({ ...p, reporting_manager: '' })); }}
+                  onChange={(v) => setFormData(p => ({ ...p, reporting_manager: v }))}
                   options={managers.map(m => ({ value: m.id, label: m.full_name || m.username }))}
                   placeholder="Select Manager"
                   searchable
                   searchPlaceholder="Search manager..."
-                  hasError={!!fieldErrors.reporting_manager}
                 />
-                {fieldErrors.reporting_manager && <span className="field-error">{fieldErrors.reporting_manager}</span>}
               </div>
             </div>
           </div>
