@@ -544,7 +544,7 @@ class ManagerListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Employee.objects.select_related('user').filter(
-            Q(is_manager=True) | Q(role='Manager'), status='Active'
+            Q(is_manager=True) | Q(role='Manager')
         )
     
 
