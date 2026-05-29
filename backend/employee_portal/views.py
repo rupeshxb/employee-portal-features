@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
 
 from rest_framework import generics, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -118,6 +118,7 @@ class DailyTaskDetail(generics.RetrieveUpdateDestroyAPIView):
 
 # --- TEAM UPDATES VIEW (STANDARD EMPLOYEES) ---
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def team_updates(request):
     date_param = request.GET.get('date')
     filter_type = request.GET.get('filter_type', '')  # 'today', 'yesterday', 'custom', or ''
@@ -357,9 +358,19 @@ class CustomLoginView(APIView):
             if employee:
                 employee_id = employee.pk
                 designation = employee.designation.name if employee.designation else None
-                portal_role = employee.role 
+                portal_role = employee.role
                 is_manager_status = employee.is_manager
-                avatar = employee.avatar.url if employee.avatar else None
+                # Prefer the reliable Cloudinary URL; fall back to legacy ImageField
+                if employee.avatar_url:
+                    avatar = employee.avatar_url
+                elif employee.avatar:
+                    try:
+                        url = employee.avatar.url
+                        avatar = url if url.startswith('http') else None
+                    except Exception:
+                        avatar = None
+                else:
+                    avatar = None
                 if employee.department:
                     department_name = employee.department.name
             elif user.is_superuser:
@@ -391,6 +402,38 @@ class CustomLoginView(APIView):
 
 
 # --- SETTINGS VIEWS ---
+def _upload_avatar_to_cloudinary(file):
+    """Upload a file-like object to Cloudinary and return the secure_url."""
+    import cloudinary.uploader
+    result = cloudinary.uploader.upload(
+        file,
+        folder='avatars',
+        resource_type='image',
+        overwrite=True,
+    )
+    return result['secure_url'], result['public_id']
+
+
+def _delete_cloudinary_asset(public_id_or_url):
+    """Best-effort delete of a Cloudinary asset by public_id or URL."""
+    if not public_id_or_url:
+        return
+    import cloudinary.uploader
+    try:
+        # If it's a full Cloudinary URL, extract the public_id
+        if public_id_or_url.startswith('http'):
+            # URL format: .../image/upload/[version/]<folder/name>.<ext>
+            import re
+            match = re.search(r'/image/upload/(?:v\d+/)?(.+?)(?:\.\w+)?$', public_id_or_url)
+            if match:
+                public_id_or_url = match.group(1)
+            else:
+                return
+        cloudinary.uploader.destroy(public_id_or_url, resource_type='image')
+    except Exception:
+        pass
+
+
 class EmployeeProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = EmployeeProfileSerializer
@@ -399,16 +442,36 @@ class EmployeeProfileView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         return get_object_or_404(Employee, user=self.request.user)
 
+    def partial_update(self, request, *args, **kwargs):
+        employee = self.get_object()
+
+        # Handle avatar upload explicitly via Cloudinary SDK
+        avatar_file = request.FILES.get('avatar')
+        if avatar_file:
+            # Delete old Cloudinary asset before uploading new one
+            _delete_cloudinary_asset(employee.avatar_url or (employee.avatar.name if employee.avatar else None))
+
+            secure_url, _ = _upload_avatar_to_cloudinary(avatar_file)
+            employee.avatar_url = secure_url
+            employee.avatar = None  # Clear legacy ImageField
+            employee.save(update_fields=['avatar_url', 'avatar'])
+
+        # Delegate the rest (name, designation, etc.) to the serializer
+        kwargs['partial'] = True
+        return super().partial_update(request, *args, **kwargs)
+
 
 class RemoveAvatarView(APIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request):
         employee = get_object_or_404(Employee, user=request.user)
+        _delete_cloudinary_asset(employee.avatar_url or (employee.avatar.name if employee.avatar else None))
         if employee.avatar:
             employee.avatar.delete(save=False)
         employee.avatar = None
-        employee.save()
+        employee.avatar_url = None
+        employee.save(update_fields=['avatar', 'avatar_url'])
         return Response({'avatar': None}, status=200)
 
 

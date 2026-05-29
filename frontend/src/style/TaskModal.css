@@ -188,6 +188,45 @@
   background: #ffffff;
 }
 
+/* --- Describe Blocker Input (unique, no border or shift on any state) --- */
+.task-add-modal .blocker-describe-input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #f6f7fb;
+  border-radius: 8px;
+  padding: 12px 16px;
+  height: 48px;
+  width: 100%;
+  font-family: "Figtree", sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.2;
+  color: #17181a;
+  box-sizing: border-box;
+  transition: none !important;
+}
+
+.task-add-modal .blocker-describe-input:focus,
+.task-add-modal .blocker-describe-input:focus-visible,
+.task-add-modal .blocker-describe-input:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: #f6f7fb !important;
+  padding: 12px 16px !important;
+}
+
+.task-add-modal .blocker-describe-input::placeholder {
+  color: rgba(23, 24, 26, 0.5);
+  font-family: "Figtree", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
 /* --- Custom Dropdown --- */
 .task-add-modal .custom-select-wrapper {
   position: relative;
@@ -346,7 +385,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  cursor: pointer;
+  cursor: default;
   font-family: "Figtree", sans-serif;
   font-size: 1rem;
   color: #17181a;
@@ -371,6 +410,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
 }
 

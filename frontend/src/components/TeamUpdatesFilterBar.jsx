@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../style/TeamUpdatesFilterBar.css';
-import { SearchIcon, ProjectIcon, RoleIcon, TodayIcon, YesterdayIcon, CustomDateIcon, PillCloseIcon } from './Icons';
+import { SearchIcon, ProjectIcon, RoleIcon, TodayIcon, YesterdayIcon, CustomDateIcon, PillCloseIcon, RoleDevelopersIcon, RoleDesignerIcon, RoleProjectManagerIcon, RoleQAIcon, RoleAllIcon } from './Icons';
+
+const getRoleIcon = (role) => {
+    const r = role.toLowerCase();
+    if (r === 'all roles') return <RoleAllIcon />;
+    if (r.includes('develop') || r.includes('engineer') || r.includes('full stack') || r.includes('frontend') || r.includes('backend') || r.includes('front-end') || r.includes('back-end')) return <RoleDevelopersIcon />;
+    if (r.includes('design') || r.includes('ui') || r.includes('ux')) return <RoleDesignerIcon />;
+    if (r.includes('manager') || r.includes('lead') || r.includes('product') || r.includes('scrum')) return <RoleProjectManagerIcon />;
+    if (r.includes('qa') || r.includes('quality') || r.includes('test')) return <RoleQAIcon />;
+    return <RoleAllIcon />;
+};
 import CustomDatePicker from './CustomDatePicker';
 
 const TeamUpdatesFilterBar = ({
@@ -168,7 +178,7 @@ const TeamUpdatesFilterBar = ({
                     className="filter-item-wrapper role-dropdown-trigger"
                     onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
                 >
-                    <RoleIcon />
+                    {getRoleIcon(selectedRole)}
                     <span className="role-display">{selectedRole}</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isRoleDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
                         <path d="M6 9l6 6 6-6" />
@@ -186,6 +196,7 @@ const TeamUpdatesFilterBar = ({
                                     setIsRoleDropdownOpen(false);
                                 }}
                             >
+                                {getRoleIcon(role)}
                                 {role}
                             </div>
                         ))}

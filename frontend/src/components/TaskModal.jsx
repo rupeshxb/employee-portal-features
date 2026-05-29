@@ -213,22 +213,23 @@ const TaskModal = ({ show, onClose, onSubmit, isEditing, initialData, projects }
             </div>
 
             <div className="blocker-section">
-              <label className="checkbox-group">
+              <div className="checkbox-group">
                 <input
                   type="checkbox"
+                  id="blocker-checkbox"
                   className="custom-checkbox"
                   checked={isBlocker}
                   onChange={(e) => setIsBlocker(e.target.checked)}
                 />
-                <div className={`checkbox-visual${isBlocker ? ' checked' : ''}`}>
+                <label htmlFor="blocker-checkbox" className={`checkbox-visual${isBlocker ? ' checked' : ''}`}>
                   {isBlocker && (
                     <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
                       <path d="M1.5 5L4.5 8L10.5 2" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   )}
-                </div>
+                </label>
                 <span>I faced a Blocker</span>
-              </label>
+              </div>
 
               {isBlocker && (
                 <div className="form-group blocker-fade">
@@ -238,7 +239,7 @@ const TaskModal = ({ show, onClose, onSubmit, isEditing, initialData, projects }
                   {/* 2. No Placeholder */}
                   <input
                     type="text"
-                    className="blocker-input"
+                    className="blocker-input blocker-describe-input"
                     placeholder="Any dependency, delay, unclear requirement?"
                     value={blockerReason}
                     onChange={(e) => setBlockerReason(e.target.value)}

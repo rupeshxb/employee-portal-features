@@ -42,8 +42,8 @@
 /* --- NOTIFICATION WRAPPER (The Anchor) --- */
 .banner-notification-wrapper {
     position: absolute !important;
-    top: 16px !important; /* Forces it 16px from top of BANNER */
-    right: 16px !important; /* Forces it 16px from right of BANNER */
+    top: 16px !important;
+    right: 0px !important;
     z-index: 9999 !important; /* Forces it on top of decor */
     pointer-events: none; /* Clicks pass through to background */
 }
@@ -81,9 +81,13 @@
     justify-content: space-between;
     gap: 10px;
     padding: 10px 16px;
-    height: 48px;
     box-sizing: border-box;
     width: 100%;
+}
+
+.banner-notification-wrapper .notification-toast .toast-content {
+    height: 52px !important;
+    min-height: 52px !important;
 }
 
 .toast-icon {

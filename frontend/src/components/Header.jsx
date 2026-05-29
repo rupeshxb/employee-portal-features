@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Bell, ChevronDown, LogOut, User, Settings as SettingsIcon } from 'lucide-react';
 import { API_BASE_URL } from '../../config';
 import { useUser } from '../context/UserContext';
-import { VerticalDividerIcon, HeaderCalendarIcon } from './Icons';
+import { VerticalDividerIcon, HeaderCalendarIcon, SettingsDefaultAvatarIcon } from './Icons';
 
 const Header = () => {
   const { user, logout } = useUser();
@@ -103,8 +103,8 @@ const Header = () => {
                 onError={() => setAvatarError(true)}
               />
             ) : (
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#4F46E5', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '16px', border: '1px solid #E5E7EB' }}>
-                {getInitials()}
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                <SettingsDefaultAvatarIcon />
               </div>
             )}
           </div>

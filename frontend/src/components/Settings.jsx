@@ -5,7 +5,7 @@ import { API_BASE_URL } from '../../config';
 import { useUser } from '../context/UserContext';
 import { validatePasswordForm, getPasswordStrength, validateCurrentPassword } from '../../src/utils/validation';
 import ProfilePictureModal from '../components/ProfilePictureModal';
-import { ToastSuccessIcon, SettingsCameraIcon, SettingsDesignationIcon, SettingsEmailIcon, PasswordEyeIcon, PasswordEyeOffIcon } from './Icons';
+import { ToastSuccessIcon, SettingsCameraIcon, SettingsDesignationIcon, SettingsEmailIcon, PasswordEyeIcon, PasswordEyeOffIcon, SettingsDefaultAvatarIcon } from './Icons';
 
 const Settings = () => {
     const { user, updateUser, fetchUser } = useUser();
@@ -183,7 +183,7 @@ const Settings = () => {
             
             {/* --- THE TOAST (Moved outside the header so it doesn't get cut off) --- */}
             {message.text && (
-                <div className="settings-notification-wrapper" style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 50 }}>
+                <div className="settings-notification-wrapper" style={{ position: 'absolute', top: '16px', right: '0px', zIndex: 50 }}>
                     <div className={`notification-toast ${message.type}`}>
                         <div className="toast-content">
                             <div className="check-circle">
@@ -228,7 +228,7 @@ const Settings = () => {
                                 {getImageUrl(profile.avatar) ? (
                                     <img src={getImageUrl(profile.avatar)} alt="Profile" className="avatar-image" />
                                 ) : (
-                                    <div className="avatar-placeholder">{getInitials(profile.first_name, profile.last_name)}</div>
+                                    <SettingsDefaultAvatarIcon />
                                 )}
                                 {getImageUrl(profile.avatar) ? (
                                     <button className="camera-btn" onClick={() => setIsProfileModalOpen(true)}>

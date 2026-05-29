@@ -110,6 +110,7 @@ class Employee(models.Model):
     
     date_joined = models.DateTimeField(auto_now_add=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    avatar_url = models.URLField(null=True, blank=True)
 
     def __str__(self):
         full_name = self.user.get_full_name()

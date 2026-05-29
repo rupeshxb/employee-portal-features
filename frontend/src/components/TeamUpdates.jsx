@@ -20,7 +20,7 @@ const TeamUpdates = () => {
     // Filter States
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedProject, setSelectedProject] = useState('All Projects');
-    const [selectedRole, setSelectedRole] = useState('All Roles');
+    const [selectedRole, setSelectedRole] = useState('Developers');
 
 
     const [dateFilter, setDateFilter] = useState('Today');

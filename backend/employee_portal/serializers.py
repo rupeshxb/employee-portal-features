@@ -162,15 +162,33 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     department_name = serializers.CharField(source='department.name', read_only=True)
     designation_name = serializers.CharField(source='designation.name', read_only=True)
+    avatar = serializers.SerializerMethodField()
 
     class Meta:
         model = Employee
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'designation', 'designation_name', 'department', 'department_name', 'avatar', 'is_manager', 'role']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'designation', 'designation_name', 'department', 'department_name', 'avatar', 'avatar_url', 'is_manager', 'role']
+
+    def get_avatar(self, obj):
+        # avatar_url is the reliable Cloudinary secure_url — prefer it
+        if obj.avatar_url:
+            return obj.avatar_url
+        # Fallback: derive URL from legacy ImageField
+        if obj.avatar:
+            try:
+                url = obj.avatar.url
+                return url if url.startswith('http') else None
+            except Exception:
+                return None
+        return None
 
     def update(self, instance, validated_data):
+        # avatar uploads are handled directly in the view via Cloudinary SDK;
+        # pop it here so super().update() doesn't try to re-save the file.
+        validated_data.pop('avatar', None)
+
         user_data = validated_data.pop('user', {})
         user = instance.user
-        
+
         if 'first_name' in user_data:
             user.first_name = user_data['first_name']
         if 'last_name' in user_data:
