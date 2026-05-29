@@ -1,11 +1,11 @@
 from django.urls import path
 from .views import (
-    CustomLoginView, 
-    DailyTaskListCreate, 
-    DailyTaskDetail, 
-    ProjectList, 
-    ProjectDetail,         
-    team_updates,          
+    CustomLoginView,
+    DailyTaskListCreate,
+    DailyTaskDetail,
+    ProjectList,
+    ProjectDetail,
+    team_updates,
     EmployeeProfileView,
     ChangePasswordView,
     RemoveAvatarView,
@@ -17,13 +17,17 @@ from .views import (
     ManagerListView,
     ManagerEmployeeDetailView,
     EmployeeDetailView,
-    DesignationListCreateView,  # <-- NEW
-    DesignationDetailView,      # <-- NEW
-    TagListCreateView,          # <-- NEW
-    TagDetailView               # <-- NEW
+    DesignationListCreateView,
+    DesignationDetailView,
+    TagListCreateView,
+    TagDetailView,
+    health_check,
 )
 
 urlpatterns = [
+    # Keep-alive ping (no auth, no DB hit)
+    path('health/', health_check, name='health-check'),
+
     # Auth
     path('login/', CustomLoginView.as_view(), name='login'),
 

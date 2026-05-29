@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from django.http import JsonResponse
 from django.db.models import Q, Prefetch
 from django.utils import timezone
 from django.utils.dateparse import parse_date
@@ -224,7 +225,7 @@ class ManagerTeamUpdatesView(APIView):
 
         # Filters
         tag_filter = request.query_params.get('tag', 'all')
-        time_filter = request.query_params.get('time', 'Time')
+        time_filter = request.query_params.get('time', '')
         search_query = request.query_params.get('search', '')
         project_filter = request.query_params.get('project', 'All Projects')
 
@@ -269,21 +270,11 @@ class ManagerTeamUpdatesView(APIView):
             
             latest_task = next((t for t in emp_tasks if t.date == target_date), None)
             
-            if time_filter == 'not_submitted' and (submission is not None or latest_task is not None):
-                continue 
-                
             actual_submit_time = None
             if submission:
                 actual_submit_time = submission.submitted_at
             elif latest_task:
                 actual_submit_time = latest_task.created_at
-
-            if actual_submit_time:
-                submit_hour = timezone.localtime(actual_submit_time).hour
-                if time_filter == 'before_10' and submit_hour >= 10: continue 
-                if time_filter == 'after_10' and submit_hour < 10: continue
-            elif time_filter in ['before_10', 'after_10']:
-                continue 
 
             today_tasks, prev_day_tasks, blockers = [], [], []
 
@@ -665,3 +656,7 @@ class TagDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tag.objects.prefetch_related('designations').all()
     serializer_class = TagSerializer
     permission_classes = [IsAuthenticated]
+
+def health_check(request):
+    """Lightweight ping endpoint — no auth, no DB hit. Used by keep-alive cron."""
+    return JsonResponse({'status': 'ok'})

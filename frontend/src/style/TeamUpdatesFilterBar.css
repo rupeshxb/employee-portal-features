@@ -596,7 +596,7 @@
     position: relative;
     display: flex;
     flex: 0 0 auto;
-    min-width: 160px;
+    min-width: 200px;
 }
 
 .time-dropdown-menu {

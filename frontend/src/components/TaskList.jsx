@@ -68,7 +68,7 @@ const TaskList = ({ groupedTasks, onEdit, onDelete, onAddNewTask }) => {
           {group.blockers && group.blockers.length > 0 && (
             <div className={`blocker-section${group.tasks.length === 0 ? ' blocker-no-separator' : ''}`}>
               <div className="blocker-section-title">
-                BLOCKERS
+                {group.blockers.length === 1 ? 'BLOCKER' : 'BLOCKERS'}
               </div>
               <div className="blocker-rows">
                 {group.blockers.map((task, idx) => (

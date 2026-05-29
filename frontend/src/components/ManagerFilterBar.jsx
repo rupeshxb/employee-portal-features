@@ -229,7 +229,7 @@ const ManagerFilterBar = ({
             {/* 4. Time Dropdown — with icons, opens leftward */}
             <div ref={timeContainerRef} className="time-dropdown-container">
                 <div className="filter-item-wrapper date-dropdown-pill time-dropdown-pill" onClick={() => setIsTimeDropdownOpen(!isTimeDropdownOpen)}>
-                    {timeFilter !== 'Time' ? renderTimeIcon(timeFilter) : <ClockIcon />}
+                    {renderTimeIcon(timeFilter)}
                     <div className="date-dropdown-content">
                         {timeFilter}
                     </div>

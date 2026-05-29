@@ -32,7 +32,7 @@ const ManagerDailyTaskUpdates = () => {
     const [selectedProject, setSelectedProject] = useState('All Projects');
     const [dateFilter, setDateFilter] = useState('Today');
     const [customDate, setCustomDate] = useState(new Date().toISOString().split('T')[0]);
-    const [timeFilter, setTimeFilter] = useState('Time');
+    const [timeFilter, setTimeFilter] = useState('Before 10 AM');
 
     // --- 1. FETCH PROJECTS + TAGS (Runs Once) ---
     useEffect(() => {
@@ -82,7 +82,6 @@ const ManagerDailyTaskUpdates = () => {
                 if (activeTagId !== 'all') params.append('tag', activeTagId);
                 if (searchTerm) params.append('search', searchTerm);
                 if (selectedProject !== 'All Projects') params.append('project', selectedProject);
-                if (timeFilter !== 'Time') params.append('time', timeFilter);
 
                 // Handle Dates — use LOCAL date so it matches how DailyTask.date is stored
                 const toLocalDateStr = (d) => {
@@ -164,27 +163,25 @@ const ManagerDailyTaskUpdates = () => {
             });
         }
 
-        // Time Filter — compared against 10:00 on the selected day (24h clock, local time)
-        if (timeFilter !== 'Time') {
-            result = result.filter(emp => {
-                if (timeFilter === 'Not Submitted') {
-                    return !emp.submittedTime || emp.submittedTime === 'Not Submitted';
-                }
+        // Time Filter — always applied, compared against 10:00 (local time)
+        result = result.filter(emp => {
+            if (timeFilter === 'Not Submitted') {
+                return !emp.submittedTime || emp.submittedTime === 'Not Submitted';
+            }
 
-                if (!emp.submittedTime || emp.submittedTime === 'Not Submitted') return false;
+            if (!emp.submittedTime || emp.submittedTime === 'Not Submitted') return false;
 
-                const submittedAt = new Date(emp.submittedTime);
-                if (isNaN(submittedAt.getTime())) return false;
+            const submittedAt = new Date(emp.submittedTime);
+            if (isNaN(submittedAt.getTime())) return false;
 
-                const minutesOfDay = submittedAt.getHours() * 60 + submittedAt.getMinutes();
-                const tenAM = 10 * 60;
+            const minutesOfDay = submittedAt.getHours() * 60 + submittedAt.getMinutes();
+            const tenAM = 10 * 60;
 
-                if (timeFilter === 'Before 10 AM') return minutesOfDay < tenAM;
-                if (timeFilter === 'After 10 AM') return minutesOfDay >= tenAM;
+            if (timeFilter === 'Before 10 AM') return minutesOfDay < tenAM;
+            if (timeFilter === 'After 10 AM') return minutesOfDay >= tenAM;
 
-                return true;
-            });
-        }
+            return true;
+        });
 
         setFilteredEmployees(result);
     }, [employees, searchTerm, selectedProject, timeFilter]);

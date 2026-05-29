@@ -51,7 +51,7 @@ const BlockerItem = ({ task }) => (
 const DaySection = ({ title, icon, tasks }) => {
     if (!tasks || tasks.length === 0) return null;
 
-    if (title === 'BLOCKERS') {
+    if (title === 'BLOCKERS' || title === 'BLOCKER') {
         return (
             <div className="ec-blocker-section">
                 <div className="card-section-header">
@@ -162,7 +162,7 @@ const EmployeeCard = ({ emp, variant = 'employee', filterType = '', targetDate =
         if (emp.tasks.blockers && emp.tasks.blockers.length > 0) {
             groups.push({
                 dateKey: 'blockers',
-                title: 'BLOCKERS',
+                title: emp.tasks.blockers.length === 1 ? 'BLOCKER' : 'BLOCKERS',
                 icon: <BlockerAlertIcon />,
                 tasks: emp.tasks.blockers
             });
@@ -213,7 +213,7 @@ const EmployeeCard = ({ emp, variant = 'employee', filterType = '', targetDate =
 
                         {emp.blockers > 0 && (
                             <div className="status-pill alert">
-                                <AlertIcon /> {emp.blockers} blockers
+                                <AlertIcon /> {emp.blockers} {emp.blockers === 1 ? 'blocker' : 'blockers'}
                             </div>
                         )}
                     </div>
