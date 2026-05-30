@@ -28,6 +28,37 @@
   z-index: 10;
 }
 
+.project-overview-container .page-header h2 {
+  font-family: 'Figtree', sans-serif;
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.03em;
+  color: #05205F;
+  margin: 0 0 8px 0;
+}
+
+.projects-section-label {
+  font-family: 'Figtree', sans-serif;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 38px;
+  letter-spacing: -0.03em;
+  color: #141414;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.projects-section-label span {
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: -0.03em;
+  color: #747575;
+}
+
 .page-header p {
   font-size: 15px;
   color: #64748b;

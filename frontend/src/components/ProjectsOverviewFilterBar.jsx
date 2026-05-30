@@ -43,13 +43,12 @@ const ProjectsOverviewFilterBar = ({
         return "Select Date Range";
     };
 
-    // Determine which icon to show in the main Team Size button
     const getActiveTeamIcon = () => {
         switch (teamSizeFilter) {
             case 'Medium (6-10)': return <MediumTeamIcon />;
-            case 'Large (10+)': return <LargeTeamIcon />;
+            case 'Large (11+)': return <LargeTeamIcon />;
             case 'Small (1-5)':
-            case 'All':
+            case 'All Team':
             default: return <SmallTeamIcon />;
         }
     };
@@ -94,7 +93,7 @@ const ProjectsOverviewFilterBar = ({
                     {getActiveTeamIcon()}
 
                     <div className="date-dropdown-content">
-                        {teamSizeFilter === 'All' ? 'Team Size' : teamSizeFilter}
+                        {teamSizeFilter}
                     </div>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#747575" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M6 9l6 6 6-6" />
@@ -103,7 +102,7 @@ const ProjectsOverviewFilterBar = ({
 
                 {isTeamDropdownOpen && (
                     <div className="date-dropdown-menu">
-                        {['All', 'Small (1-5)', 'Medium (6-10)', 'Large (10+)'].map(size => (
+                        {['All Team', 'Small (1-5)', 'Medium (6-10)', 'Large (11+)'].map(size => (
                             <div
                                 key={size}
                                 className="date-dropdown-item date-dropdown-item-bordered"
@@ -112,10 +111,9 @@ const ProjectsOverviewFilterBar = ({
                             >
                                 {size === 'Small (1-5)' && <SmallTeamIcon />}
                                 {size === 'Medium (6-10)' && <MediumTeamIcon />}
-                                {size === 'Large (10+)' && <LargeTeamIcon />}
-                                {size === 'All' && <SmallTeamIcon />}
-
-                                {size === 'All' ? 'All Team Sizes' : size}
+                                {size === 'Large (11+)' && <LargeTeamIcon />}
+                                {size === 'All Team' && <SmallTeamIcon />}
+                                {size}
                             </div>
                         ))}
                     </div>

@@ -22,16 +22,22 @@
     margin-bottom: 24px;
 }
 .designation-management-page .page-header h2 {
-    font-size: 26px;
-    font-weight: 700;
-    color: #17181A;
-    margin: 0 0 6px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 36px;
+    font-weight: 600;
+    line-height: 43px;
+    letter-spacing: -0.03em;
+    color: #05205F;
+    margin: 0 0 4px;
     position: relative;
     z-index: 10;
 }
 .designation-management-page .page-header p {
-    font-size: 14px;
-    color: #64748b;
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 19px;
+    color: rgba(1, 12, 55, 0.75);
     margin: 0;
     position: relative;
     z-index: 10;
@@ -86,15 +92,23 @@
 
 /* Sub-header */
 .desig-subheader h3 {
-    font-size: 22px;
-    font-weight: 600;
-    margin: 0 0 16px 0;
-    color: #111827;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+    letter-spacing: -0.03em;
+    margin: 0 0 12px 0;
+    color: #141414;
 }
 .desig-subheader .text-muted {
     font-weight: 400;
-    font-size: 16px;
-    color: #6B7280;
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: -0.03em;
+    color: #747575;
 }
 
 /* Top bar */

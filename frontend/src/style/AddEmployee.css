@@ -280,7 +280,7 @@
 
 .password-input-wrapper input.pwd-masked {
     font-size: 22px;
-    letter-spacing: 4px;
+    letter-spacing: 1px;
 }
 
 .pwd-icon-btn {
@@ -320,7 +320,7 @@
     line-height: 22px;
     color: #fff;
     transition: background-color 0.2s;
-    width: 160px;
+    width: 168px;
     height: 48px;
     flex-shrink: 0;
     white-space: nowrap;

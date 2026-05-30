@@ -4,9 +4,8 @@
     background: var(--card-accent);
     border-radius: 16px;
     color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-rows: 1fr auto;
     padding: 16px 8px 8px;
     gap: 16px;
     isolation: isolate;
@@ -29,6 +28,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     text-align: center;
     padding: 0 8px;
@@ -103,10 +103,31 @@
     gap: 12px;
 }
 
+/* Timeline */
+.timeline-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.progress-bar-bg {
+    flex-grow: 1;
+    height: 5px;
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.4s ease;
+}
+
 .team-section-divider {
     height: 1px;
     background: rgba(23, 24, 26, 0.1);
-    align-self: stretch;
+    margin-left: -16px;
+    margin-right: -16px;
 }
 
 .list-title {

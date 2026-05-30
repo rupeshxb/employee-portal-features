@@ -48,7 +48,7 @@
 .tags-table td {
     padding: 0 16px;
     border-bottom: 1px solid #F3F4F6;
-    font-size: 14px;
+    font-size: 16px;
     vertical-align: middle;
     color: #374151;
 }
@@ -88,14 +88,18 @@
 .description-cell {
     overflow: hidden;
 }
-.description-text {
+.tags-table .description-text {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     white-space: normal;
     word-break: break-word;
-    line-height: 1.4;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 18px;
+    color: #17181A;
 }
 
 /* Table Specific Elements */

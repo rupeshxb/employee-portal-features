@@ -7,6 +7,28 @@
 }
 
 /* --- 1. HEADER BANNER --- */
+.employee-overview-page .page-header h2 {
+    font-family: 'Figtree', sans-serif;
+    font-size: 36px;
+    font-weight: 600;
+    line-height: 43px;
+    letter-spacing: -0.03em;
+    color: #05205F;
+    margin: 0 0 4px;
+    position: relative;
+    z-index: 10;
+}
+.employee-overview-page .page-header p {
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 19px;
+    color: rgba(1, 12, 55, 0.75);
+    margin: 0;
+    position: relative;
+    z-index: 10;
+}
+
 .btn-add-employee {
     background-color: #17181A;
     color: white;
@@ -31,14 +53,23 @@
 
 /* --- 2. TITLE --- */
 .table-header-title h2 {
-    font-size: 20px;
-    color: #1e293b;
-    margin-bottom: 24px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+    letter-spacing: -0.03em;
+    color: #141414;
+    margin: 0 0 12px 0;
 }
 .table-header-title span {
-    color: #64748b;
     font-weight: 400;
-    font-size: 16px;
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: -0.03em;
+    color: #747575;
 }
 
 /* --- 3. SEARCH & FILTER BAR --- */
@@ -117,18 +148,20 @@
 }
 
 .overview-table thead {
-    background-color: #F9FAFB;
+    background-color: #EFF0F2;
 }
 
 .overview-table th {
     background-color: inherit;
-    color: #6B7280;
-    font-size: 12px;
+    color: rgba(23, 24, 26, 0.7);
+    font-family: 'Figtree', sans-serif;
+    font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
+    line-height: 13px;
     padding: 14px 24px;
-    border-bottom: 1px solid #E5E7EB;
+    border-bottom: none;
     white-space: nowrap;
 }
 

@@ -164,9 +164,11 @@ const TagAddEditModal = ({ isOpen, onClose, onSubmit, tag, designations }) => {
                                     })}
                                 </div>
                             </div>
-                            
+
+                            <div className="color-row-divider" />
+
                             <div className="color-row">
-                                <span className="color-label">Custom Color</span>
+                                <span className="color-label">Pick Custom Color</span>
                                 <div className="custom-color-controls">
                                     <div 
                                         className="color-square custom-color-preview"

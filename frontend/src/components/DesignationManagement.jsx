@@ -97,7 +97,7 @@ const DesignationManagement = () => {
                 <div className="projects-header-inner">
                     <div className="header-text">
                         <h2>Designations Management</h2>
-                        <p>Create and manage employee designations for your organisation.</p>
+                        <p>Define employee designations and organize them under tags.</p>
                     </div>
                     <button className="add-project-btn" onClick={() => handleOpenModal()}>
                         <TagAddPlusIcon /> Add Designation

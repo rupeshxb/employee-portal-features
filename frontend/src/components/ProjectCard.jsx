@@ -53,6 +53,18 @@ const ProjectCard = ({ project, departments = [], onEdit, onDelete }) => {
 
     const cardBgColor = project.color_code || project.accentColor || '#7751FF';
 
+    const calculateProgress = () => {
+        if (!project.start_date || !project.end_date) return 0;
+        const startDate = new Date(project.start_date).getTime();
+        const endDate = new Date(project.end_date).getTime();
+        const today = new Date().getTime();
+        if (today <= startDate) return 0;
+        if (today >= endDate) return 100;
+        return ((today - startDate) / (endDate - startDate)) * 100;
+    };
+
+    const progressPercentage = calculateProgress();
+
     return (
         <div className="project-card" style={{ '--card-accent': cardBgColor }}>
             <div className="card-header" ref={menuRef}>
@@ -96,8 +108,18 @@ const ProjectCard = ({ project, departments = [], onEdit, onDelete }) => {
 
             <div className="card-body">
                 <div className="card-body-inner">
-                    <div className="list-title">TEAM STRUCTURE</div>
+                    <div className="timeline-row">
+                        <span className="list-title">TIMELINE</span>
+                        <div className="progress-bar-bg" style={{ backgroundColor: `${cardBgColor}33` }}>
+                            <div
+                                className="progress-bar-fill"
+                                style={{ width: `${progressPercentage}%`, backgroundColor: cardBgColor }}
+                            />
+                        </div>
+                    </div>
+
                     <div className="team-section-divider" />
+                    <div className="list-title">TEAM STRUCTURE</div>
 
                     <div className="team-list-wrap">
                         <CustomScrollbar className="team-list-scroll">

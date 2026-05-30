@@ -25,7 +25,7 @@ const ProjectsOverview = () => {
   const [notification, setNotification] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
-  const [teamSizeFilter, setTeamSizeFilter] = useState('All');
+  const [teamSizeFilter, setTeamSizeFilter] = useState('Small (1-5)');
 
   // --- Fetch projects from Django on page load ---
   useEffect(() => {
@@ -194,8 +194,8 @@ const ProjectsOverview = () => {
       matchesTeamSize = teamSize >= 1 && teamSize <= 5;
     } else if (teamSizeFilter === 'Medium (6-10)') {
       matchesTeamSize = teamSize >= 6 && teamSize <= 10;
-    } else if (teamSizeFilter === 'Large (10+)') {
-      matchesTeamSize = teamSize > 10;
+    } else if (teamSizeFilter === 'Large (11+)') {
+      matchesTeamSize = teamSize >= 11;
     }
 
     // 3. Date Range Filter (Checks if the project overlaps with the selected range)
@@ -246,6 +246,11 @@ const ProjectsOverview = () => {
           <button className="add-project-btn" onClick={handleOpenAddModal}><TagAddPlusIcon /> Add Project</button>
         </div>
       </div>
+
+      {/* Projects count label */}
+      <p className="projects-section-label">
+        Projects <span>(Total {projects.length})</span>
+      </p>
 
       {/* Filters render immediately */}
       <ProjectsOverviewFilterBar

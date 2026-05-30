@@ -221,7 +221,7 @@ const AddEmployee = () => {
                     <input
                       type="text"
                       name="password"
-                      value={showPassword ? formData.password : '*'.repeat(formData.password.length)}
+                      value={showPassword ? formData.password : '*'.repeat(32)}
                       onChange={(e) => {
                         if (!showPassword) return;
                         setFormData((prev) => ({ ...prev, password: e.target.value }));

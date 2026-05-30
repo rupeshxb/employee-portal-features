@@ -11,8 +11,8 @@
 .delete-confirm-box {
     background: #FFFFFF;
     border-radius: 16px;
-    padding: 28px 32px 32px;
-    width: 460px;
+    padding: 24px;
+    width: 500px;
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -22,8 +22,8 @@
 
 .delete-confirm-box .close-icon {
     position: absolute;
-    top: 18px;
-    right: 21px;
+    top: 16px;
+    right: 16px;
     background: none;
     border: none;
     cursor: pointer;
@@ -70,7 +70,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 122px;
+    width: 140px;
     height: 44px;
     border: 1px solid #747575;
     border-radius: 8px;
@@ -92,7 +92,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 122px;
+    width: 140px;
     height: 44px;
     background: #FF493F;
     border-radius: 8px;

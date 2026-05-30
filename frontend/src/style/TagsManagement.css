@@ -27,16 +27,22 @@
     margin-bottom: 24px;
 }
 .tags-management-page .page-header h2 {
-    font-size: 26px;
-    font-weight: 700;
-    color: #17181A;
-    margin: 0 0 6px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 36px;
+    font-weight: 600;
+    line-height: 43px;
+    letter-spacing: -0.03em;
+    color: #05205F;
+    margin: 0 0 4px;
     position: relative;
     z-index: 10;
 }
 .tags-management-page .page-header p {
-    font-size: 14px;
-    color: #64748b;
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 19px;
+    color: rgba(1, 12, 55, 0.75);
     margin: 0;
     position: relative;
     z-index: 10;
@@ -102,7 +108,7 @@
     align-items: center;
     justify-content: center;
     gap: 24px;
-    min-height: 320px;
+    min-height: 560px;
     text-align: center;
 }
 .tags-empty-text {
@@ -110,18 +116,34 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    width: 234px;
 }
 .tags-empty-text h3 {
     margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #111827;
+    font-family: 'Figtree', sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 26px;
+    letter-spacing: -0.03em;
+    color: #17181A;
 }
 .tags-empty-text p {
     margin: 0;
+    font-family: 'Figtree', sans-serif;
     font-size: 14px;
-    color: #6B7280;
+    font-weight: 300;
+    line-height: 17px;
+    color: rgba(23, 24, 26, 0.75);
+    white-space: nowrap;
+}
+
+/* Empty-state Add Tag button — larger, matches Figma 160×48 */
+.tags-empty-section .tags-add-btn {
+    width: 160px;
+    height: 48px;
+    padding: 0;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
 }
 
 /* Error banner */
@@ -137,15 +159,23 @@
 
 /* Sub-header */
 .tags-subheader h3 {
-    font-size: 22px;
-    font-weight: 600;
-    margin: 0 0 16px;
-    color: #111827;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+    letter-spacing: -0.03em;
+    margin: 0 0 12px;
+    color: #141414;
 }
 .tags-subheader .text-muted {
     font-weight: 400;
-    font-size: 16px;
-    color: #6B7280;
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: -0.03em;
+    color: #747575;
 }
 
 /* Top Bar (Search & Filter) */
