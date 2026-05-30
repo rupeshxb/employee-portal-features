@@ -235,9 +235,12 @@ const AddEmployee = () => {
                       {showPassword ? <PasswordEyeOffIcon /> : <PasswordEyeIcon />}
                     </button>
                     <span className="pwd-divider" />
-                    <button type="button" className="pwd-icon-btn" onClick={copyPassword} title={copied ? "Copied!" : "Copy"}>
-                      <CopyIcon />
-                    </button>
+                    <span className="pwd-copy-wrap">
+                      <button type="button" className="pwd-icon-btn" onClick={copyPassword} aria-label="Copy password">
+                        <CopyIcon />
+                      </button>
+                      {copied && <span className="pwd-copied-tooltip" role="status">Copied!</span>}
+                    </span>
                   </div>
                   <button type="button" onClick={generatePassword} className="btn-generate">
                     Generate
